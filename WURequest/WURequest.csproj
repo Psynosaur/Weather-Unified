@@ -7,12 +7,8 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <StartupObject />
     <ApplicationIcon />
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\logs\wudata.txt" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />

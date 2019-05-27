@@ -46,7 +46,7 @@ namespace WURequest.Controllers
                         {
                             response.EnsureSuccessStatusCode();
                             string responseBody = await response.Content.ReadAsStringAsync();
-                            using (StreamWriter outputFile = new StreamWriter(Path.Combine(webRootPath + "/logs/wudata.txt"), append: true))
+                            using (StreamWriter outputFile = new StreamWriter(Path.Combine(webRootPath + "/logs/wudata11.txt"), append: true))
                             {
                                 await outputFile.WriteLineAsync(responseBody);
                             }
@@ -71,28 +71,30 @@ namespace WURequest.Controllers
     }
     [Route("api/[controller]")]
     [ApiController]
-    public class ChartsController : ControllerBase
+    public class DataController : ControllerBase
     {
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public ChartsController(IHostingEnvironment hostingEnvironment)
+        public DataController(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
         }
         [HttpGet]
-        public ActionResult<List<object>> Get()
+        public ActionResult<JObject> Temp()
         {
 
             string webRootPath = _hostingEnvironment.WebRootPath;
             //var lineCount = System.IO.File.ReadLines(webRootPath + "/logs/wudata11.txt").Count();
-            var list = new List<object>();
+            var list = new JObject();
             var fileitems = System.IO.File.ReadLines(webRootPath + "/logs/wudata11.txt");
+            //list.Add("date\ttemp");
             foreach (var item in fileitems)
             {
                 JObject jObj = JObject.Parse(item);
                 var temperature = jObj["observations"][0]["metric"]["temp"].ToString();
-                var time = jObj["observations"][0]["obsTimeLocal"].ToString();
-                list.Add(time + "," + temperature);
+                var time = jObj["observations"][0]["obsTimeLocal"].ToString().Split(' ').Last();
+                time = time.Remove(time.Length - 3);
+                list.Add(time, temperature);
             }
             return list;
 
