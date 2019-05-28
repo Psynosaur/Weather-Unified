@@ -80,23 +80,22 @@ namespace WURequest.Controllers
             _hostingEnvironment = hostingEnvironment;
         }
         [HttpGet]
-        public ActionResult<JObject> Temp()
+        public ActionResult<JArray> Temp()
         {
 
             string webRootPath = _hostingEnvironment.WebRootPath;
-            //var lineCount = System.IO.File.ReadLines(webRootPath + "/logs/wudata11.txt").Count();
-            var list = new JObject();
+            var json = new JArray();
             var fileitems = System.IO.File.ReadLines(webRootPath + "/logs/wudata11.txt");
-            //list.Add("date\ttemp");
             foreach (var item in fileitems)
             {
                 JObject jObj = JObject.Parse(item);
-                var temperature = jObj["observations"][0]["metric"]["temp"].ToString();
-                var time = jObj["observations"][0]["obsTimeLocal"].ToString().Split(' ').Last();
-                time = time.Remove(time.Length - 3);
-                list.Add(time, temperature);
+                json.Add(new JObject()
+                {
+                    {"time", jObj["observations"][0]["obsTimeUtc"] },
+                    {"temp", jObj["observations"][0]["metric"]["temp"] }
+                    });
             }
-            return list;
+            return json;
 
         }
     }
