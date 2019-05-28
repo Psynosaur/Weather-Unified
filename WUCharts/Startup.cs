@@ -36,6 +36,10 @@ namespace WUCharts
             {
                 // options.DebuggingPort 
             });
+            services.AddCors(c =>
+            {
+                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -52,6 +56,7 @@ namespace WUCharts
                 app.UseHsts();
             }
 
+            app.UseCors(options => options.AllowAnyOrigin());
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
