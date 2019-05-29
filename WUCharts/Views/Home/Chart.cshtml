@@ -1,78 +1,47 @@
 ﻿@{
-    ViewData["Title"] = "Temperature 27/05/2019";
+    ViewData["Title"] = "Temperature 29/05/2019";
 }
 <h2>@ViewData["Title"]</h2>
-
-@*<p><img src="@Html.Raw(ViewData[" ChartImage"])" /></p>*@
-  <head>
-      <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
-      <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
-      <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
-      <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-  </head>
-<div id="chartContainer"></div>
+<head>
+    <link rel="stylesheet" href="~/js/chartist/chartist.css">
+    <script src="~/js/chartist/chartist.js"></script>
+</head>
+<div class="ct-chart ct-minor-sixth"></div>
+<pre id="log"></pre>
 <script>
-    //https://canvasjs.com/javascript-charts/json-data-api-ajax-chart/
-    //https://canvasjs.com/data/gallery/javascript/daily-sales-data.json
-    var dataPoints = [];
+    // time is given in ISO 8601 - standard eg: 2019-05-27T04:35:14Z
+    fetch('https://localhost:44350/api/data')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (datas) {
+            var data = {
+                labels: datas.map(function (read) {
+                    return read.time;
+                }),
+                series: [datas.map(function (read) {
+                    return read.temp;
+                })]
+            };
 
-    var chart = new CanvasJS.Chart("chartContainer", {
-        animationEnabled: true,
-        theme: "dark2",
-        title: {
-            text: "Temp"
-        },
-        axisY: {
-            title: "Celcius",
-            titleFontSize: 24
-        },
-        data: [{
-            type: "column",
-            yValueFormatString: "## Celcius",
-            dataPoints: dataPoints
-        }]
-    });
-    function addData(data) {
-        for (var i = 0; i < data.length; i++) {
-            dataPoints.push({
-                x: new Date(data[i].time),
-                y: data[i].temp
-            });
-        }
-        chart.render();
+            document.getElementById('log').innerHTML = 'data = ' + JSON.stringify(data, undefined, 2) +
+                '\r\njson = ' + JSON.stringify(datas, undefined, 2);
 
-    }
-    $.getJSON("https://localhost:44350/api/data", addData);
-    //fetch('https://localhost:44350/api/data')
-    //    .then(function (response) {
-    //        return response.json();
-    //    })
-    //    .then(function (temps) {
-    //        var data = {
-    //            labels: temps.map(function (temp) {
-    //                return temp;
-    //            }),
-    //            series: temps.map(function (temp) {
-    //                return user.name.length;
-    //            })
-    //        };
+            var options = {
+                width: 300,
+                height: 200
+            };
 
-    //        var chart = new Chartist.Bar('#chart', data, {
-    //            distributeSeries: true
-    //        });
-    //    });
-    //var data = {
-    //    // A labels array that can contain any sort of values
-    //    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-    //    // Our series array that contains series objects or in this case series data arrays
-    //    series: [
-    //        [8, 18, 17, 14, 9]
-    //    ]
-    //};
-
-    //// Create a new line chart object where as first parameter we pass in a selector
-    //// that is resolving to our chart container element. The Second parameter
-    //// is the actual data object. As a third parameter we pass in our custom options.
-    //new Chartist.Line('.ct-chart', data);
+            console.log(Chartist.plugins);
+            new Chartist.Line('.ct-chart', data, {
+                lineSmooth: Chartist.Interpolation.simple({
+                    divisor: 2
+                }),
+                fullWidth: true,
+                chartPadding: {
+                    right: 20
+                }
+               });
+        });
 </script>
 
