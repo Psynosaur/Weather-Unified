@@ -11,6 +11,44 @@ using Newtonsoft.Json.Linq;
 
 namespace WURequest.Controllers
 {
+//     public class Metrics
+//     {
+//         public string TempOutCur { get; set; }
+//         public string Tmin { get; set; }
+//         public string Tmax { get; set; }
+//         public string HumOutCur { get; set; }
+//         public string PressCur { get; set; }
+//         public string DewCur { get; set; }
+//         public string HeatIdxCur { get; set; }
+//         public string WindChillCur { get; set; }
+//         public string TempInCur { get; set; }
+//         public string HumInCur { get; set; }
+//         public string WindSpeedCur { get; set; }
+//         public string WindAvgSpeedCur { get; set; }
+//         public string WindDirCur { get; set; }
+//         public string WindDirCurEng { get; set; }
+//         public string WindGust10 { get; set; }
+//         public string WindDirAvg10 { get; set; }
+//         public string WindDirAvg10Eng { get; set; }
+//         public string RainRateCur { get; set; }
+//         public string RainDay { get; set; }
+//         public string RainYest { get; set; }
+//         public string RainMonth { get; set; }
+//         public string RainYear { get; set; }
+//         public string UV { get; set; }
+//         public string Solar_Rad { get; set; }
+//     }
+
+//     public class Meteobridge
+//     {
+//         public string DateTime { get; set; }
+//         public Metrics metrics { get; set; }
+//     }
+
+//     public class RootObject
+//     {
+//         public List<Meteobridge> meteobridge { get; set; }
+//     }
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
