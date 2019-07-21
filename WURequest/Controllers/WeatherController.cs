@@ -51,6 +51,7 @@ namespace WURequest.Controllers
                 throw;
             }
         }
+
         [HttpGet]
         public async Task<ActionResult<string>> GetAsync(string id, string pat)
         {
@@ -66,22 +67,27 @@ namespace WURequest.Controllers
                         new MediaTypeWithQualityHeaderValue("application/json"));
 
                     using (HttpResponseMessage response = await client.GetAsync(
-                        string.Format("https://api.weather.com/v2/pws/observations/current?stationId={0}&format={1}&units={2}&apiKey={3}", id, format, units, pat)))
+                        string.Format(
+                            "https://api.weather.com/v2/pws/observations/current?stationId={0}&format={1}&units={2}&apiKey={3}",
+                            id, format, units, pat)))
                     {
                         try
                         {
                             response.EnsureSuccessStatusCode();
                             string responseBody = await response.Content.ReadAsStringAsync();
-                            using (StreamWriter outputFile = new StreamWriter(Path.Combine(webRootPath + "/logs/wudata11.txt"), append: true))
+                            using (StreamWriter outputFile =
+                                new StreamWriter(Path.Combine(webRootPath + "/logs/wudata11.txt"), append: true))
                             {
                                 await outputFile.WriteAsync(responseBody);
                             }
+
                             return responseBody;
                         }
                         catch (Exception e)
                         {
                             Console.WriteLine(e.ToString());
                         }
+
                         return "NO DATA";
                     }
                 }
@@ -93,35 +99,34 @@ namespace WURequest.Controllers
             }
         }
 
-    }
-
-    // POC stuff to get JSON from flat DB
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DataController : ControllerBase
-    {
-        private readonly IHostingEnvironment _hostingEnvironment;
-
-        public DataController(IHostingEnvironment hostingEnvironment)
+        // POC stuff to get JSON from flat DB
+        [Route("api/[controller]")]
+        [ApiController]
+        public class DataController : ControllerBase
         {
-            _hostingEnvironment = hostingEnvironment;
-        }
+            private readonly IHostingEnvironment _hostingEnvironment;
 
-        [HttpGet]
-        public ActionResult<JArray> Temp()
-        {
-
-            string webRootPath = _hostingEnvironment.WebRootPath;
-            var jsonArray = new JArray();
-            var fileitems = System.IO.File.ReadLines(webRootPath + "/logs/wudata11.txt");
-            foreach (var item in fileitems)
+            public DataController(IHostingEnvironment hostingEnvironment)
             {
-                JObject jObj = JObject.Parse(item);
-                jsonArray.Add(jObj[""]);
+                _hostingEnvironment = hostingEnvironment;
             }
 
-            return jsonArray;
+            [HttpGet]
+            public ActionResult<JArray> Temp()
+            {
 
+                string webRootPath = _hostingEnvironment.WebRootPath;
+                var jsonArray = new JArray();
+                var fileitems = System.IO.File.ReadLines(webRootPath + "/logs/wudata11.txt");
+                foreach (var item in fileitems)
+                {
+                    JObject jObj = JObject.Parse(item);
+                    jsonArray.Add(jObj[""]);
+                }
+
+                return jsonArray;
+
+            }
         }
     }
 }
