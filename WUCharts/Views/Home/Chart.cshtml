@@ -1,47 +1,45 @@
-﻿@{
-    ViewData["Title"] = "Temperature 29/05/2019";
+﻿
+@{
+    //ViewData["Title"] = "Temp Past Hour : " + DateTime.Now.ToString("f");
 }
-<h2>@ViewData["Title"]</h2>
-<head>
-    <link rel="stylesheet" href="~/lib/chartist/chartist.css">
-    <script src="~/lib/chartist/chartist.js"></script>
-</head>
-<div class="ct-chart ct-minor-sixth"></div>
-<pre id="log"></pre>
-<script>
-    // time is given in ISO 8601 - standard eg: 2019-05-27T04:35:14Z
-    fetch('https://localhost:44350/api/data')
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (datas) {
-            var data = {
-                labels: datas.map(function (read) {
-                    return read.time;
-                }),
-                series: [datas.map(function (read) {
-                    return read.temp;
-                })]
-            };
 
-            document.getElementById('log').innerHTML = 'data = ' + JSON.stringify(data, undefined, 2) +
-                '\r\njson = ' + JSON.stringify(datas, undefined, 2);
 
-            var options = {
-                width: 300,
-                height: 200
-            };
+@*<div class="ct-chart ct-minor-sixth"></div>
+    <pre id="log"></pre>
+    <script>
+        // time is given in ISO 8601 - standard eg: 2019-05-27T04:35:14Z
+        fetch('https://localhost/api/observations')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (datas) {
+                var data = {
+                    labels: datas.map(function (read) {
+                        return read.DateTime;
+                    }),
+                    series: [datas.map(function (read) {
+                        return read.WindDirCur;
+                    })]
+                };
 
-            console.log(Chartist.plugins);
-            new Chartist.Line('.ct-chart', data, {
-                lineSmooth: Chartist.Interpolation.simple({
-                    divisor: 2
-                }),
-                fullWidth: true,
-                chartPadding: {
-                    right: 20
-                }
-               });
-        });
-</script>
+                document.getElementById('log').innerHTML = 'data = ' + JSON.stringify(data, undefined, 2) +
+                    '\r\njson = ' + JSON.stringify(datas, undefined, 2);
+
+                var options = {
+                    width: 300,
+                    height: 200
+                };
+
+                console.log(Chartist.plugins);
+                new Chartist.Line('.ct-chart', data, {
+                    lineSmooth: Chartist.Interpolation.simple({
+                        divisor: 2
+                    }),
+                    fullWidth: true,
+                    chartPadding: {
+                        right: 20
+                    }
+                   });
+            });
+    </script>*@
 

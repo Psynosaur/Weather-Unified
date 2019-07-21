@@ -1,10 +1,100 @@
-﻿@{
+﻿@model WURequest.Models.Observation
+@{
     ViewData["Title"] = "Home Page";
 }
 
+<h2>Latest Conditions</h2>
+
+<form id="form1" runat="server">
     <div>
-        <h2>First time user journey goes here</h2>
-        <h2>Setup stationID, APIKey etc.</h2>
+        <asp:Label ID="lblCount" runat="server" Text=""></asp:Label>
+    </div>
+</form>
+<div class="container-fluid" id="Head1" runat="server">
+    <script type="text/javascript" language="javascript">
+
+        var idleInterval = setInterval("reloadPage()", 30000); // 30 Seconds
+
+        function reloadPage() {
+            location.reload()();
+        }
+    </script>
+    <strong>Date Time :</strong> @Html.DisplayFor(model => model.DateTime)
+    <br />
+    <br />
+    <div class="container-fluid col-md-3">
+        <br />
+        <strong>Outdoor</strong>
+        <br />
+        Current Temp : @Html.DisplayFor(model => model.TempOutCur)&#176
+        <br />
+        Average TMin : @Html.DisplayFor(model => model.Tmin)&#176
+        <br />
+        Average TMax : @Html.DisplayFor(model => model.Tmax)&#176
+        <br />
+        Humidity : @Html.DisplayFor(model => model.HumOutCur)%
+        <br />
+        Dew Point : @Html.DisplayFor(model => model.DewCur)&#176
+    </div>
+    <div class="container-fluid col-md-3">
+        <br />
+        <strong>Wind Direction</strong>
+        <br />
+        Wind Direction : @Html.DisplayFor(model => model.WindDirCur)&#176
+        <br />
+        Wind Direction : @Html.DisplayFor(model => model.WindDirCurEng)
+        <br />
+        Wind Dir Avg : @Html.DisplayFor(model => model.WindDirAvg10)&#176
+        <br />
+        Wind Dir Avg : @Html.DisplayFor(model => model.WindDirAvg10Eng)
+        <br />
+        Wind Chill : @Html.DisplayFor(model => model.WindChillCur)&#176
+    </div>
+    <div class="container-fluid col-md-3">
+        <br />
+        <strong>Rain</strong>
+        <br />
+        Rain Rate : @Html.DisplayFor(model => model.RainRateCur)mm/h
+        <br />
+        Rain Total Day : @Html.DisplayFor(model => model.RainDay)mm
+        <br />
+        Rain Total Yesterday : @Html.DisplayFor(model => model.RainYest)mm
+        <br />
+        Rain Total Month : @Html.DisplayFor(model => model.RainMonth)mm
+        <br />
+        Rain Total Year : @Html.DisplayFor(model => model.RainYear)mm
+    </div>
+</div>
+<br/>
+<div class="container-fluid">
+    <div class="container-fluid col-md-3">
+        <br />
+        <strong>Indoor</strong>
+        <br />
+        Current Temp : @Html.DisplayFor(model => model.TempInCur)&#176
+        <br />
+        Humidity : @Html.DisplayFor(model => model.HumInCur)%
+        <br />
+        Pressure : @Html.DisplayFor(model => model.PressCur)hPa
+    </div>
+    
+    <div class="container-fluid col-md-3">
+        <br />
+        <strong>Wind Speed</strong>
+        <br />
+        Wind Current : @Html.DisplayFor(model => model.WindSpeedCur) m/s
+        <br />
+        Wind Average : @Html.DisplayFor(model => model.WindAvgSpeedCur) m/s
+        <br />
+        Wind Gust : @Html.DisplayFor(model => model.WindGust10) m/s
+    </div>
+    <div class="container-fluid col-md-3">
+        <br />
+        <strong>Solar</strong>
+        <br />
+        Solar Radiation : @Html.DisplayFor(model => model.SolarRad)W/m²
+        <br />
+        UV index : @Html.DisplayFor(model => model.UV)
     </div>
 
-
+</div>

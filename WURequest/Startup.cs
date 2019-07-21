@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using WURequest.Models;
+using WURequest.Services;
 
 namespace WURequest
 {
@@ -18,7 +21,19 @@ namespace WURequest
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.Configure<ObservationDatabaseSettings>(
+                Configuration.GetSection(nameof(ObservationDatabaseSettings)));
+
+            services.AddSingleton<IObservationDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
+            services.AddSingleton<ObservationService>();
+            //services.AddMvc(options =>
+            //{
+            //    options.ModelBinderProviders.Insert(0, new AspNetCoreJTokenModelBinder.JTokenFormModelBinderProvider());
+            //});
+            services.AddMvc()
+                .AddJsonOptions(options => options.UseMemberCasing())
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());

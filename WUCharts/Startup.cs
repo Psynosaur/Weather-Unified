@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.NodeServices;
+using Microsoft.Extensions.Options;
+using WURequest.Models;
+using WURequest.Services;
 
 
 namespace WUCharts
@@ -26,6 +29,12 @@ namespace WUCharts
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ObservationDatabaseSettings>(
+                Configuration.GetSection(nameof(ObservationDatabaseSettings)));
+
+            services.AddSingleton<IObservationDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
+            services.AddSingleton<ObservationService>();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -40,7 +49,9 @@ namespace WUCharts
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
             });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .AddJsonOptions(options => options.UseMemberCasing())
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

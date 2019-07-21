@@ -20,7 +20,7 @@
     "WURequest": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/observations",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
