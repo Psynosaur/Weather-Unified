@@ -51,8 +51,50 @@ namespace WURequest.Controllers
                 throw;
             }
         }
+        [HttpGet]
+        public async Task<ActionResult<string>> GetAsync(string id, string pat)
+        {
+            try
+            {
+                var format = "json";
+                var units = 'm';
+                string webRootPath = _hostingEnvironment.WebRootPath;
+
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    using (HttpResponseMessage response = await client.GetAsync(
+                        string.Format("https://api.weather.com/v2/pws/observations/current?stationId={0}&format={1}&units={2}&apiKey={3}", id, format, units, pat)))
+                    {
+                        try
+                        {
+                            response.EnsureSuccessStatusCode();
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            using (StreamWriter outputFile = new StreamWriter(Path.Combine(webRootPath + "/logs/wudata11.txt"), append: true))
+                            {
+                                await outputFile.WriteAsync(responseBody);
+                            }
+                            return responseBody;
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.ToString());
+                        }
+                        return "NO DATA";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
+        }
 
     }
+
     // POC stuff to get JSON from flat DB
     [Route("api/[controller]")]
     [ApiController]
@@ -94,46 +136,4 @@ namespace WURequest.Controllers
 //    await outputFile.WriteLineAsync(str);
 //}
 
-//[HttpGet]
-//public async Task<ActionResult<string>> GetAsync(string id)
-//{
-//    try
-//    {
-//        //var stationId = "IBELLV3";
-//        var format = "json";
-//        var units = 'm';
-//        var personalaccesstoken = "d4748acffd2e4d8ab48acffd2e7d8abc";
-//        string webRootPath = _hostingEnvironment.WebRootPath;
 
-//        using (HttpClient client = new HttpClient())
-//        {
-//            client.DefaultRequestHeaders.Accept.Add(
-//                new MediaTypeWithQualityHeaderValue("application/json"));
-
-//            using (HttpResponseMessage response = await client.GetAsync(
-//                        string.Format("https://api.weather.com/v2/pws/observations/current?stationId={0}&format={1}&units={2}&apiKey={3}", id, format, units, personalaccesstoken)))
-//            {
-//                try
-//                {
-//                    response.EnsureSuccessStatusCode();
-//                    string responseBody = await response.Content.ReadAsStringAsync();
-//                    using (StreamWriter outputFile = new StreamWriter(Path.Combine(webRootPath + "/logs/wudata11.txt"), append: true))
-//                    {
-//                        await outputFile.WriteAsync(responseBody);
-//                    }
-//                    return responseBody;
-//                }
-//                catch (Exception e)
-//                {
-//                    Console.WriteLine(e.ToString());
-//                }
-//                return "NO DATA";
-//            }
-//        }
-//    }
-//    catch (Exception ex)
-//    {
-//        Console.WriteLine(ex.ToString());
-//        throw;
-//    }
-//}
