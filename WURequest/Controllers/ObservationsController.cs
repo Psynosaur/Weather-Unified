@@ -13,21 +13,21 @@ namespace WURequest.Controllers
     [ApiController]
     public class ObservationsController : ControllerBase
     {
-        private readonly ObservationService _observationService;
+        private readonly ObservationsService _observationsService;
 
-        public ObservationsController(ObservationService observationService)
+        public ObservationsController(ObservationsService observationsService)
         {
-            _observationService = observationService;
+            _observationsService = observationsService;
         }
 
         [HttpGet]
-        public ActionResult<List<Observation>> Get() =>
-            _observationService.Latest();
+        public ActionResult<List<Observations>> Get() =>
+            _observationsService.Latest();
 
         [HttpGet("{id:length(24)}", Name = "GetObservation")]
-        public ActionResult<Observation> Get(string id)
+        public ActionResult<Observations> Get(string id)
         {
-            var observation = _observationService.Get(id);
+            var observation = _observationsService.Get(id);
 
             if (observation == null)
             {
@@ -38,24 +38,24 @@ namespace WURequest.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Observation> Create(Observation observation)
+        public ActionResult<Observations> Create(Observations observations)
         {
-            _observationService.Create(observation);
+            _observationsService.Create(observations);
 
-            return CreatedAtRoute("GetObservation", new { id = observation.Id }, observation);
+            return CreatedAtRoute("GetObservation", new { id = observations.Id }, observations);
         }
 
         [HttpPut("{id:length(24)}")]
-        public IActionResult Update(string id, Observation observationIn)
+        public IActionResult Update(string id, Observations observationsIn)
         {
-            var observation = _observationService.Get(id);
+            var observation = _observationsService.Get(id);
 
             if (observation == null)
             {
                 return NotFound();
             }
 
-            _observationService.Update(id, observationIn);
+            _observationsService.Update(id, observationsIn);
 
             return NoContent();
         }
@@ -63,14 +63,14 @@ namespace WURequest.Controllers
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
-            var observation = _observationService.Get(id);
+            var observation = _observationsService.Get(id);
 
             if (observation == null)
             {
                 return NotFound();
             }
 
-            _observationService.Remove(observation.Id);
+            _observationsService.Remove(observation.Id);
 
             return NoContent();
         }

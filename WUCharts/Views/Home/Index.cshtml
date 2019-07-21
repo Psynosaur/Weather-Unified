@@ -1,4 +1,4 @@
-﻿@model WURequest.Models.Observation
+﻿@model WURequest.Models.Observations
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -35,6 +35,9 @@
         Humidity : @Html.DisplayFor(model => model.HumOutCur)%
         <br />
         Dew Point : @Html.DisplayFor(model => model.DewCur)&#176
+        <br />
+        Heat Index : @Html.DisplayFor(model => model.HeatIdxCur)&#176
+
     </div>
     <div class="container-fluid col-md-3">
         <br />

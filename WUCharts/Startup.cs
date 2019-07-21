@@ -34,7 +34,7 @@ namespace WUCharts
 
             services.AddSingleton<IObservationDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
-            services.AddSingleton<ObservationService>();
+            services.AddSingleton<ObservationsService>();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

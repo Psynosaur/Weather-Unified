@@ -13,15 +13,15 @@ namespace WUCharts.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ObservationService _observationService;
+        private readonly ObservationsService _observationsService;
 
-        public HomeController(ObservationService observationService)
+        public HomeController(ObservationsService observationsService)
         {
-            _observationService = observationService;
+            _observationsService = observationsService;
         }
         public IActionResult Index()
         {
-            var model = _observationService.Latest().FirstOrDefault();
+            var model = _observationsService.Latest().FirstOrDefault();
             return View(model);
         }
 
@@ -67,7 +67,7 @@ namespace WUCharts.Controllers
         // https://gunnarpeipman.com/aspnet/aspnet-core-node-d3js/
         public IActionResult Chart([FromServices] INodeServices nodeServices)
         {
-            var model = _observationService.Latest().FirstOrDefault();
+            var model = _observationsService.Latest().FirstOrDefault();
 
             return View(model);
         }

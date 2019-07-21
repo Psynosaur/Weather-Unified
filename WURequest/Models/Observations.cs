@@ -1,11 +1,12 @@
-﻿using MongoDB.Bson;
+﻿using System;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 
 namespace WURequest.Models
 {
-    public class Observation
+    public class Observations
     {
 
         [BsonId]
@@ -39,5 +40,38 @@ namespace WURequest.Models
         // ReSharper disable once InconsistentNaming
         public double UV { get; set; }
         public double SolarRad { get; set; }
+    }
+    public class Metric
+    {
+        public int temp { get; set; }
+        public int heatIndex { get; set; }
+        public int dewpt { get; set; }
+        public int windChill { get; set; }
+        public int windSpeed { get; set; }
+        public int windGust { get; set; }
+        public double pressure { get; set; }
+        public double precipRate { get; set; }
+        public double precipTotal { get; set; }
+        public int elev { get; set; }
+    }
+
+    public class WUObservations
+    {
+        public string stationID { get; set; }
+        public DateTime obsTimeUtc { get; set; }
+        public string obsTimeLocal { get; set; }
+        public string neighborhood { get; set; }
+        public string softwareType { get; set; }
+        public string country { get; set; }
+        public double solarRadiation { get; set; }
+        public double lon { get; set; }
+        public object realtimeFrequency { get; set; }
+        public int epoch { get; set; }
+        public double lat { get; set; }
+        public double uv { get; set; }
+        public int winddir { get; set; }
+        public int humidity { get; set; }
+        public int qcStatus { get; set; }
+        public Metric metric { get; set; }
     }
 }

@@ -26,7 +26,7 @@ namespace WURequest
 
             services.AddSingleton<IObservationDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
-            services.AddSingleton<ObservationService>();
+            services.AddSingleton<ObservationsService>();
             //services.AddMvc(options =>
             //{
             //    options.ModelBinderProviders.Insert(0, new AspNetCoreJTokenModelBinder.JTokenFormModelBinderProvider());
