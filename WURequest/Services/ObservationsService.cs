@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MongoDB.Driver;
 using WURequest.Models;
 
@@ -18,9 +16,39 @@ namespace WURequest.Services
 
             _observation = database.GetCollection<Observations>(settings.ObservationCollectionName);
         }
+        //db.Observations.find({ "DateTime" :{ "$gte" : "2019-07-21 13:00", "$lt" : "2019-07-21 13:10"}})
+        public List<WUObservations> LatestWu()
+        {
+            return null;
+        }
+        //Finds all the observations for today based on DateTime object comparisons
+        public List<Observations> Hourly()
+        {
+            var tm = DateTime.UtcNow.AddHours(-1);
+            var obsersvations = _observation.Find(
+            x => x.ObsTime > tm).ToList();
+            return obsersvations;
+        }
+        public List<Observations> Daily()
+        {
+            var tm = DateTime.UtcNow.AddDays(-1);
+            var obsersvations = _observation.Find(
+            x => x.ObsTime > tm).ToList();
+            return obsersvations;
+        }
+        public List<Observations> Weekly()
+        {
+            var tm = DateTime.UtcNow.AddDays(-7);
+            var obsersvations = _observation.Find(
+            x => x.ObsTime > tm).ToList();
+            return obsersvations;
+        }
 
-        public List<Observations> Get() =>
-            _observation.Find(Observation => true).ToList();
+        public List<Observations> Gets() =>
+            // This was the method to get a date range when the DateTime object in WeatherDb was a string and not ISODate() 
+            _observation.Find("{ \"DateTime\" :{ \"$gte\" : \"2019-07-21 13:00\", \"$lt\" : \"2019-07-21 13:10\"}}").Limit(10).ToList();
+        //_observation.Find(Observation => true).Sort("{DateTime: -1}").Limit(10).ToList();
+        //_observation.Find(x => x.TempOutCur == 13.0).ToList();
         public List<Observations> Latest() =>
             _observation
                 .Find(Observation => true)

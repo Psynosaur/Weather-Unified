@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -19,7 +17,6 @@ namespace WURequest.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ObservationsService _observationsService;
-
         public WeatherController(
             ObservationsService observationsService,
             IHostingEnvironment hostingEnvironment)
@@ -84,10 +81,12 @@ namespace WURequest.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<string>> GetAsync(string id, string pat)
+        public async Task<ActionResult<string>> Wu(string id, string pat)
         {
             try
             {
+                if (id == null || pat == null)
+                    return "StationId and or Personal access token is empty";
                 var format = "json";
                 var units = 'm';
                 string webRootPath = _hostingEnvironment.WebRootPath;
@@ -111,8 +110,9 @@ namespace WURequest.Controllers
                             {
                                 await outputFile.WriteAsync(responseBody);
                             }
-
-                            return responseBody;
+                            JObject jObj = JObject.Parse(responseBody);
+                            string some = jObj["observations"][0].ToString();
+                            return some;
                         }
                         catch (Exception e)
                         {

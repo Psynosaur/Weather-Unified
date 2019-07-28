@@ -5,21 +5,16 @@
 
 <h2>Latest Conditions</h2>
 
-<form id="form1" runat="server">
-    <div>
-        <asp:Label ID="lblCount" runat="server" Text=""></asp:Label>
-    </div>
-</form>
 <div class="container-fluid" id="Head1" runat="server">
     <script type="text/javascript" language="javascript">
 
         var idleInterval = setInterval("reloadPage()", 30000); // 30 Seconds
 
         function reloadPage() {
-            location.reload()();
+            location.reload();
         }
     </script>
-    <strong>Date Time :</strong> @Html.DisplayFor(model => model.DateTime)
+    <strong>Date Time :</strong> @Html.DisplayFor(model => model.ObsTime)
     <br />
     <br />
     <div class="container-fluid col-md-3">
@@ -101,3 +96,4 @@
     </div>
 
 </div>
+

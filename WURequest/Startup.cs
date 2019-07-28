@@ -27,10 +27,7 @@ namespace WURequest
             services.AddSingleton<IObservationDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
             services.AddSingleton<ObservationsService>();
-            //services.AddMvc(options =>
-            //{
-            //    options.ModelBinderProviders.Insert(0, new AspNetCoreJTokenModelBinder.JTokenFormModelBinderProvider());
-            //});
+            
             services.AddMvc()
                 .AddJsonOptions(options => options.UseMemberCasing())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

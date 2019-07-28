@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.NodeServices;
 using WUCharts.Models;
-using WURequest.Models;
 using WURequest.Services;
 
 namespace WUCharts.Controllers
@@ -62,13 +57,21 @@ namespace WUCharts.Controllers
             }
 
         }
-
-
-        // https://gunnarpeipman.com/aspnet/aspnet-core-node-d3js/
-        public IActionResult Chart([FromServices] INodeServices nodeServices)
+        public IActionResult Hour()
         {
-            var model = _observationsService.Latest().FirstOrDefault();
+            var model = _observationsService.Hourly();
+            return View(model);
+        }
 
+        public IActionResult Day()
+        {
+            var model = _observationsService.Daily();
+            return View(model);
+        }
+
+        public IActionResult Week()
+        {
+            var model = _observationsService.Weekly();
             return View(model);
         }
     }

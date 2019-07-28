@@ -1,0 +1,18 @@
+﻿@model List<WURequest.Models.Observations>
+@{
+    var cnt = 0;
+    //ViewData["Title"] = "Temp Past Hour : " + DateTime.Now.ToString("f");
+}
+    <div class="container-fluid" id="Head1" runat="server">
+
+        @foreach (var obs in Model)
+        {
+            @*<strong>Date Time :</strong> @Html.DisplayFor(model => obs.Id)
+            <br />*@
+            cnt++;
+
+        }
+        @cnt records
+
+
+    </div>
