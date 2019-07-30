@@ -31,7 +31,7 @@ namespace WURequest.Controllers
         public ActionResult<string> Mb(string data)
         {
             /*
-             This is the Meteobridge test string copy from
+             This is the Meteobridge TEST string copy from
              <<<<<<<There all the way to the last "}" then paste 
              https://localhost:5001/api/weather/Mb?data=
              {

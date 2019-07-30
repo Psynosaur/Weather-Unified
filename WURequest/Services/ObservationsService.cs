@@ -16,37 +16,44 @@ namespace WURequest.Services
 
             _observation = database.GetCollection<Observations>(settings.ObservationCollectionName);
         }
+
         //db.Observations.find({ "DateTime" :{ "$gte" : "2019-07-21 13:00", "$lt" : "2019-07-21 13:10"}})
         public List<WUObservations> LatestWu()
         {
             return null;
         }
-        //Finds all the observations for today based on DateTime object comparisons
+
+        //Finds all the observations for a time frame(hourly,daily and weekly) based on DateTime object comparisons
         public List<Observations> Hourly()
         {
-            var tm = DateTime.UtcNow.AddHours(-1);
+            var tm = DateTime.UtcNow;
+            var hm = new DateTime(tm.Year, tm.Month, tm.Day, tm.Hour, 0, 0, DateTimeKind.Utc);
             var obsersvations = _observation.Find(
-            x => x.ObsTime > tm).ToList();
+                x => x.ObsTime > hm).ToList();
             return obsersvations;
         }
+
         public List<Observations> Daily()
         {
-            var tm = DateTime.UtcNow.AddDays(-1);
+            var tm = DateTime.Today;
             var obsersvations = _observation.Find(
-            x => x.ObsTime > tm).ToList();
+                x => x.ObsTime >= tm).ToList();
             return obsersvations;
         }
+
         public List<Observations> Weekly()
         {
-            var tm = DateTime.UtcNow.AddDays(-7);
+            var monday = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
             var obsersvations = _observation.Find(
-            x => x.ObsTime > tm).ToList();
+                x => x.ObsTime >= monday).ToList();
             return obsersvations;
         }
 
         public List<Observations> Gets() =>
             // This was the method to get a date range when the DateTime object in WeatherDb was a string and not ISODate() 
-            _observation.Find("{ \"DateTime\" :{ \"$gte\" : \"2019-07-21 13:00\", \"$lt\" : \"2019-07-21 13:10\"}}").Limit(10).ToList();
+            _observation.Find("{ \"DateTime\" :{ \"$gte\" : \"2019-07-21 13:00\", \"$lt\" : \"2019-07-21 13:10\"}}")
+                .Limit(10).ToList();
+
         //_observation.Find(Observation => true).Sort("{DateTime: -1}").Limit(10).ToList();
         //_observation.Find(x => x.TempOutCur == 13.0).ToList();
         public List<Observations> Latest() =>
@@ -55,6 +62,7 @@ namespace WURequest.Services
                 .Sort("{DateTime: -1}")
                 .Limit(1)
                 .ToList();
+
         public Observations Get(string id) =>
             _observation.Find(Observation => Observation.Id == id).FirstOrDefault();
 
