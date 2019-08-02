@@ -35,7 +35,7 @@ namespace WURequest.Controllers
              <<<<<<<There all the way to the last "}" then paste 
              https://localhost:5001/api/weather/Mb?data=
              {
-                %22DateTime%22:%222019-09-19%2020:58:23%22,
+                %22DateTime%22:%2019-07-20T13:04:21.000%2B00:00%22,
                 %22TempOutCur%22:17.4,
                 %22Tmin%22:9.4,
                 %22Tmax%22:19.4,
