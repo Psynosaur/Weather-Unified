@@ -1,483 +1,160 @@
 ﻿@using Newtonsoft.Json
 @model List<WURequest.Models.Observations>
 @{
-    var cnt = 0;
-    double maxTemp = 0;
-    double minTemp = 60;
-    double maxHum = 0;
-    double minHum = 100;
-    double maxDew = 0;
-    double minDew = 60;
-    double minRain = 0;
-    double avgTemp = 0;
-    double avgHum = 0;
-    double avgDew = 0;
+    var cnt = Model.Select(x => true).Count();
+    double? maxTemp = Model.Any() ? Model.Select(x => x.TempOutCur).ToList().Max() : 0;
+    double? minTemp = Model.Any() ? Model.Select(x => x.TempOutCur).ToList().Min() : 0;
+    double? maxHum = Model.Any() ? Model.Select(x => x.HumOutCur).ToList().Max() : 0;
+    double? minHum = Model.Any() ? Model.Select(x => x.HumOutCur).ToList().Min() : 0;
+    double? maxDew = Model.Any() ? Model.Select(x => x.DewCur).ToList().Max() : 0;
+    double? minDew = Model.Any() ? Model.Select(x => x.DewCur).ToList().Min() : 0;
+    double? minRain = Model.Any() ? Model.Select(x => x.RainRateCur).ToList().Min() : 0;
+    var avgTemp = Model.Any() ? Model.Select(x => x.TempOutCur).ToList().Average() : 0;
+    var avgHum = Model.Any() ? Model.Select(x => x.HumOutCur).ToList().Average() : 0;
+    var avgDew = Model.Any() ? Model.Select(x => x.DewCur).ToList().Average() : 0;
+    var avgRain = Model.Any() ? Model.Select(x => x.RainDay).ToList().Average() : 0;
     string niks = "--";
 
-    double GetMin(double v1, double v2)
-    {
-        v1 = v2 < v1 ? v2 : v1;
-        return v1;
-    }
-
-    double GetMax(double v1, double v2)
-    {
-        v1 = v2 > v1 ? v2 : v1;
-        return v1;
-    }
-
-    // Serializes data from model for plotting
-    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.ObsTime).ToList());
-    var yPress = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.PressCur).ToList());
-    var yWind = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.WindSpeedCur*3.6).ToList());
-    var yRainRate = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.RainRateCur).ToList());
-    var rainHour = (Model.Count() > 0) ? Model.Select(x => x.RainDay).Last() - Model.Select(x => x.RainDay).First() : 0;
-
-
+    var rainHour = Model.Any() ? Model.Select(x => x.RainDay).Last() - Model.Select(x => x.RainDay).First() : 0;
     //ViewData["Title"] = "Temp Past Hour : " + DateTime.Now.ToString("f");
 }
 
-<div class="container-fluid" id="Head1" runat="server">
-
-    @foreach (var obs in Model)
-    {
-        maxTemp = GetMax(maxTemp, obs.TempOutCur);
-        minTemp = GetMin(minTemp, obs.TempOutCur);
-        maxHum = GetMax(maxHum, obs.HumOutCur);
-        minHum = GetMin(minHum, obs.HumOutCur);
-        maxDew = GetMax(maxDew, obs.DewCur);
-        minDew = GetMin(minDew, obs.DewCur);
-        minRain = GetMin(minRain, obs.RainDay);
-        avgTemp = avgTemp + obs.TempOutCur;
-        avgHum = avgHum + obs.HumOutCur;
-        avgDew = avgDew + obs.DewCur;
-        @*<strong>Date Time :</strong> @Html.DisplayFor(model => obs.Id)
-        <br />*@
-        cnt++;
-    }
+<div class="container-fluid">
     <h2>Hourly Stats</h2>
-    @if (true)
+    @if (cnt > 0)
     {
-        <table>
-            <tr>
-                <td>
-                    <br/>
-                </td>
-                <td>
-                    <br/>
-                </td>
-                <th width="100px">
-                    High
-                </th>
-                <th width="100px">
-                    Low
-                </th>
-                <th width="100px">
-                    Average
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <th height="25px" width="100px">
-                    Temp
-                </th>
-                <td>
-                    <p></p>
-                </td>
-                <td>
-                    <strong>@maxTemp</strong> &#176C
-                </td>
-                <td>
-                    <strong>@minTemp</strong> &#176C
-                </td>
-                <td>
-                    <strong>@((avgTemp / cnt).ToString("00.0"))</strong> &#176C
-                </td>
-            </tr>
-            <tr>
-                <th height="25px" width="100px">
-                    Humidity
-                </th>
-                <td>
-                    <p></p>
-                </td>
-                <td>
-                    <strong>@maxHum</strong> %
-                </td>
-                <td>
-                    <strong>@minHum</strong> %
-                </td>
-                <td>
-                    <strong>@((avgHum / cnt).ToString("00.0"))</strong> %
-                </td>
-            </tr>
-            <tr>
-                <th height="25px" width="100px">
-                    Dew Point
-                </th>
-                <td>
-                    <p></p>
-                </td>
-                <td>
-                    <strong>@maxDew</strong> &#176C
-                </td>
-                <td>
-                    <strong>@minDew</strong> &#176C
-                </td>
-                <td>
-                    <strong>@((avgDew / cnt).ToString("00.0"))</strong> &#176C
-                </td>
-            </tr>
-            <tr>
-                <th height="25px" width="100px">
-                    Precipitation
-                </th>
-                <td>
-                    <p></p>
-                </td>
-                <td>
-                    <strong>@rainHour</strong> mm
-                </td>
-                <td>
-                    @if (minRain > 0)
-                    {
-                        <strong>
-                            @minRain
-                        </strong>
-                    }
-                    else
-                    {
-                        <strong>
-                            @niks
-                        </strong>
-                    }
-                    mm
-                </td>
-                <td>
-                    @if (rainHour / cnt > 0)
-                    {
-                        <strong>
-                            @((rainHour / cnt).ToString("0.0"))
-                        </strong>
-                    }
-                    else
-                    {
-                        <strong>
-                            @niks
-                        </strong>
-                    }
-                    mm
-                </td>
-            </tr>
-        </table>
-        <div id="chartdiv"></div>
-        <div class="chart-container container-fluid">
-            <canvas id="wind" style="width:100%; height:300px"></canvas>
+        <div class="container-fluid">
+            <table>
+                <tr>
+                    <td>
+                        <br/>
+                    </td>
+                    <td>
+                        <br/>
+                    </td>
+                    <th width="100px">
+                        High
+                    </th>
+                    <th width="100px">
+                        Low
+                    </th>
+                    <th width="100px">
+                        Average
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <br/>
+                    </td>
+                </tr>
+                <tr>
+                    <th height="25px" width="100px">
+                        Temp
+                    </th>
+                    <td>
+                        <p></p>
+                    </td>
+                    <td>
+                        <strong>@maxTemp</strong> &#176C
+                    </td>
+                    <td>
+                        <strong>@minTemp</strong> &#176C
+                    </td>
+                    <td>
+                        <strong>@avgTemp.ToString("#.00")</strong> &#176C
+                    </td>
+                </tr>
+                <tr>
+                    <th height="25px" width="100px">
+                        Humidity
+                    </th>
+                    <td>
+                        <p></p>
+                    </td>
+                    <td>
+                        <strong>@maxHum</strong> %
+                    </td>
+                    <td>
+                        <strong>@minHum</strong> %
+                    </td>
+                    <td>
+                        <strong>@avgHum.ToString("#.00")</strong> %
+                    </td>
+                </tr>
+                <tr>
+                    <th height="25px" width="100px">
+                        Dew Point
+                    </th>
+                    <td>
+                        <p></p>
+                    </td>
+                    <td>
+                        <strong>@maxDew</strong> &#176C
+                    </td>
+                    <td>
+                        <strong>@minDew</strong> &#176C
+                    </td>
+                    <td>
+                        <strong>@avgDew.ToString("#.00")</strong> &#176C
+                    </td>
+                </tr>
+                <tr>
+                    <th height="25px" width="100px">
+                        Precipitation
+                    </th>
+                    <td>
+                        <p></p>
+                    </td>
+                    <td>
+                        <strong>@rainHour</strong> mm
+                    </td>
+                    <td>
+                        @if (minRain > 0)
+                        {
+                            <strong>
+                                @minRain
+                            </strong>
+                        }
+                        else
+                        {
+                            <strong>
+                                @niks
+                            </strong>
+                        }
+                        mm
+                    </td>
+                    <td>
+                        @if (rainHour> 0)
+                        {
+                            <strong>
+                                @avgRain.ToString("#.00")
+                            </strong>
+                        }
+                        else
+                        {
+                            <strong>
+                                @niks
+                            </strong>
+                        }
+                        mm
+                    </td>
+                </tr>
+            </table>
+            <div id="chartemp" style="height:300px;"></div>
+            <div id="chartminmax" style="height:300px;"></div>
+            <div id="chartwind" style="height:300px;"></div>
+            <div id="chartrain" style="height:300px;"></div>
+            <div id="chartpressure" style="height:300px;"></div>
         </div>
-        <div class="chart-container container-fluid">
-            <canvas id="rainrate" style="width:100%; height:300px"></canvas>
-        </div>
-        <div class="chart-container container-fluid">
-            <canvas id="pressure" style="width:100%; height:300px"></canvas>
-        </div>
-        
     }
-
     @cnt total records
-
 </div>
-<style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    }
-    
-    #chartdiv {
-      width: 100%;
-      height: 250px;
-    }
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
 <script src="//www.amcharts.com/lib/4/core.js"></script>
 <script src="//www.amcharts.com/lib/4/charts.js"></script>
-<script src="//www.amcharts.com/lib/4/themes/animated.js"></script>
-
+<script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
 <script type="text/javascript">
-/**
- * ---------------------------------------
- * This demo was created using amCharts 4.
- *
- * For more information visit:
- * https://www.amcharts.com/
- *
- * Documentation is available at:
- * https://www.amcharts.com/docs/v4/
- * ---------------------------------------
- */
-
-am4core.useTheme(am4themes_animated);
-var data = @Html.Raw(JsonConvert.SerializeObject(Model));
-// Create chart instance
-var chart = am4core.create("chartdiv", am4charts.XYChart);
-chart.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-var label = chart.chartContainer.createChild(am4core.Label);
-label.text = "Temperature °C";
-label.align = "center";
-// Add data
-chart.data = data;
-// Create axes
-var categoryAxis = chart.xAxes.push(new am4charts.DateAxis());
-categoryAxis.renderer.grid.template.location = 0;
-categoryAxis.renderer.minGridDistance = 60;
-categoryAxis.baseInterval = {
-  "timeUnit": "second"
-};
-// categoryAxis.dateFormats.setKey("second", "HH:mm:s");
-var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-
-// Create series
-var series = chart.series.push(new am4charts.LineSeries());
-series.dataFields.valueY = "TempOutCur"; 
-series.dataFields.dateX = "DateTime";
-series.tooltipText = "{TempOutCur} °C";
-series.strokeWidth = 3;
-// var series1 = chart.series.push(new am4charts.LineSeries());
-// series1.dataFields.valueY = "DewCur"; 
-// series1.dataFields.dateX = "DateTime";
-// series1.tooltipText = "{TempOutCur}";
-// series1.strokeWidth = 3;
-chart.scrollbarX = new am4core.Scrollbar();
-// series.bullets.push(new am4charts.CircleBullet());
-
-chart.cursor = new am4charts.XYCursor();
-
-chart.events.on("beforedatavalidated", function(ev) {
-  chart.data.sort(function(a, b) {
-    return (new Date(a.date)) - (new Date(b.date));
-  });
-});
+    var hrs = 0;
+    var modeldata = @Html.Raw(JsonConvert.SerializeObject(Model));
 </script>
-
-<script type="text/javascript">  
-        $(function () {  
-    var chartName = "pressure";  
-        var ctx = document.getElementById(chartName).getContext('2d');  
-        var data = {  
-                labels: @Html.Raw(XLabels),  
-                datasets: [{  
-                    label: "pressure",  
-                    backgroundColor: [  
-                        'rgba(255, 99, 132, 0.2)',  
-                        'rgba(54, 162, 235, 0.2)',  
-                        'rgba(255, 206, 86, 0.2)',  
-                        'rgba(75, 192, 192, 0.2)',  
-                        'rgba(153, 102, 255, 0.2)',  
-                        'rgba(255, 159, 64, 0.2)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'  
-                    ],  
-                    borderColor: [  
-                        'rgba(255,99,132,1)',  
-                        'rgba(54, 162, 235, 1)',  
-                        'rgba(255, 206, 86, 1)',  
-                        'rgba(75, 192, 192, 1)',  
-                        'rgba(153, 102, 255, 1)',  
-                        'rgba(255, 159, 64, 1)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'  
-                    ],  
-                    borderWidth: 1,  
-                    data: @Html.Raw(yPress)  
-    }]  
-            };  
-  
-var options = {  
-                maintainAspectRatio: false,  
-                scales: {  
-                    yAxes: [{  
-                        ticks: {  
-                            beginAtZero: false  
-                        },  
-                        gridLines: {  
-                            display: true,  
-                            color: "rgba(255,99,164,0.2)"  
-                        }  
-}],  
-                    xAxes: [{  
-                        ticks: {  
-                            min: 0,  
-                            beginAtZero: false  
-                        },  
-                        gridLines: {  
-                            display: false  
-                        }  
-                    }]  
-                }  
-            };  
-  
-       var myChart = new  Chart(ctx, {  
-                options: options,  
-                data: data,  
-                type:'line'  
-  
-            });  
-        });  
-</script>
-<script type="text/javascript">  
-        $(function () {  
-    var chartName = "wind";  
-        var ctx = document.getElementById(chartName).getContext('2d');  
-        var data = {  
-                labels: @Html.Raw(XLabels),  
-                datasets: [{  
-                    label: "Wind Speed km/h",  
-                    backgroundColor: [  
-                        'rgba(0,129,255,0.61)',  
-                        'rgba(54, 162, 235, 0.2)',  
-                        'rgba(255, 206, 86, 0.2)',  
-                        'rgba(75, 192, 192, 0.2)',  
-                        'rgba(153, 102, 255, 0.2)',  
-                        'rgba(255, 159, 64, 0.2)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'  
-                    ],  
-                    borderColor: [  
-                        'rgba(255,99,132,1)',  
-                        'rgba(54, 162, 235, 1)',  
-                        'rgba(255, 206, 86, 1)',  
-                        'rgba(75, 192, 192, 1)',  
-                        'rgba(153, 102, 255, 1)',  
-                        'rgba(255, 159, 64, 1)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'  
-                    ],  
-                    borderWidth: 1,  
-                    data: @Html.Raw(yWind)  
-    }]  
-            };  
-  
-var options = {  
-                maintainAspectRatio: false,  
-                scales: {  
-                    yAxes: [{  
-                        ticks: {  
-                            beginAtZero: false  
-                        },  
-                        gridLines: {  
-                            display: true,  
-                            color: "rgba(20,29,255,0.84)"  
-                        }  
-}],  
-                    xAxes: [{  
-                        ticks: {  
-                            min: 0,  
-                            beginAtZero: false  
-                        },  
-                        gridLines: {  
-                            display: false  
-                        }  
-                    }]  
-                }  
-            };  
-  
-       var myChart = new  Chart(ctx, {  
-                options: options,  
-                data: data,  
-                type:'line'  
-  
-            });  
-        });  
-</script>
-<script type="text/javascript">  
-        $(function () {  
-    var chartName = "rainrate";  
-        var ctx = document.getElementById(chartName).getContext('2d');  
-        var data = {  
-                labels: @Html.Raw(XLabels),  
-                datasets: [{  
-                    label: "Rain Rate mm/h",  
-                    backgroundColor: [  
-                        'rgba(255, 99, 132, 0.2)',  
-                        'rgba(54, 162, 235, 0.2)',  
-                        'rgba(255, 206, 86, 0.2)',  
-                        'rgba(75, 192, 192, 0.2)',  
-                        'rgba(153, 102, 255, 0.2)',  
-                        'rgba(255, 159, 64, 0.2)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'  
-                    ],  
-                    borderColor: [  
-                        'rgba(255,99,132,1)',  
-                        'rgba(54, 162, 235, 1)',  
-                        'rgba(255, 206, 86, 1)',  
-                        'rgba(75, 192, 192, 1)',  
-                        'rgba(153, 102, 255, 1)',  
-                        'rgba(255, 159, 64, 1)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'  
-                    ],  
-                    borderWidth: 1,  
-                    data: @Html.Raw(yRainRate)  
-    }]  
-            };  
-  
-var options = {  
-                maintainAspectRatio: false,  
-                scales: {  
-                    yAxes: [{  
-                        ticks: {  
-                            beginAtZero: true  
-                        },  
-                        gridLines: {  
-                            display: true,  
-                            color: "rgba(255,99,164,0.2)"  
-                        }  
-}],  
-                    xAxes: [{  
-                        ticks: {  
-                            min: 0,  
-                            beginAtZero: false  
-                        },  
-                        gridLines: {  
-                            display: false  
-                        }  
-                    }]  
-                }  
-            };  
-  
-       var myChart = new  Chart(ctx, {  
-                options: options,  
-                data: data,  
-                type:'line'  
-  
-            });  
-        });  
-</script>
+<script type="text/javascript" src="~/js/amcharts.js"></script>

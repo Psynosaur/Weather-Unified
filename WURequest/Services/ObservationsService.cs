@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MongoDB.Driver;
+using Newtonsoft.Json.Linq;
 using WURequest.Models;
 
 namespace WURequest.Services
@@ -32,6 +33,16 @@ namespace WURequest.Services
                 x => x.ObsTime > hm).ToList();
             return obsersvations;
         }
+        public List<ChartObs> HObs()
+        {
+            var tm = DateTime.UtcNow;
+            var hm = new DateTime(tm.Year, tm.Month, tm.Day, tm.Hour, 0, 0, DateTimeKind.Utc);
+            var obsersvations = _observation.Find(
+                x => x.ObsTime > hm).ToList();
+            JArray json = JArray.Parse(obsersvations.ToString()); 
+            var crt = json.ToObject<List<ChartObs>>();
+            return crt;
+        }
 
         public List<Observations> Daily()
         {
@@ -43,9 +54,10 @@ namespace WURequest.Services
 
         public List<Observations> Weekly()
         {
-            var monday = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+//            var weekstart = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Saturday);
+            var weekstart = DateTime.Today.AddDays(-7);
             var obsersvations = _observation.Find(
-                x => x.ObsTime >= monday).ToList();
+                x => x.ObsTime > weekstart).ToList();
             return obsersvations;
         }
 

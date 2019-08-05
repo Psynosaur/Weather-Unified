@@ -1,138 +1,139 @@
-﻿@model List<WURequest.Models.Observations>
+﻿@using Newtonsoft.Json
+@model List<WURequest.Models.Observations>
 @{
-    var cnt = 0;
-    double maxTemp = 0;
-    double minTemp = 60;
-    double maxHum = 0;
-    double minHum = 100;
-    double maxDew = 0;
-    double minDew = 60;
-    double maxRain = 0;
-    double minRain = 0;
-    double avgTemp = 0;
-    double avgHum = 0;
-    double avgDew = 0;
-    double avgRain = 0;
+    var cnt = Model.Select(x => true).Count();
+    double? maxTemp = Model.Any() ? Model.Select(x => x.TempOutCur).ToList().Max() : 0;
+    double? minTemp = Model.Any() ? Model.Select(x => x.TempOutCur).ToList().Min() : 0;
+    double? maxHum = Model.Any() ? Model.Select(x => x.HumOutCur).ToList().Max() : 0;
+    double? minHum = Model.Any() ? Model.Select(x => x.HumOutCur).ToList().Min() : 0;
+    double? maxDew = Model.Any() ? Model.Select(x => x.DewCur).ToList().Max() : 0;
+    double? minDew = Model.Any() ? Model.Select(x => x.DewCur).ToList().Min() : 0;
+    double? maxRain = Model.Any() ? Model.Select(x => x.RainDay).ToList().Max() : 0;
+    double? minRain = Model.Any() ? Model.Select(x => x.RainDay).ToList().Min() : 0;
+    var avgTemp = Model.Any() ? Model.Select(x => x.TempOutCur).ToList().Average() : 0;
+    var avgHum = Model.Any() ? Model.Select(x => x.HumOutCur).ToList().Average() : 0;
+    var avgDew = Model.Any() ? Model.Select(x => x.DewCur).ToList().Average() : 0;
+    var avgRain = Model.Any() ? Model.Select(x => x.RainDay).ToList().Average() : 0;
+    string niks = "--";
+    // Sets nth record to use for plotting
+    int nStep = 166;
+    var graph = Model.Where((x, i) => i % nStep == 0);
+    int nStepRain = 100;
+    var graphrain = Model.Where((x, i) => i % nStepRain == 0);
+
 
     //ViewData["Title"] = "Temp Past Hour : " + DateTime.Now.ToString("f");
 }
 <div class="container-fluid" id="Head1" runat="server">
-
-    @foreach (var obs in Model)
-    {
-        maxTemp = obs.TempOutCur > maxTemp ? obs.TempOutCur : maxTemp;
-        minTemp = obs.TempOutCur < minTemp ? obs.TempOutCur : minTemp;
-        maxHum = obs.HumOutCur > maxHum ? obs.HumOutCur : maxHum;
-        minHum = obs.HumOutCur < minHum ? obs.HumOutCur : minHum;
-        maxDew = obs.DewCur > maxDew ? obs.DewCur : maxDew;
-        minDew = obs.DewCur < minDew ? obs.DewCur : minDew;
-        maxRain = obs.RainDay > maxRain ? obs.RainDay : maxRain;
-        minRain = obs.RainDay < minRain ? obs.RainDay : minRain;
-        avgTemp = avgTemp + obs.TempOutCur;
-        avgHum = avgHum + obs.HumOutCur;
-        avgDew = avgDew + obs.DewCur;
-        avgRain = avgRain + obs.RainDay;
-        @*<strong>Date Time :</strong> @Html.DisplayFor(model => obs.Id)
-        <br />*@
-        cnt++;
-    }
     <h2>Weekly Stats</h2>
-    <table>
-        <tr>
-            <td>
-                <br/>
-            </td>
-            <td>
-                <br/>
-            </td>
-            <th width="100px">
-                High
-            </th>
-            <th width="100px">
-                Low
-            </th>
-            <th width="100px">
-                Average
-            </th>
-        </tr>
-        <tr>
-            <td>
-                <br/>
-            </td>
-        </tr>
-        <tr>
-            <th height="25px" width="100px">
-                Temp
-            </th>
-            <td>
-                <p></p>
-            </td>
-            <td>
-                <strong>@maxTemp</strong> &#176C
-            </td>
-            <td>
-                <strong>@minTemp</strong> &#176C
-            </td>
-            <td>
-                <strong>@((avgTemp / cnt).ToString("00.0"))</strong> &#176C
-            </td>
-        </tr>
-        <tr>
-            <th height="25px" width="100px">
-                Humidity
-            </th>
-            <td>
-                <p></p>
-            </td>
-            <td>
-                <strong>@maxHum</strong> %
-            </td>
-            <td>
-                <strong>@minHum</strong> %
-            </td>
-            <td>
-                <strong>@((avgHum / cnt).ToString("00.0"))</strong> %
-            </td>
-        </tr>
-        <tr>
-            <th height="25px" width="100px">
-                Dew Point
-            </th>
-            <td>
-                <p></p>
-            </td>
-            <td>
-                <strong>@maxDew</strong> &#176C
-            </td>
-            <td>
-                <strong>@minDew</strong> &#176C
-            </td>
-            <td>
-                <strong>@((avgDew / cnt).ToString("00.0"))</strong> &#176C
-            </td>
-        </tr>
-        <tr>
-            <th height="25px" width="100px">
-                Precipitation
-            </th>
-            <td>
-                <p></p>
-            </td>
-            <td>
-                <strong>@maxRain</strong> mm
-            </td>
-            <td>
-                <strong>@minRain</strong> mm
-            </td>
-            <td>
-                <strong>@((avgRain / cnt).ToString("0.0"))</strong> mm
-            </td>
-        </tr>
-
-    </table>
-
-
+    @if (cnt > 0)
+    {
+        <table>
+            <tr>
+                <td>
+                    <br/>
+                </td>
+                <td>
+                    <br/>
+                </td>
+                <th width="100px">
+                    High
+                </th>
+                <th width="100px">
+                    Low
+                </th>
+                <th width="100px">
+                    Average
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <th height="25px" width="100px">
+                    Temp
+                </th>
+                <td>
+                    <p></p>
+                </td>
+                <td>
+                    <strong>@maxTemp</strong> &#176C
+                </td>
+                <td>
+                    <strong>@minTemp</strong> &#176C
+                </td>
+                <td>
+                    <strong>@avgTemp.ToString("#.00")</strong> &#176C
+                </td>
+            </tr>
+            <tr>
+                <th height="25px" width="100px">
+                    Humidity
+                </th>
+                <td>
+                    <p></p>
+                </td>
+                <td>
+                    <strong>@maxHum</strong> %
+                </td>
+                <td>
+                    <strong>@minHum</strong> %
+                </td>
+                <td>
+                    <strong>@avgHum.ToString("#.00")</strong> %
+                </td>
+            </tr>
+            <tr>
+                <th height="25px" width="100px">
+                    Dew Point
+                </th>
+                <td>
+                    <p></p>
+                </td>
+                <td>
+                    <strong>@maxDew</strong> &#176C
+                </td>
+                <td>
+                    <strong>@minDew</strong> &#176C
+                </td>
+                <td>
+                    <strong>@avgDew.ToString("#.00")</strong> &#176C
+                </td>
+            </tr>
+            <tr>
+                <th height="25px" width="100px">
+                    Precipitation
+                </th>
+                <td>
+                    <p></p>
+                </td>
+                <td>
+                    <strong>@maxRain</strong> mm
+                </td>
+                <td>
+                    <strong>@minRain</strong> mm
+                </td>
+                <td>
+                    <strong>@avgRain.ToString("#.00")</strong> mm
+                </td>
+            </tr>
+        </table>
+        <div id="chartemp" style="height:300px;"></div>
+        <div id="chartminmax" style="height:300px;"></div>
+        <div id="chartwind" style="height:300px;"></div>
+        <div id="chartrain" style="height:300px;"></div>
+        <div id="chartpressure" style="height:300px;"></div>
+    }
     @cnt total records
-
-
 </div>
+
+<script src="//www.amcharts.com/lib/4/core.js"></script>
+<script src="//www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
+<script type="text/javascript">
+    var hrs = 2;
+    var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph));
+</script>
+<script type="text/javascript" src="~/js/amcharts.js"></script>

@@ -1,60 +1,28 @@
-﻿@model List<WURequest.Models.Observations>
+﻿@using Newtonsoft.Json
+@model List<WURequest.Models.Observations>
 @{
-    var cnt = 0;
-    double maxTemp = 0;
-    double minTemp = 60;
-    double maxHum = 0;
-    double minHum = 100;
-    double maxDew = 0;
-    double minDew = 60;
-    double maxRain = 0;
-    double minRain = 0;
-    double avgTemp = 0;
-    double avgHum = 0;
-    double avgDew = 0;
-    double avgRain = 0;
-
-    double GetMin(double v1, double v2)
-    {
-        v1 = v2 < v1 ? v2 : v1;
-        return v1;
-    }
-
-    double GetMax(double v1, double v2)
-    {
-        v1 = v2 > v1 ? v2 : v1;
-        return v1;
-    }
+    var cnt = Model.Select(x => true).Count();
+    double? maxTemp = Model.Any() ? Model.Select(x => x.TempOutCur).ToList().Max() : 0;
+    double? minTemp = Model.Any() ? Model.Select(x => x.TempOutCur).ToList().Min() : 0;
+    double? maxHum = Model.Any() ? Model.Select(x => x.HumOutCur).ToList().Max() : 0;
+    double? minHum = Model.Any() ? Model.Select(x => x.HumOutCur).ToList().Min() : 0;
+    double? maxDew = Model.Any() ? Model.Select(x => x.DewCur).ToList().Max() : 0;
+    double? minDew = Model.Any() ? Model.Select(x => x.DewCur).ToList().Min() : 0;
+    double? maxRain = Model.Any() ? Model.Select(x => x.RainDay).ToList().Max() : 0;
+    double? minRain = Model.Any() ? Model.Select(x => x.RainDay).ToList().Min() : 0;
+    var avgTemp = Model.Any() ? Model.Select(x => x.TempOutCur).ToList().Average() : 0;
+    var avgHum = Model.Any() ? Model.Select(x => x.HumOutCur).ToList().Average() : 0;
+    var avgDew = Model.Any() ? Model.Select(x => x.DewCur).ToList().Average() : 0;
+    var avgRain = Model.Any() ? Model.Select(x => x.RainDay).ToList().Average() : 0;
+    string niks = "--";
     // Sets nth record to use for plotting
-    int nStep = 25;
+    int nStep = 17;
     var graph = Model.Where((x, i) => i % nStep == 0);
-    // Serializes data from model for plotting
-    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(graph.Select(x => x.ObsTime).ToList());
-    var yTemp = Newtonsoft.Json.JsonConvert.SerializeObject(graph.Select(x => x.TempOutCur).ToList());
 
     //ViewData["Title"] = "Temp Past Hour : " + DateTime.Now.ToString("f");
 }
 
 <div class="container-fluid" id="Head1" runat="server">
-
-    @foreach (var obs in Model)
-    {
-        maxTemp = GetMax(maxTemp, obs.TempOutCur);
-        minTemp = GetMin(minTemp, obs.TempOutCur);
-        maxHum = GetMax(maxHum, obs.HumOutCur);
-        minHum = GetMin(minHum, obs.HumOutCur);
-        maxDew = GetMax(maxDew, obs.DewCur);
-        minDew = GetMin(minDew, obs.DewCur);
-        maxRain = GetMax(maxRain, obs.RainDay);
-        minRain = GetMin(minRain, obs.RainDay);
-        avgTemp = avgTemp + obs.TempOutCur;
-        avgHum = avgHum + obs.HumOutCur;
-        avgDew = avgDew + obs.DewCur;
-        avgRain = avgRain + obs.RainDay;
-        @*<strong>Date Time :</strong> @Html.DisplayFor(model => obs.Id)
-        <br />*@
-        cnt++;
-    }
     <h2>Daily Stats</h2>
     @if (cnt > 0)
     {
@@ -95,7 +63,7 @@
                     <strong>@minTemp</strong> &#176C
                 </td>
                 <td>
-                    <strong>@((avgTemp / cnt).ToString("00.0"))</strong> &#176C
+                    <strong>@avgTemp.ToString("#.00")</strong> &#176C
                 </td>
             </tr>
             <tr>
@@ -112,7 +80,7 @@
                     <strong>@minHum</strong> %
                 </td>
                 <td>
-                    <strong>@((avgHum / cnt).ToString("00.0"))</strong> %
+                    <strong>@avgHum.ToString("#.00")</strong> %
                 </td>
             </tr>
             <tr>
@@ -129,7 +97,7 @@
                     <strong>@minDew</strong> &#176C
                 </td>
                 <td>
-                    <strong>@((avgDew / cnt).ToString("00.0"))</strong> &#176C
+                    <strong>@avgDew.ToString("#.00")</strong> &#176C
                 </td>
             </tr>
             <tr>
@@ -140,98 +108,30 @@
                     <p></p>
                 </td>
                 <td>
-                    <strong>@maxRain.ToString("0.0")</strong> mm
+                    <strong>@maxRain</strong> mm
                 </td>
                 <td>
                     <strong>@minRain</strong> mm
                 </td>
                 <td>
-                    <strong>@((avgRain / cnt).ToString("0.0"))</strong> mm
+                    <strong>@avgRain.ToString("#.00")</strong> mm
                 </td>
             </tr>
         </table>
+        <div id="chartemp" style="height:300px;"></div>
+        <div id="chartminmax" style="height:300px;"></div>
+        <div id="chartwind" style="height:300px;"></div>
+        <div id="chartrain" style="height:300px;"></div>
+        <div id="chartpressure" style="height:300px;"></div>
     }
-
     @cnt total records
-    <div class="chart-container container-fluid">
-            <canvas id="temp" style="width:100%; height:500px"></canvas>
-        </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-
-<script type="text/javascript">  
-        $(function () {  
-    var chartName = "temp";  
-        var ctx = document.getElementById(chartName).getContext('2d');  
-        var data = {  
-                labels: @Html.Raw(XLabels),  
-                datasets: [{  
-                    label: "Temps",  
-                    backgroundColor: [  
-                        'rgba(255, 99, 132, 0.2)',  
-                        'rgba(54, 162, 235, 0.2)',  
-                        'rgba(255, 206, 86, 0.2)',  
-                        'rgba(75, 192, 192, 0.2)',  
-                        'rgba(153, 102, 255, 0.2)',  
-                        'rgba(255, 159, 64, 0.2)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'  
-                    ],  
-                    borderColor: [  
-                        'rgba(255,99,132,1)',  
-                        'rgba(54, 162, 235, 1)',  
-                        'rgba(255, 206, 86, 1)',  
-                        'rgba(75, 192, 192, 1)',  
-                        'rgba(153, 102, 255, 1)',  
-                        'rgba(255, 159, 64, 1)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'  
-                    ],  
-                    borderWidth: 1,  
-                    data: @Html.Raw(yTemp)  
-    }]  
-            };  
-  
-var options = {  
-                maintainAspectRatio: false,  
-                scales: {  
-                    yAxes: [{  
-                        ticks: {  
-                            beginAtZero: false  
-                        },  
-                        gridLines: {  
-                            display: true,  
-                            color: "rgba(255,99,164,0.2)"  
-                        }  
-}],  
-                    xAxes: [{  
-                        ticks: {  
-                            min: 0,  
-                            beginAtZero: false  
-                        },  
-                        gridLines: {  
-                            display: false  
-                        }  
-                    }]  
-                }  
-            };  
-  
-       var myChart = new  Chart(ctx, {  
-                options: options,  
-                data: data,  
-                type:'line'  
-  
-            });  
-        });  
+<script src="//www.amcharts.com/lib/4/core.js"></script>
+<script src="//www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
+<script type="text/javascript">
+    var hrs = 1;
+    var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph));
 </script>
-
+<script type="text/javascript" src="~/js/amcharts.js"></script>

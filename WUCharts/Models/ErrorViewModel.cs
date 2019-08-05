@@ -1,5 +1,3 @@
-using System;
-
 namespace WUCharts.Models
 {
     public class ErrorViewModel
