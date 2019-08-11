@@ -17,7 +17,6 @@ namespace WURequest.Models
         [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         [BsonRepresentation(BsonType.DateTime)]
         [JsonProperty("DateTime")]
-        [DataType(DataType.DateTime)]
         public DateTime ObsTime { get; set; } 
         public double TempOutCur { get; set; }
         public double Tmin { get; set; }

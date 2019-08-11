@@ -1,37 +1,42 @@
-﻿@model WURequest.Models.Observations
+@model WURequest.Models.Observations
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <h2>Latest Conditions</h2>
-
-<div class="container-fluid" id="Head1" runat="server">
-    <script type="text/javascript" language="javascript">
-
-        var idleInterval = setInterval("reloadPage()", 30000); // 30 Seconds
-
-        function reloadPage() {
-            location.reload();
-        }
-    </script>
-    <strong>Date Time :</strong> @Html.DisplayFor(model => model.ObsTime)
-    <br />
-    <br />
-    <div class="container-fluid col-md-3">
-        <br />
-        <strong>Outdoor</strong>
-        <br />
-        Current Temp : @Html.DisplayFor(model => model.TempOutCur)&#176
-        <br />
-        Average TMin : @Html.DisplayFor(model => model.Tmin)&#176
-        <br />
-        Average TMax : @Html.DisplayFor(model => model.Tmax)&#176
-        <br />
-        Humidity : @Html.DisplayFor(model => model.HumOutCur)%
-        <br />
-        Dew Point : @Html.DisplayFor(model => model.DewCur)&#176
-        <br />
-        Heat Index : @Html.DisplayFor(model => model.HeatIdxCur)&#176
+<style>
+  		#windy {
+  			width: 100%;
+  			height: 300px;
+  		}
+  	</style>
+<div class="container-fluid">
+    <div class="container-fluid" id="Head1" runat="server">
+        @* <script type="text/javascript" language="javascript"> *@
+        @* *@
+        @*     var idleInterval = setInterval("reloadPage()", 30000); // 30 Seconds *@
+        @* *@
+        @*     function reloadPage() { *@
+        @*         location.reload(); *@
+        @*     } *@
+        @* </script> *@
+        <strong>Date Time :</strong> @Html.DisplayFor(model => model.ObsTime)
+        <br/>
+        <div class="container-fluid col-md-3">
+            <br/>
+            <strong>Outdoor</strong>
+            <br/>
+            Current Temp : @Html.DisplayFor(model => model.TempOutCur)&#176
+            <br/>
+            Average TMin : @Html.DisplayFor(model => model.Tmin)&#176
+            <br/>
+            Average TMax : @Html.DisplayFor(model => model.Tmax)&#176
+            <br/>
+            Humidity : @Html.DisplayFor(model => model.HumOutCur)%
+            <br/>
+            Dew Point : @Html.DisplayFor(model => model.DewCur)&#176
+            <br/>
+            Heat Index : @Html.DisplayFor(model => model.HeatIdxCur)&#176
 
     </div>
     <div class="container-fluid col-md-3">
@@ -96,4 +101,3 @@
     </div>
 
 </div>
-

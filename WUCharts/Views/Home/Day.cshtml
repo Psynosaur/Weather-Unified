@@ -63,7 +63,7 @@
                     <strong>@minTemp</strong> &#176C
                 </td>
                 <td>
-                    <strong>@avgTemp.ToString("#.00")</strong> &#176C
+                    <strong>@avgTemp.ToString("#.0")</strong> &#176C
                 </td>
             </tr>
             <tr>
@@ -80,7 +80,7 @@
                     <strong>@minHum</strong> %
                 </td>
                 <td>
-                    <strong>@avgHum.ToString("#.00")</strong> %
+                    <strong>@avgHum.ToString("#.0")</strong> %
                 </td>
             </tr>
             <tr>
@@ -97,7 +97,7 @@
                     <strong>@minDew</strong> &#176C
                 </td>
                 <td>
-                    <strong>@avgDew.ToString("#.00")</strong> &#176C
+                    <strong>@avgDew.ToString("#.0")</strong> &#176C
                 </td>
             </tr>
             <tr>
@@ -114,19 +114,20 @@
                     <strong>@minRain</strong> mm
                 </td>
                 <td>
-                    <strong>@avgRain.ToString("#.00")</strong> mm
+                    <strong>@avgRain.ToString("#.0")</strong> mm
                 </td>
             </tr>
         </table>
         <div id="chartemp" style="height:300px;"></div>
         <div id="chartminmax" style="height:300px;"></div>
+        <div id="charthum" style="height:300px;"></div>
         <div id="chartwind" style="height:300px;"></div>
         <div id="chartrain" style="height:300px;"></div>
         <div id="chartpressure" style="height:300px;"></div>
+        <div id="chartsolar" style="height:300px;"></div>
     }
     @cnt total records
 </div>
-
 <script src="//www.amcharts.com/lib/4/core.js"></script>
 <script src="//www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
