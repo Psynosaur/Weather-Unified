@@ -57,6 +57,13 @@ var labelSolar = solar.chartContainer.createChild(am4core.Label);
 labelSolar.text = "Radiation Watts/m²";
 labelSolar.align = "center";
 
+// Create UV chart instance
+var uv = am4core.create("chartuv", am4charts.XYChart);
+uv.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+var labelUV = uv.chartContainer.createChild(am4core.Label);
+labelUV.text = "UV index";
+labelUV.align = "center";
+
 // Add data
 temp.data = data;
 wind.data = data;
@@ -65,6 +72,7 @@ rain.data = data;
 tminmax.data = data;
 pressure.data = data;
 solar.data = data;
+uv.data = data;
 
 // Create temp axes
 var categoryAxisTemp = temp.xAxes.push(new am4charts.DateAxis());
@@ -274,6 +282,36 @@ switch(h) {
 }
 var valueAxisSolar = solar.yAxes.push(new am4charts.ValueAxis());
 
+// Create UV axes
+var categoryAxisUV = uv.xAxes.push(new am4charts.DateAxis());
+categoryAxisUV.renderer.grid.template.location = 0;
+categoryAxisUV.renderer.minGridDistance = 60;
+categoryAxisUV.baseInterval = {
+    "timeUnit": "minute"
+};
+switch(h) {
+    case 1:
+        categoryAxisUV.baseInterval = {
+            "timeUnit": "minute"
+        };
+        categoryAxisUV.dateFormats.setKey("minute", "HH:mm");
+        break;
+    case 2:
+        categoryAxisUV.baseInterval = {
+            "timeUnit": "minute",
+            "count" : 30
+        };
+        categoryAxisUV.dateFormats.setKey("minute", "dd-MM HH:mm");
+        break;
+    default:
+        categoryAxisUV.baseInterval = {
+            "timeUnit": "second",
+            "count" : 15
+        };
+        categoryAxisUV.dateFormats.setKey("second", "HH:mm");
+}
+var valueAxisUV = uv.yAxes.push(new am4charts.ValueAxis());
+
 // Create temp series
 var seriesTemp = temp.series.push(new am4charts.LineSeries());
 seriesTemp.dataFields.valueY = "TempOutCur";
@@ -291,8 +329,8 @@ seriesTemp.tooltip.label.fill = am4core.color("#000");
 //     "max": am4core.color("#ED7B84"),
 //     "dataField": "valueY"
 // });
-// seriesTemp.tensionY = 1;
-// seriesTemp.tensionX = 0.8;
+seriesTemp.tensionY = 1;
+seriesTemp.tensionX = 0.8;
 var seriesTempDeW = temp.series.push(new am4charts.LineSeries());
 seriesTempDeW.dataFields.valueY = "DewCur";
 seriesTempDeW.dataFields.dateX = "DateTime";
@@ -302,8 +340,8 @@ seriesTempDeW.stroke = am4core.color("#87f7ff");
 seriesTempDeW.tooltip.getFillFromObject = false;
 seriesTempDeW.tooltip.background.fill = am4core.color("#87f7ff");
 seriesTempDeW.tooltip.label.fill = am4core.color("#000");
-// seriesTempDeW.tensionY = 1;
-// seriesTempDeW.tensionX = 0.8;
+seriesTempDeW.tensionY = 1;
+seriesTempDeW.tensionX = 0.8;
 // temp.scrollbarX = new am4core.Scrollbar();
 temp.cursor = new am4charts.XYCursor();
 
@@ -317,8 +355,8 @@ seriesTempMin.stroke = am4core.color("#0ec7ff");
 seriesTempMin.tooltip.getFillFromObject = false;
 seriesTempMin.tooltip.background.fill = am4core.color("#0ec7ff");
 seriesTempMin.tooltip.label.fill = am4core.color("#000");
-// seriesTempMin.tensionY = 1;
-// seriesTempMin.tensionX = 0.8;
+seriesTempMin.tensionY = 1;
+seriesTempMin.tensionX = 0.8;
 var seriesTempMax = tminmax.series.push(new am4charts.LineSeries());
 seriesTempMax.dataFields.valueY = "Tmax";
 seriesTempMax.dataFields.dateX = "DateTime";
@@ -328,8 +366,8 @@ seriesTempMax.stroke = am4core.color("#ff2955");
 seriesTempMax.tooltip.getFillFromObject = false;
 seriesTempMax.tooltip.background.fill = am4core.color("#ff2955");
 seriesTempMax.tooltip.label.fill = am4core.color("#000");
-// seriesTempMax.tensionY = 1;
-// seriesTempMax.tensionX = 0.8;
+seriesTempMax.tensionY = 1;
+seriesTempMax.tensionX = 0.8;
 // tminmax.scrollbarX = new am4core.Scrollbar();
 tminmax.cursor = new am4charts.XYCursor();
 
@@ -343,8 +381,8 @@ seriesHum.stroke = am4core.color("#5c8fff");
 seriesHum.tooltip.getFillFromObject = false;
 seriesHum.tooltip.background.fill = am4core.color("#5c8fff");
 seriesHum.tooltip.label.fill = am4core.color("#000");
-// seriesTempMax.tensionY = 1;
-// seriesTempMax.tensionX = 0.8;
+seriesHum.tensionY = 1;
+seriesHum.tensionX = 0.8;
 // tminmax.scrollbarX = new am4core.Scrollbar();
 hum.cursor = new am4charts.XYCursor();
 
@@ -358,8 +396,8 @@ seriesWind.stroke = am4core.color("#11ff1e");
 seriesWind.tooltip.getFillFromObject = false;
 seriesWind.tooltip.background.fill = am4core.color("#11ff1e");
 seriesWind.tooltip.label.fill = am4core.color("#000");
-// seriesWind.tensionY = 1;
-// seriesWind.tensionX = 0.8;
+seriesWind.tensionY = 1;
+seriesWind.tensionX = 0.8;
 var seriesWindGust = wind.series.push(new am4charts.LineSeries());
 seriesWindGust.dataFields.valueY = "WindGust10";
 seriesWindGust.dataFields.dateX = "DateTime";
@@ -369,8 +407,8 @@ seriesWindGust.stroke = am4core.color("#ffbf8d");
 seriesWindGust.tooltip.getFillFromObject = false;
 seriesWindGust.tooltip.background.fill = am4core.color("#ffbf8d");
 seriesWindGust.tooltip.label.fill = am4core.color("#000");
-// seriesWindGust.tensionY = 1;
-// seriesWindGust.tensionX = 0.8;
+seriesWindGust.tensionY = 1;
+seriesWindGust.tensionX = 0.8;
 // wind.scrollbarX = new am4core.Scrollbar();
 wind.cursor = new am4charts.XYCursor();
 
@@ -380,15 +418,15 @@ seriesRain.dataFields.valueY = "RainDay";
 seriesRain.dataFields.dateX = "DateTime";
 seriesRain.tooltipText = "{RainDay} mm";
 seriesRain.strokeWidth = 1;
-// seriesRain.tensionY = 1;
-// seriesRain.tensionX = 0.8;
+seriesRain.tensionY = 1;
+seriesRain.tensionX = 0.8;
 var seriesRainRate = rain.series.push(new am4charts.LineSeries());
 seriesRainRate.dataFields.valueY = "RainRateCur";
 seriesRainRate.dataFields.dateX = "DateTime";
 seriesRainRate.tooltipText = "{RainRateCur} mm/h";
 seriesRainRate.strokeWidth = 1;
-// seriesRainRate.tensionY = 1;
-// seriesRainRate.tensionX = 0.8;
+seriesRainRate.tensionY = 1;
+seriesRainRate.tensionX = 0.8;
 // rain.scrollbarX = new am4core.Scrollbar();
 rain.cursor = new am4charts.XYCursor();
 
@@ -398,8 +436,8 @@ seriesPressure.dataFields.valueY = "PressCur";
 seriesPressure.dataFields.dateX = "DateTime";
 seriesPressure.tooltipText = "{PressCur} hPa";
 seriesPressure.strokeWidth = 1;
-// seriesPressure.tensionY = 1;
-// seriesPressure.tensionX = 0.8;
+seriesPressure.tensionY = 1;
+seriesPressure.tensionX = 0.8;
 // pressure.scrollbarX = new am4core.Scrollbar();
 pressure.cursor = new am4charts.XYCursor();
 
@@ -413,7 +451,22 @@ seriesSolar.stroke = am4core.color("#ffdf43");
 seriesSolar.tooltip.getFillFromObject = false;
 seriesSolar.tooltip.background.fill = am4core.color("#ffdf43");
 seriesSolar.tooltip.label.fill = am4core.color("#000");
-// seriesPressure.tensionY = 1;
-// seriesPressure.tensionX = 0.8;
+seriesSolar.tensionY = 1;
+seriesSolar.tensionX = 0.8;
 // pressure.scrollbarX = new am4core.Scrollbar();
 solar.cursor = new am4charts.XYCursor();
+
+// Create solar series
+var seriesUV = uv.series.push(new am4charts.LineSeries());
+seriesUV.dataFields.valueY = "UV";
+seriesUV.dataFields.dateX = "DateTime";
+seriesUV.tooltipText = "{UV}";
+seriesUV.strokeWidth = 1;
+seriesUV.stroke = am4core.color("#ffdf43");
+seriesUV.tooltip.getFillFromObject = false;
+seriesUV.tooltip.background.fill = am4core.color("#ffdf43");
+seriesUV.tooltip.label.fill = am4core.color("#000");
+seriesUV.tensionY = 1;
+seriesUV.tensionX = 0.8;
+// pressure.scrollbarX = new am4core.Scrollbar();
+uv.cursor = new am4charts.XYCursor();

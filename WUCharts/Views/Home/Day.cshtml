@@ -2,7 +2,10 @@
 @model List<WURequest.Models.Observations>
 @{
     var cnt = Model.Select(x => true).Count();
-    if (cnt == 0){return;}
+    if (cnt == 0)
+    {
+        return;
+    }
     var maxTemp = Model.Select(x => x.TempOutCur).ToList().Max();
     var minTemp = Model.Select(x => x.TempOutCur).ToList().Min();
     var maxHum = Model.Select(x => x.HumOutCur).ToList().Max();
@@ -15,6 +18,17 @@
     var avgHum = Model.Select(x => x.HumOutCur).ToList().Average();
     var avgDew = Model.Select(x => x.DewCur).ToList().Average();
     var avgRain = Model.Select(x => x.RainDay).ToList().Average();
+    var maxSolar = Model.Select(x => x.SolarRad).ToList().Max();
+    var minSolar = Model.Select(x => x.SolarRad).ToList().Min();
+    var avgSolar = Model.Select(x => x.SolarRad).ToList().Average();
+    var maxWind = Model.Select(x => x.WindSpeedCur).ToList().Max();
+    var minWind = Model.Select(x => x.WindSpeedCur).ToList().Min();
+    var avgWind = Model.Select(x => x.WindSpeedCur).ToList().Average();
+    var maxGust = Model.Select(x => x.WindGust10).ToList().Max();
+    var minGust = Model.Select(x => x.WindGust10).ToList().Min();
+    var avgGust = Model.Select(x => x.WindGust10).ToList().Average();
+    var avgWDir = Model.Select(x => x.WindDirAvg10).ToList().Average();
+
     var latest = Model.Last();
     string niks = "--";
     // Sets nth record to use for plotting
@@ -28,19 +42,55 @@
         display: grid;  
         grid-template-columns: 1fr 1fr 1fr;  
         /*grid-template-rows: 50px 50px;  */
+        overflow-x:auto;
     }
     .pew {
         display: grid;
     }
+    
+        /*table {  */
+        /*    color: #333;*/
+        /*    font-family: Helvetica, Arial, sans-serif;*/
+        /*    width: 640px; */
+        /*    border-collapse: */
+        /*    collapse; border-spacing: 0; */
+        /*}*/
+        
+        td, th {  
+            border: 1px solid transparent; /* No more visible border */
+            height: 30px; 
+            transition: all 0.3s;  /* Simple transition for hover effect */
+            width: 150px;
+        }
+        
+        /*th {  */
+        /*    background: #DFDFDF;  !* Darken header a bit *!*/
+        /*    font-weight: bold;*/
+        /*}*/
+        
+        /*td {  */
+        /*    background: #FAFAFA;*/
+        /*    text-align: center;*/
+        /*}*/
+        
+        /* Cells in even rows (2,4,6...) are one color */        
+        tr:nth-child(even) td { background: rgba(48,48,61,0.86); }   
+        
+        /* Cells in odd rows (1,3,5...) are another (excludes header cells)  */        
+        tr:nth-child(odd) td { background: rgba(67,67,81,0.86); }  
+        
+        tr td:hover { background: #1e28a2; color: #FFF; }  
+        /* Hover cell effect! */
     
 </style>
 
 <h2>Daily Stats</h2>
 <strong>Date Time :</strong> @latest.ObsTime
 <div class="containerx">
+    
     <table>
         <tr>
-            <th width="100px">
+            <th>
                 <strong>Outdoor</strong>
             </th>
         </tr>
@@ -64,166 +114,282 @@
             <td>Dew Point</td>
             <td>@latest.DewCur&#176</td>
         </tr>
-        <tr>
-            <td>Heat Index</td>
-            <td>@latest.HeatIdxCur&#176</td>
-        </tr>
+       
     </table>
-    <table>
-            <tr>
-                <th width="100px">
-                    <strong>Wind Direction</strong>
-                </th>
-            </tr>
-            <tr>
-                <td>Wind Direction</td>
-                <td>@latest.WindDirCur&#176</td>
-            </tr>
-            <tr>
-                <td>Wind Direction</td>
-                <td>@latest.WindDirCurEng</td>
-            </tr>
-            <tr>
-                <td>Wind Dir Avg</td>
-                <td>@latest.WindDirAvg10&#176</td>
-            </tr>
-            <tr>
-                <td>Wind Dir Avg</td>
-                <td>@latest.WindDirAvg10Eng</td>
-            </tr>
-            <tr>
-                <td>Wind Chill</td>
-                <td>@latest.WindChillCur&#176</td>
-            </tr>
-        </table>
-    <table>
-            <tr>
-                <td>
-                    <br/>
-                </td>
-                <td>
-                    <br/>
-                </td>
-                <th width="100px">
-                    High
-                </th>
-                <th width="100px">
-                    Low
-                </th>
-                <th width="100px">
-                    Average
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <th style="height:25px;width:100px;">
-                    Temp
-                </th>
-                <td>
-                    <p></p>
-                </td>
-                <td>
-                    <strong>@maxTemp</strong> &#176C
-                </td>
-                <td>
-                    <strong>@minTemp</strong> &#176C
-                </td>
-                <td>
-                    <strong>@avgTemp.ToString("#.0")</strong> &#176C
-                </td>
-            </tr>
-            <tr>
-               <th style="height:25px;width:100px;">
-                    Humidity
-                </th>
-                <td>
-                    <p></p>
-                </td>
-                <td>
-                    <strong>@maxHum</strong> %
-                </td>
-                <td>
-                    <strong>@minHum</strong> %
-                </td>
-                <td>
-                    <strong>@avgHum.ToString("#.0")</strong> %
-                </td>
-            </tr>
-            <tr>
-                <th style="height:25px;width:100px;">
-                    Dew Point
-                </th>
-                <td>
-                    <p></p>
-                </td>
-                <td>
-                    <strong>@maxDew</strong> &#176C
-                </td>
-                <td>
-                    <strong>@minDew</strong> &#176C
-                </td>
-                <td>
-                    <strong>@avgDew.ToString("#.0")</strong> &#176C
-                </td>
-            </tr>
-            <tr>
-                <th style="height:25px;width:100px;">
-                    Precipitation
-                </th>
-                <td>
-                    <p></p>
-                </td>
-                <td>
-                    <strong>@maxRain</strong> mm
-                </td>
-                <td>
-                    <strong>@minRain</strong> mm
-                </td>
-                <td>
-                    <strong>@avgRain</strong> mm
-                </td>
-            </tr>
-        </table>
-</div>
-<div class="pew">
+
     <table>
         <tr>
-            <td>
-                <div id="chartemp" style="height:300px;"></div>
-            </td>
-            <td>
-                <div id="chartminmax" style="height:300px;"></div>
-            </td>
+            <th>
+                <strong>Wind Direction</strong>
+            </th>
         </tr>
         <tr>
-            <td >
-                <div id="charthum" style="height:300px;"></div>
-            </td>
-            <td >
-                <div id="chartsolar" style="height:300px;"></div>
-            </td>
+            <td>Wind Direction</td>
+            <td>@latest.WindDirCur&#176</td>
         </tr>
         <tr>
-            <td>
-                <div id="chartwind" style="height:300px;"></div>
-            </td>
-            <td>
-                <div id="chartpressure" style="height:300px;"></div>
-            </td>
+            <td>Wind Direction</td>
+            <td>@latest.WindDirCurEng</td>
         </tr>
         <tr>
-            <td colspan="2">
-                <div id="chartrain" style="height:300px;"></div>
-            </td>
+            <td>Wind Dir Avg</td>
+            <td>@latest.WindDirAvg10Eng</td>
+        </tr>
+        <tr>
+            <td>Wind Chill</td>
+            <td>@latest.WindChillCur&#176</td>
+        </tr>
+        <tr>
+            <td>Wind Dir Avg</td>
+            <td>@latest.WindDirAvg10&#176</td>
         </tr>
 
     </table>
+
+
+    <table>
+    <tr>
+        <th>
+            <strong>Rain</strong>
+        </th>
+    </tr>
+    <tr>
+        <td>Rain Rate</td>
+        <td>@latest.RainRateCur mm/h</td>
+    </tr>
+    <tr>
+        <td>RainTotal Day</td>
+        <td>@latest.RainDay mm</td>
+    </tr>
+    <tr>
+        <td>RainTotal Yesterday</td>
+        <td>@latest.RainYest mm</td>
+    </tr>
+    <tr>
+        <td>RainTotal Month</td>
+        <td>@latest.RainMonth mm</td>
+    </tr>
+    <tr>
+        <td>RainTotal Year</td>
+        <td>@latest.RainYear mm</td>
+    </tr>
+</table>
+    
+<table>
+    <tr>
+        <th>
+           <strong>Indoor</strong>
+        </th>
+    </tr>
+    <tr>
+        <td>Current Temp</td>
+        <td>@latest.TempInCur&#176</td>
+    </tr>
+    <tr>
+        <td>Humidity</td>
+        <td>@latest.HumInCur%</td>
+    </tr>
+    <tr>
+        <td>Pressure</td>
+        <td>@latest.PressCur hPa</td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <th>
+            <strong>Wind Speed</strong>
+        </th>
+    </tr>
+    <tr>
+        <td>Wind Current</td>
+        <td>@latest.WindSpeedCur m/s</td>
+    </tr>
+    <tr>
+        <td>Wind Average</td>
+        <td>@latest.WindAvgSpeedCur m/s</td>
+    </tr>
+    <tr>
+        <td>Wind Gust</td>
+        <td>@latest.WindGust10 m/s</td>
+    </tr>
+</table>
+@* <div> *@
+@*     <table> *@
+@*         <tr> *@
+@*             <td> *@
+@*                 <br/> *@
+@*             </td> *@
+@*             <td> *@
+@*                 <br/> *@
+@*             </td> *@
+@*             <th width="100px"> *@
+@*                 High *@
+@*             </th> *@
+@*             <th width="100px"> *@
+@*                 Low *@
+@*             </th> *@
+@*             <th width="100px"> *@
+@*                 Average *@
+@*             </th> *@
+@*         </tr> *@
+@*         <tr> *@
+@*             <td> *@
+@*                 <br/> *@
+@*             </td> *@
+@*         </tr> *@
+@*         <tr> *@
+@*             <th style="height:25px;width:100px;"> *@
+@*                 Temp *@
+@*             </th> *@
+@*             <td> *@
+@*                 <p></p> *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@maxTemp</strong> &#176C *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@minTemp</strong> &#176C *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@avgTemp.ToString("#.0")</strong> &#176C *@
+@*             </td> *@
+@*         </tr> *@
+@*         <tr> *@
+@*             <th style="height:25px;width:100px;"> *@
+@*                 Humidity *@
+@*             </th> *@
+@*             <td> *@
+@*                 <p></p> *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@maxHum</strong> % *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@minHum</strong> % *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@avgHum.ToString("#.0")</strong> % *@
+@*             </td> *@
+@*         </tr> *@
+@*         <tr> *@
+@*             <th style="height:25px;width:100px;"> *@
+@*                 Dew Point *@
+@*             </th> *@
+@*             <td> *@
+@*                 <p></p> *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@maxDew</strong> &#176C *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@minDew</strong> &#176C *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@avgDew.ToString("#.0")</strong> &#176C *@
+@*             </td> *@
+@*         </tr> *@
+@*         <tr> *@
+@*             <th style="height:25px;width:100px;"> *@
+@*                 Precipitation *@
+@*             </th> *@
+@*             <td> *@
+@*                 <p></p> *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@maxRain</strong> mm *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@minRain</strong> mm *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@avgRain</strong> mm *@
+@*             </td> *@
+@*         </tr> *@
+@*         <tr> *@
+@*             <th style="height:25px;width:100px;"> *@
+@*                 Solar Rad *@
+@*             </th> *@
+@*             <td> *@
+@*                 <p></p> *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@maxSolar</strong> W/m² *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@minSolar</strong> W/m² *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@avgSolar.ToString("#.0")</strong> W/m² *@
+@*             </td> *@
+@*         </tr> *@
+@*         <tr> *@
+@*             <th style="height:25px;width:100px;"> *@
+@*                 Wind Speed *@
+@*             </th> *@
+@*             <td> *@
+@*                 <p></p> *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@maxWind</strong> m/s *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@minWind</strong> m/s *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@avgWind.ToString("#.0")</strong> m/s *@
+@*             </td> *@
+@*         </tr> *@
+@*         <tr> *@
+@*             <th style="height:25px;width:100px;"> *@
+@*                 Wind Gust *@
+@*             </th> *@
+@*             <td> *@
+@*                 <p></p> *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@maxGust</strong> m/s *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@minGust</strong> m/s *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@avgGust.ToString("#.0")</strong> m/s *@
+@*             </td> *@
+@*         </tr> *@
+@*         <tr> *@
+@*             <th style="height:25px;width:100px;"> *@
+@*                 Wind Dir *@
+@*             </th> *@
+@*             <td> *@
+@*                 <p></p> *@
+@*             </td> *@
+@*             <td> *@
+@*                 <br/> *@
+@*             </td> *@
+@*             <td> *@
+@*                 <br/> *@
+@*             </td> *@
+@*             <td> *@
+@*                 <strong>@avgWDir.ToString("#")</strong> &#176 *@
+@*             </td> *@
+@*         </tr> *@
+@*     </table> *@
+@* *@
+@* </div> *@
+</div>
+
+<div class="pew">
     @if (cnt > 0)
     {
+        <div id="chartemp" style="height:300px;"></div>
+        <div id="chartminmax" style="height:300px;"></div>
+        <div id="charthum" style="height:300px;"></div>
+        <div id="chartpressure" style="height:300px;"></div>
+        <div id="chartwind" style="height:300px;"></div>
+        <div id="chartrain" style="height:300px;"></div>
+        <div id="chartsolar" style="height:300px;"></div>
+        <div id="chartuv" style="height:300px;"></div>
     }
 
     @cnt total records

@@ -16,7 +16,7 @@
     var avgRain = Model.Any() ? Model.Select(x => x.RainDay).ToList().Average() : 0;
     string niks = "--";
     // Sets nth record to use for plotting
-    int nStep = 150;
+    int nStep = 100;
     var graph = Model.Where((x, i) => i % nStep == 0);
     int nStepRain = 100;
     var graphrain = Model.Where((x, i) => i % nStepRain == 0);
@@ -24,6 +24,7 @@
 
     //ViewData["Title"] = "Temp Past Hour : " + DateTime.Now.ToString("f");
 }
+
 <div class="container-fluid">
     <h2>Weekly Stats</h2>
     @if (cnt > 0)
@@ -127,6 +128,7 @@
         <div id="chartpressure" style="height:300px;"></div>
         <div id="chartwind" style="height:300px;"></div>
         <div id="chartsolar" style="height:300px;"></div>
+        <div id="chartuv" style="height:300px;"></div>
     }
     @cnt total records
 </div>
