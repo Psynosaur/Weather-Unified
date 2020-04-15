@@ -22,7 +22,12 @@ namespace WUCharts.Controllers
 
         public IActionResult About()
         {
-            ViewData["Message"] = "This will serve as a replacemet for my current weather34 template hosted on https://cptsats.co.za/pws";
+            ViewData["Message"] = "This web application works with ASP.NET Core 2 and mongo db, weather is gathered from\r\n" +
+                                  "a meteobridge device, fed into the database via HTTP and then parsed as a JSON object\r\n" +
+                                  "which is then saved in the mongo database.\r\n" +
+                                  "The application then calls the database and gets the weather info to populate the model.\r\n" +
+                                  "The charts are drawn using amcharts\r\n" +
+                                  "Build from first principles";
 
             return View();
         }
@@ -72,6 +77,11 @@ namespace WUCharts.Controllers
         public IActionResult Week()
         {
             var model = _observationsService.Weekly();
+            return View(model);
+        }
+        public IActionResult Month()
+        {
+            var model = _observationsService.Monthly();
             return View(model);
         }
     }

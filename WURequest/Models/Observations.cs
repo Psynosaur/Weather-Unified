@@ -14,7 +14,7 @@ namespace WURequest.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         [BsonElement("DateTime")]
-        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         [BsonRepresentation(BsonType.DateTime)]
         [JsonProperty("DateTime")]
         public DateTime ObsTime { get; set; } 

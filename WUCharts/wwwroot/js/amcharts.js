@@ -64,6 +64,16 @@ var labelUV = uv.chartContainer.createChild(am4core.Label);
 labelUV.text = "UV index";
 labelUV.align = "center";
 
+// Create winddir chart instance
+var wd = am4core.create("chartwd", am4charts.XYChart);
+wd.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+var labelWD = wd.chartContainer.createChild(am4core.Label);
+labelWD.text = "Wind Direction";
+labelWD.align = "center";
+// var labelWD2 = wd.yAxes.push(new am4charts.ValueAxis());
+// labelWD2.title.text = "N";
+// labelWD2.renderer.opposite = true;
+
 // Add data
 temp.data = data;
 wind.data = data;
@@ -73,6 +83,7 @@ tminmax.data = data;
 pressure.data = data;
 solar.data = data;
 uv.data = data;
+wd.data = data;
 
 // Create temp axes
 var categoryAxisTemp = temp.xAxes.push(new am4charts.DateAxis());
@@ -200,6 +211,7 @@ categoryAxisRain.renderer.minGridDistance = 60;
 categoryAxisRain.baseInterval = {
     "timeUnit": "minute"
 };
+
 switch(h) {
     case 1:
         categoryAxisRain.baseInterval = {
@@ -222,6 +234,7 @@ switch(h) {
         categoryAxisRain.dateFormats.setKey("second", "HH:mm");
 }
 var valueAxisRain = rain.yAxes.push(new am4charts.ValueAxis());
+valueAxisRain.min  = 0;
 
 // Create pressure axes
 var categoryAxisPressure = pressure.xAxes.push(new am4charts.DateAxis());
@@ -312,11 +325,45 @@ switch(h) {
 }
 var valueAxisUV = uv.yAxes.push(new am4charts.ValueAxis());
 
+// Create WindDir axes
+var categoryAxisWD = wd.xAxes.push(new am4charts.DateAxis());
+categoryAxisWD.renderer.grid.template.location = 0;
+categoryAxisWD.renderer.minGridDistance = 60;
+categoryAxisWD.baseInterval = {
+    "timeUnit": "minute"
+};
+switch(h) {
+    case 1:
+        categoryAxisWD.baseInterval = {
+            "timeUnit": "minute"
+        };
+        categoryAxisWD.dateFormats.setKey("minute", "HH:mm");
+        break;
+    case 2:
+        categoryAxisWD.baseInterval = {
+            "timeUnit": "minute"
+            // "count" : 30
+        };
+        categoryAxisWD.dateFormats.setKey("minute", "dd-MM HH:mm");
+        break;
+    default:
+        categoryAxisWD.baseInterval = {
+            "timeUnit": "second"
+            // "count" : 15
+        };
+        categoryAxisWD.dateFormats.setKey("second", "HH:mm");
+}
+var valueAxisWD = wd.yAxes.push(new am4charts.ValueAxis());
+valueAxisWD.min = 0;
+valueAxisWD.max = 360;
+valueAxisWD.renderer.minGridDistance = 12.3;
+valueAxisWD.strictMinMax = true;
+
 // Create temp series
 var seriesTemp = temp.series.push(new am4charts.LineSeries());
 seriesTemp.dataFields.valueY = "TempOutCur";
 seriesTemp.dataFields.dateX = "DateTime";
-seriesTemp.tooltipText = "{TempOutCur} °C";
+seriesTemp.tooltipText = "Outdoor {TempOutCur} °C";
 seriesTemp.strokeWidth = 1;
 seriesTemp.stroke = am4core.color("#ff8145");
 seriesTemp.tooltip.getFillFromObject = false;
@@ -342,6 +389,16 @@ seriesTempDeW.tooltip.background.fill = am4core.color("#87f7ff");
 seriesTempDeW.tooltip.label.fill = am4core.color("#000");
 seriesTempDeW.tensionY = 1;
 seriesTempDeW.tensionX = 0.8;
+
+var seriesTempIn = temp.series.push(new am4charts.LineSeries());
+seriesTempIn.dataFields.valueY = "TempInCur";
+seriesTempIn.dataFields.dateX = "DateTime";
+seriesTempIn.tooltipText = "Indoor {TempInCur} °C";
+seriesTempIn.strokeWidth = 1;
+seriesTempIn.stroke = am4core.color("#fcff4c");
+seriesTempIn.tooltip.getFillFromObject = false;
+seriesTempIn.tooltip.background.fill = am4core.color("#fcff4c");
+seriesTempIn.tooltip.label.fill = am4core.color("#000");
 // temp.scrollbarX = new am4core.Scrollbar();
 temp.cursor = new am4charts.XYCursor();
 
@@ -383,6 +440,17 @@ seriesHum.tooltip.background.fill = am4core.color("#5c8fff");
 seriesHum.tooltip.label.fill = am4core.color("#000");
 seriesHum.tensionY = 1;
 seriesHum.tensionX = 0.8;
+var seriesHuIn = hum.series.push(new am4charts.LineSeries());
+seriesHuIn.dataFields.valueY = "HumInCur";
+seriesHuIn.dataFields.dateX = "DateTime";
+seriesHuIn.tooltipText = "{HumInCur} %";
+seriesHuIn.strokeWidth = 1;
+seriesHuIn.stroke = am4core.color("#0ec7ff");
+seriesHuIn.tooltip.getFillFromObject = false;
+seriesHuIn.tooltip.background.fill = am4core.color("#0ec7ff");
+seriesHuIn.tooltip.label.fill = am4core.color("#000");
+seriesHuIn.tensionY = 1;
+seriesHuIn.tensionX = 0.8;
 // tminmax.scrollbarX = new am4core.Scrollbar();
 hum.cursor = new am4charts.XYCursor();
 
@@ -390,7 +458,7 @@ hum.cursor = new am4charts.XYCursor();
 var seriesWind = wind.series.push(new am4charts.LineSeries());
 seriesWind.dataFields.valueY = "WindSpeedCur";
 seriesWind.dataFields.dateX = "DateTime";
-seriesWind.tooltipText = "{WindSpeedCur} m/s";
+seriesWind.tooltipText = "Current {WindSpeedCur} km/h";
 seriesWind.strokeWidth = 1;
 seriesWind.stroke = am4core.color("#11ff1e");
 seriesWind.tooltip.getFillFromObject = false;
@@ -401,7 +469,7 @@ seriesWind.tensionX = 0.8;
 var seriesWindGust = wind.series.push(new am4charts.LineSeries());
 seriesWindGust.dataFields.valueY = "WindGust10";
 seriesWindGust.dataFields.dateX = "DateTime";
-seriesWindGust.tooltipText = "{WindGust10} m/s";
+seriesWindGust.tooltipText = "Gust {WindGust10} km/h";
 seriesWindGust.strokeWidth = 1;
 seriesWindGust.stroke = am4core.color("#ffbf8d");
 seriesWindGust.tooltip.getFillFromObject = false;
@@ -470,3 +538,39 @@ seriesUV.tensionY = 1;
 seriesUV.tensionX = 0.8;
 // pressure.scrollbarX = new am4core.Scrollbar();
 uv.cursor = new am4charts.XYCursor();
+
+// Create windir series
+var seriesWindDir = wd.series.push(new am4charts.LineSeries());
+seriesWindDir.dataFields.valueY = "WindDirCur";
+seriesWindDir.dataFields.dateX = "DateTime";
+seriesWindDir.tooltipText = "{WindDirCur}° / {WindDirCurEng} current";
+seriesWindDir.strokeWidth = 1;
+seriesWindDir.stroke = am4core.color("#7fdfff");
+seriesWindDir.tooltip.getFillFromObject = false;
+seriesWindDir.tooltip.background.fill = am4core.color("#7fdfff");
+seriesWindDir.tooltip.label.fill = am4core.color("#000");
+seriesWindDir.tensionY = 1;
+seriesWindDir.tensionX = 0.8;
+seriesWindDir.connect = false;
+
+var bullet1 = seriesWindDir.bullets.push(new am4charts.CircleBullet());
+bullet1.circle.radius = 1;
+
+// pressure.scrollbarX = new am4core.Scrollbar();
+var seriesWindDirAvg = wd.series.push(new am4charts.LineSeries());
+seriesWindDirAvg.dataFields.valueY = "WindDirAvg10";
+seriesWindDirAvg.dataFields.dateX = "DateTime";
+seriesWindDirAvg.tooltipText = "{WindDirAvg10}° / {WindDirAvg10Eng} average";
+seriesWindDirAvg.strokeWidth = 1;
+seriesWindDirAvg.stroke = am4core.color("#dafaff");
+seriesWindDirAvg.tooltip.getFillFromObject = false;
+seriesWindDirAvg.tooltip.background.fill = am4core.color("#dafaff");
+seriesWindDirAvg.tooltip.label.fill = am4core.color("#000");
+seriesWindDirAvg.tensionY = 1;
+seriesWindDirAvg.tensionX = 0.8;
+seriesWindDirAvg.connect = false;
+var bullet2 = seriesWindDirAvg.bullets.push(new am4charts.CircleBullet());
+bullet2.circle.radius = 1;
+
+// wind.scrollbarX = new am4core.Scrollbar();
+wd.cursor = new am4charts.XYCursor();

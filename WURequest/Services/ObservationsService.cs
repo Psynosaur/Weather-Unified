@@ -46,18 +46,32 @@ namespace WURequest.Services
 
         public List<Observations> Daily()
         {
-            var tm = DateTime.Today;
+            var tm = DateTime.Now;
+            var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
+            // Offset for station timezone
+            var pp = hm.AddHours(-2);
             var obsersvations = _observation.Find(
-                x => x.ObsTime >= tm).ToList();
+                x => x.ObsTime > pp).ToList();
             return obsersvations;
         }
 
         public List<Observations> Weekly()
         {
 //            var weekstart = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Saturday);
-            var weekstart = DateTime.Today.AddDays(-7);
+            var tm = DateTime.UtcNow;
+            var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
+            var weekstart = hm.AddDays(-6);
             var obsersvations = _observation.Find(
                 x => x.ObsTime > weekstart).ToList();
+            return obsersvations;
+        }
+        
+        public List<Observations> Monthly()
+        {
+            var tm = DateTime.UtcNow;
+            var hm = new DateTime(tm.Year, tm.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+            var obsersvations = _observation.Find(
+                x => x.ObsTime > hm).ToList();
             return obsersvations;
         }
 

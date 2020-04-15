@@ -1,4 +1,5 @@
-﻿@using Newtonsoft.Json
+@using System.Reflection
+@using Newtonsoft.Json
 @model List<WURequest.Models.Observations>
 @{
     var cnt = Model.Select(x => true).Count();
@@ -25,20 +26,11 @@
     statsObj.Add(new KeyValuePair<string, string>("Humidity Max", Model.Select(x => x.HumOutCur).ToList().Max().ToString("0.#") + " %"));
     statsObj.Add(new KeyValuePair<string, string>("Dewpoint Min", Model.Select(x => x.DewCur).ToList().Min().ToString("0.#") + " °C"));
     statsObj.Add(new KeyValuePair<string, string>("Dewpoint Avg", Model.Select(x => x.DewCur).ToList().Average().ToString("0.#") + " °C"));
-    statsObj.Add(new KeyValuePair<string, string>("Dewpoint Max", Model.Select(x => x.DewCur).ToList().Max().ToString("0.##") + " °C"));
-    statsObj.Add(new KeyValuePair<string, string>("Wind Max", (Model.Select(x => x.WindSpeedCur).ToList().Max() * 3.6).ToString("0.#") + " km/h"));
-    statsObj.Add(new KeyValuePair<string, string>("Wind Avg", (Model.Select(x => x.WindSpeedCur).ToList().Average()* 3.6).ToString("0.#") + " km/h"));
+    statsObj.Add(new KeyValuePair<string, string>("Dewpoint Max", Model.Select(x => x.DewCur).ToList().Max().ToString("0.#") + " °C"));
     statsObj.Add(new KeyValuePair<string, string>("WindDir Avg", Model.Select(x => x.WindDirCur).ToList().Average().ToString("0.#") + " °"));
     statsObj.Add(new KeyValuePair<string, string>("Rain Avg", Model.Select(x => x.RainDay).ToList().Average().ToString("0.#") + " mm"));
     statsObj.Add(new KeyValuePair<string, string>("RainRate Max", Model.Select(x => x.RainRateCur).ToList().Max().ToString("0.#") + " mm/h"));
-    if (latest.SolarRad > 0)
-    {
-        statsObj.Add(new KeyValuePair<string, string>("Solar Avg", Model.Where(x => x.SolarRad > 0).Select(x => x.SolarRad).Average().ToString("0.#") + " W/m²"));
-    }
-    else
-    {
-        statsObj.Add(new KeyValuePair<string, string>("Solar Avg", 0 + " W/m²"));    
-    }
+    statsObj.Add(new KeyValuePair<string, string>("Solar Avg", Model.Where(x => x.SolarRad > 0).Select(x => x.SolarRad).Average().ToString("0.#") + " W/m²"));
     statsObj.Add(new KeyValuePair<string, string>("Solar Max", Model.Select(x => x.SolarRad).ToList().Max().ToString("0.#") + " W/m²"));
     statsObj.Add(new KeyValuePair<string, string>("Max UV", Model.Select(x => x.UV).ToList().Max().ToString("0.#")));
     statsObj.Add(new KeyValuePair<string, string>("Pressure Min", Model.Select(x => x.PressCur).ToList().Min().ToString("0.#") + " hPa"));
@@ -48,7 +40,7 @@
 
     string niks = "--";
     // Sets nth record to use for plotting
-    int nStep = 17;
+    int nStep = 527;
     var graph = Model.Where((x, i) => i % nStep == 0);
     var graph2 = graph
         .Select(c =>
@@ -68,9 +60,10 @@
 
 <div class="containerx col-lg-12 col-md-12 col-sm-12 ">
 
-    <h2>Daily Stats</h2>
-    <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy - HH:m:s tt zzz")
+    <h2>Monthly Stats</h2>
     <div class="col-lg-4 col-sm-4">
+        @* <table cellpadding="2" cellspacing="2" border="0" bgcolor="#dfdfdf" width="40%" align="center"> *@
+
         <table>
 
             <thead>
@@ -90,7 +83,11 @@
             </tbody>
         </table>
     </div>
+
+
     <div class="col-lg-4 col-sm-4">
+        <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime()
+
         <table>
             <tr>
                 <th>
@@ -238,19 +235,21 @@
 
 
 </div>
-<div class="row">
+
+<div class="pew col-lg-12 col-md-12 col-sm-12">
     @if (cnt > 0)
     {
-        <div class="col-md-6" id="chartemp" style="height:300px;"></div>
-        <div class="col-md-6" id="chartminmax" style="height:300px;"></div>
-        <div class="col-md-6" id="charthum" style="height:300px;"></div>
-        <div class="col-md-6" id="chartpressure" style="height:300px;"></div>
-        <div class="col-md-6" id="chartwind" style="height:300px;"></div>
-        <div class="col-md-6" id="chartrain" style="height:300px;"></div>
-        <div class="col-md-6" id="chartsolar" style="height:300px;"></div>
-        <div class="col-md-6" id="chartuv" style="height:300px;"></div>
-        <div class="col-md-12" id="chartwd" style="height:300px;"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12" id="chartemp" style="height:300px;"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12" id="chartminmax" style="height:300px;"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12" id="charthum" style="height:300px;"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12" id="chartpressure" style="height:300px;"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12" id="chartwind" style="height:300px;"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12" id="chartrain" style="height:300px;"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12" id="chartsolar" style="height:300px;"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12" id="chartuv" style="height:300px;"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12" id="chartwd" style="height:300px;"></div>
     }
+
 </div>
 @cnt total records
 
@@ -258,7 +257,7 @@
 <script src="//www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
 <script type="text/javascript">
-    var hrs = 1;
+    var hrs = 2;
     var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph2));
 </script>
 <script type="text/javascript" src="~/js/amcharts.js"></script>
