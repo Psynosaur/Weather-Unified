@@ -31,14 +31,7 @@
     statsObj.Add(new KeyValuePair<string, string>("WindDir Avg", Model.Select(x => x.WindDirCur).ToList().Average().ToString("0.#") + " °"));
     statsObj.Add(new KeyValuePair<string, string>("Rain Avg", Model.Select(x => x.RainDay).ToList().Average().ToString("0.#") + " mm"));
     statsObj.Add(new KeyValuePair<string, string>("RainRate Max", Model.Select(x => x.RainRateCur).ToList().Max().ToString("0.#") + " mm/h"));
-    if (latest.SolarRad > 0)
-    {
-        statsObj.Add(new KeyValuePair<string, string>("Solar Avg", Model.Where(x => x.SolarRad > 0).Select(x => x.SolarRad).Average().ToString("0.#") + " W/m²"));
-    }
-    else
-    {
-        statsObj.Add(new KeyValuePair<string, string>("Solar Avg", 0 + " W/m²"));    
-    }
+    statsObj.Add(latest.SolarRad > 0 ? new KeyValuePair<string, string>("Solar Avg", Model.Where(x => x.SolarRad > 0).Select(x => x.SolarRad).Average().ToString("0.#") + " W/m²") : new KeyValuePair<string, string>("Solar Avg", 0 + " W/m²"));
     statsObj.Add(new KeyValuePair<string, string>("Solar Max", Model.Select(x => x.SolarRad).ToList().Max().ToString("0.#") + " W/m²"));
     statsObj.Add(new KeyValuePair<string, string>("Max UV", Model.Select(x => x.UV).ToList().Max().ToString("0.#")));
     statsObj.Add(new KeyValuePair<string, string>("Pressure Min", Model.Select(x => x.PressCur).ToList().Min().ToString("0.#") + " hPa"));
@@ -69,7 +62,7 @@
 <div class="containerx col-lg-12 col-md-12 col-sm-12 ">
 
     <h2>Daily Stats</h2>
-    <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy - HH:m:s tt zzz")
+    <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy - HH:mm:s tt zzz")
     <div class="col-lg-4 col-sm-4">
         <table>
 

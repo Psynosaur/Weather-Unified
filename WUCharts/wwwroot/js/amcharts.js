@@ -202,6 +202,7 @@ switch(h) {
         categoryAxisWind.dateFormats.setKey("second", "HH:mm");
 }
 var valueAxisWind = wind.yAxes.push(new am4charts.ValueAxis());
+valueAxisWind.min = 0;
 
 
 // Create rain axes
@@ -477,7 +478,6 @@ seriesWindGust.tooltip.background.fill = am4core.color("#ffbf8d");
 seriesWindGust.tooltip.label.fill = am4core.color("#000");
 seriesWindGust.tensionY = 1;
 seriesWindGust.tensionX = 0.8;
-// wind.scrollbarX = new am4core.Scrollbar();
 wind.cursor = new am4charts.XYCursor();
 
 // Create rain series
@@ -495,7 +495,6 @@ seriesRainRate.tooltipText = "{RainRateCur} mm/h";
 seriesRainRate.strokeWidth = 1;
 seriesRainRate.tensionY = 1;
 seriesRainRate.tensionX = 0.8;
-// rain.scrollbarX = new am4core.Scrollbar();
 rain.cursor = new am4charts.XYCursor();
 
 // Create pressure series
@@ -506,7 +505,6 @@ seriesPressure.tooltipText = "{PressCur} hPa";
 seriesPressure.strokeWidth = 1;
 seriesPressure.tensionY = 1;
 seriesPressure.tensionX = 0.8;
-// pressure.scrollbarX = new am4core.Scrollbar();
 pressure.cursor = new am4charts.XYCursor();
 
 // Create solar series
@@ -521,7 +519,6 @@ seriesSolar.tooltip.background.fill = am4core.color("#ffdf43");
 seriesSolar.tooltip.label.fill = am4core.color("#000");
 seriesSolar.tensionY = 1;
 seriesSolar.tensionX = 0.8;
-// pressure.scrollbarX = new am4core.Scrollbar();
 solar.cursor = new am4charts.XYCursor();
 
 // Create solar series
@@ -536,7 +533,6 @@ seriesUV.tooltip.background.fill = am4core.color("#ffdf43");
 seriesUV.tooltip.label.fill = am4core.color("#000");
 seriesUV.tensionY = 1;
 seriesUV.tensionX = 0.8;
-// pressure.scrollbarX = new am4core.Scrollbar();
 uv.cursor = new am4charts.XYCursor();
 
 // Create windir series
@@ -556,7 +552,7 @@ seriesWindDir.connect = false;
 var bullet1 = seriesWindDir.bullets.push(new am4charts.CircleBullet());
 bullet1.circle.radius = 1;
 
-// pressure.scrollbarX = new am4core.Scrollbar();
+
 var seriesWindDirAvg = wd.series.push(new am4charts.LineSeries());
 seriesWindDirAvg.dataFields.valueY = "WindDirAvg10";
 seriesWindDirAvg.dataFields.dateX = "DateTime";
@@ -572,5 +568,4 @@ seriesWindDirAvg.connect = false;
 var bullet2 = seriesWindDirAvg.bullets.push(new am4charts.CircleBullet());
 bullet2.circle.radius = 1;
 
-// wind.scrollbarX = new am4core.Scrollbar();
 wd.cursor = new am4charts.XYCursor();
