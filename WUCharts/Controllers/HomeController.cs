@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using WUCharts.Models;
@@ -49,19 +50,7 @@ namespace WUCharts.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        public class AgeInfo
-        {
-
-            public string age;
-            public int population;
-
-            public AgeInfo(string prmAge, int prmPop)
-            {
-                this.age = prmAge;
-                this.population = prmPop;
-            }
-
-        }
+       
         public IActionResult Hour()
         {
             var model = _observationsService.Hourly();
@@ -71,6 +60,13 @@ namespace WUCharts.Controllers
         public IActionResult Day()
         {
             var model = _observationsService.Daily();
+            return View(model);
+        }
+        
+        public IActionResult Date(string id = null)
+        {
+            if (id == null) id = DateTime.Now.ToString("yyyy-MM-dd");
+            var model = _observationsService.Date(id);
             return View(model);
         }
 

@@ -54,6 +54,19 @@ namespace WURequest.Services
                 x => x.ObsTime > pp).ToList();
             return obsersvations;
         }
+        public List<Observations> Date(string date)
+        {
+            // var tm = DateTime.Now;
+            DateTime tm = DateTime.ParseExact(date, "yyyy-MM-dd",
+                System.Globalization.CultureInfo.InvariantCulture);
+            var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
+            // Offset for station timezone
+            var dayStart = hm.AddHours(-2);
+            var dayEnd = dayStart.AddDays(1);
+            var obsersvations = _observation.Find(
+                x => x.ObsTime > dayStart && x.ObsTime < dayEnd).ToList();
+            return obsersvations;
+        }
 
         public List<Observations> Weekly()
         {

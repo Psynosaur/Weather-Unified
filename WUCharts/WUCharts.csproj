@@ -20,4 +20,11 @@
     <ProjectReference Include="..\WURequest\WURequest.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Home\Date.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

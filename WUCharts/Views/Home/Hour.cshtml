@@ -3,7 +3,7 @@
 @{
     var cnt = Model.Select(x => true).Count();
     var latest = Model.Last();
-    
+
     var windObj = new
     {
         currWind = latest.WindSpeedCur * 3.6,
@@ -39,22 +39,28 @@
     // Sets nth record to use for plotting
     int nStep = 1;
     var graph = Model
-        .Select(c =>{
-                        c.WindSpeedCur *= 3.6;
-                        c.WindGust10 *= 3.6; 
-                        return c;
+        .Select(c =>
+        {
+            c.WindSpeedCur *= 3.6;
+            c.WindGust10 *= 3.6;
+            return c;
         });
-   
+
     var rainHour = Model.Any() ? Model.Select(x => x.RainDay).Last() - Model.Select(x => x.RainDay).First() : 0;
     //ViewData["Title"] = "Temp Past Hour : " + DateTime.Now.ToString("f");
 }
 
 <div class="containerx col-lg-12 ">
+    <div class="row">
+        <div class="col-lg-offset-6 col-6">
+            <h2>Hourly Stats</h2>
+            <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy - HH:mm:ss zzz")
+        </div>
+    </div>
+    <div class="row">
+            
+    <div class="col-lg col-sm">
 
-    <h2>Daily Stats</h2>
-
-    <div class="col-lg-4 col-sm-4">
-        <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy - HH:mm:s tt zzz")
 
         <table>
             <tr>
@@ -103,7 +109,7 @@
         </table>
     </div>
 
-    <div class="col-lg-4 col-sm-4">
+    <div class="col-lg col-sm">
 
 
         <table>
@@ -153,7 +159,7 @@
 
         </table>
     </div>
-    <div class="col-lg-4 col-sm-4">
+    <div class="col-lg col-sm">
 
 
         <table>
@@ -197,12 +203,11 @@
             </tr>
         </table>
     </div>
-    
-
+    </div>
 
 </div>
 
-<div class="pew col-lg-12 col-sm-12">
+<div class="row">
     @if (cnt > 0)
     {
         <div class="col-lg-6" id="chartemp" style="height:300px;"></div>
