@@ -1,66 +1,10 @@
 ﻿@using Newtonsoft.Json
-@using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging
-@using WURequest.Models
-@using Microsoft.CodeAnalysis
 @model List<WURequest.Models.Observations>
 @{
     // another hack, when there is no data for our date, when use the url to set the datepicker value, to continue
     string url = Context.Request.Path;
     var cnt = Model.Select(x => true).Count();
     var latest = Model.LastOrDefault();
-    // an empty object or twofor all the nothingness
-    // this won't be necessary when we get valid dates from the db
-    var obj2 = new List<KeyValuePair<string, string>>();
-    var obj3 = new
-    {
-        currWind = 0.0,
-        currGust = 0.0,
-        maxWind = 0.0,
-        minWind = 0.0,
-        avgWind = 0.0,
-        maxGust = 0.0,
-        minGust = 0.0,
-        avgGust = 0.0,
-    };
-    if (latest != null)
-    {
-        var windObj = new
-        {
-            currWind = latest.WindSpeedCur * 3.6,
-            currGust = latest.WindGust10 * 3.6,
-            maxWind = Model.Select(x => x.WindSpeedCur).ToList().Max() * 3.6,
-            minWind = Model.Select(x => x.WindSpeedCur).ToList().Min() * 3.6,
-            avgWind = Model.Select(x => x.WindSpeedCur).ToList().Average() * 3.6,
-            maxGust = Model.Select(x => x.WindGust10).ToList().Max() * 3.6,
-            minGust = Model.Select(x => x.WindGust10).ToList().Min() * 3.6,
-            avgGust = Model.Select(x => x.WindGust10).ToList().Average() * 3.6,
-        };
-        obj3 = windObj;
-        var statsObj = new List<KeyValuePair<string, string>>();
-        statsObj.Add(new KeyValuePair<string, string>("Temperature Min", Model.Select(x => x.TempOutCur).ToList().Min().ToString("0.#") + " °C"));
-        statsObj.Add(new KeyValuePair<string, string>("Temperature Avg", Model.Select(x => x.TempOutCur).ToList().Average().ToString("0.#") + " °C"));
-        statsObj.Add(new KeyValuePair<string, string>("Temperature Max", Model.Select(x => x.TempOutCur).ToList().Max().ToString("0.#") + " °C"));
-        statsObj.Add(new KeyValuePair<string, string>("Humidity Min", Model.Select(x => x.HumOutCur).ToList().Min().ToString("0.#") + " %"));
-        statsObj.Add(new KeyValuePair<string, string>("Humidity Avg", Model.Select(x => x.HumOutCur).ToList().Average().ToString("0.#") + " %"));
-        statsObj.Add(new KeyValuePair<string, string>("Humidity Max", Model.Select(x => x.HumOutCur).ToList().Max().ToString("0.#") + " %"));
-        statsObj.Add(new KeyValuePair<string, string>("Dewpoint Min", Model.Select(x => x.DewCur).ToList().Min().ToString("0.#") + " °C"));
-        statsObj.Add(new KeyValuePair<string, string>("Dewpoint Avg", Model.Select(x => x.DewCur).ToList().Average().ToString("0.#") + " °C"));
-        statsObj.Add(new KeyValuePair<string, string>("Dewpoint Max", Model.Select(x => x.DewCur).ToList().Max().ToString("0.##") + " °C"));
-        statsObj.Add(new KeyValuePair<string, string>("Wind Max", (Model.Select(x => x.WindSpeedCur).ToList().Max() * 3.6).ToString("0.#") + " km/h"));
-        statsObj.Add(new KeyValuePair<string, string>("Wind Avg", (Model.Select(x => x.WindSpeedCur).ToList().Average() * 3.6).ToString("0.#") + " km/h"));
-        statsObj.Add(new KeyValuePair<string, string>("WindDir Avg", Model.Select(x => x.WindDirCur).ToList().Average().ToString("0.#") + " °"));
-        statsObj.Add(new KeyValuePair<string, string>("Rain Avg", Model.Select(x => x.RainDay).ToList().Average().ToString("0.#") + " mm"));
-        statsObj.Add(new KeyValuePair<string, string>("RainRate Max", Model.Select(x => x.RainRateCur).ToList().Max().ToString("0.#") + " mm/h"));
-        statsObj.Add(latest.SolarRad > 0 ? new KeyValuePair<string, string>("Solar Avg", Model.Where(x => x.SolarRad > 0).Select(x => x.SolarRad).Average().ToString("0.#") + " W/m²") : new KeyValuePair<string, string>("Solar Avg", 0 + " W/m²"));
-        statsObj.Add(new KeyValuePair<string, string>("Solar Max", Model.Select(x => x.SolarRad).ToList().Max().ToString("0.#") + " W/m²"));
-        statsObj.Add(new KeyValuePair<string, string>("Max UV", Model.Select(x => x.UV).ToList().Max().ToString("0.#")));
-        statsObj.Add(new KeyValuePair<string, string>("Pressure Min", Model.Select(x => x.PressCur).ToList().Min().ToString("0.#") + " hPa"));
-        statsObj.Add(new KeyValuePair<string, string>("Pressure Avg", Model.Select(x => x.PressCur).ToList().Average().ToString("0.#") + " hPa"));
-        statsObj.Add(new KeyValuePair<string, string>("Pressure Max", Model.Select(x => x.PressCur).ToList().Max().ToString("0.#") + " hPa"));
-        obj2 = statsObj;
-    }
-
-
     string niks = "--";
     // Sets nth record to use for plotting
     int nStep = 17;
@@ -75,9 +19,6 @@
 
     int nStepRain = 100;
     var graphrain = Model.Where((x, i) => i % nStepRain == 0);
-
-
-    //ViewData["Title"] = "Temp Past Hour : " + DateTime.Now.ToString("f");
 }
 @if (latest != null)
 {
@@ -92,173 +33,8 @@
             <div class="offset-lg-4 col-12">
                 <h2>@latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy") Stats</h2>
             </div>
-
         </div>
-        <div class="row">
-
-            <div class="col-lg col-sm">
-                <table>
-
-                    <thead>
-                    <tr>
-                        <th>Stats</th>
-                        <th>Values</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var k in obj2)
-                    {
-                        <tr>
-                            <td>@k.Key</td>
-                            <td>@k.Value</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-lg col-sm">
-                <table>
-                    <tr>
-                        <th>
-                            <strong>Outdoor</strong>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>Current Temp</td>
-                        <td>@latest.TempOutCur&#176</td>
-                    </tr>
-                    <tr>
-                        <td>Temp Min</td>
-                        <td>@latest.Tmin&#176</td>
-                    </tr>
-                    <tr>
-                        <td>Temp Max</td>
-                        <td>@latest.Tmax&#176</td>
-                    </tr>
-                    <tr>
-                        <td>Humidity</td>
-                        <td>@latest.HumOutCur%</td>
-                    </tr>
-                    <tr>
-                        <td>Dew Point</td>
-                        <td>@latest.DewCur&#176</td>
-                    </tr>
-                    <tr>
-                        <th>
-                            <strong>Solar</strong>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>Solar Radiation</td>
-                        <td>@latest.SolarRad W/m²</td>
-                    </tr>
-                    <tr>
-                        <td>UV index</td>
-                        <td>@latest.UV</td>
-                    </tr>
-                    <tr>
-                        <th>
-                            <strong>Indoor</strong>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>Current Temp</td>
-                        <td>@latest.TempInCur&#176</td>
-                    </tr>
-                    <tr>
-                        <td>Humidity</td>
-                        <td>@latest.HumInCur%</td>
-                    </tr>
-                    <tr>
-                        <td>Pressure</td>
-                        <td>@latest.PressCur hPa</td>
-                    </tr>
-
-                </table>
-
-
-            </div>
-
-            <div class="col-lg col-sm">
-
-
-                <table>
-                    <tr>
-                        <th>
-                            <strong>Wind Direction</strong>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>Wind Direction</td>
-                        <td>@latest.WindDirCur&#176</td>
-                    </tr>
-                    <tr>
-                        <td>Wind Direction</td>
-                        <td>@latest.WindDirCurEng</td>
-                    </tr>
-                    <tr>
-                        <td>Wind Dir Avg</td>
-                        <td>@latest.WindDirAvg10Eng</td>
-                    </tr>
-                    <tr>
-                        <td>Wind Chill</td>
-                        <td>@latest.WindChillCur&#176</td>
-                    </tr>
-                    <tr>
-                        <td>Wind Dir Avg</td>
-                        <td>@latest.WindDirAvg10&#176</td>
-                    </tr>
-                    <tr>
-                        <th>
-                            <strong>Wind Speed</strong>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>Wind Current</td>
-                        <td>@latest.WindSpeedCur m/s / @obj3.currWind.ToString("#.00") km/h</td>
-
-                    </tr>
-                    <tr>
-                        <td>Wind Average</td>
-                        <td>@latest.WindAvgSpeedCur m/s / @obj3.avgWind.ToString("#.00") km/h</td>
-                    </tr>
-                    <tr>
-                        <td>Wind Gust</td>
-                        <td>@latest.WindGust10 m/s / @obj3.currGust.ToString("#.00") km/h</td>
-                    </tr>
-
-                </table>
-                <table>
-                    <tr>
-                        <th>
-                            <strong>Rain</strong>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>Rain Rate</td>
-                        <td>@latest.RainRateCur mm/h</td>
-                    </tr>
-                    <tr>
-                        <td>RainTotal Day</td>
-                        <td>@latest.RainDay mm</td>
-                    </tr>
-                    <tr>
-                        <td>RainTotal Yesterday</td>
-                        <td>@latest.RainYest mm</td>
-                    </tr>
-                    <tr>
-                        <td>RainTotal Month</td>
-                        <td>@latest.RainMonth mm</td>
-                    </tr>
-                    <tr>
-                        <td>RainTotal Year</td>
-                        <td>@latest.RainYear mm</td>
-                    </tr>
-
-                </table>
-            </div>
-
-        </div>
+        @Html.Partial("_stats", Model)
     </div>
     <div class="row">
         @if (cnt > 0)
