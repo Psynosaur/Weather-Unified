@@ -4,9 +4,12 @@
 @using Microsoft.CodeAnalysis
 @model List<WURequest.Models.Observations>
 @{
+    // another hack, when there is no data for our date, when use the url to set the datepicker value, to continue
     string url = Context.Request.Path;
     var cnt = Model.Select(x => true).Count();
     var latest = Model.LastOrDefault();
+    // an empty object or twofor all the nothingness
+    // this won't be necessary when we get valid dates from the db
     var obj2 = new List<KeyValuePair<string, string>>();
     var obj3 = new
     {
