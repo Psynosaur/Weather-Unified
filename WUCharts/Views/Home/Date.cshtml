@@ -58,9 +58,11 @@
             }
            @Html.Partial("_DateSummary", Model)
         </div>
-        <span>
-            @cnt total records
-        </span>
+        <div class="row" style="text-align: center">
+            <div class="col-lg">
+                 @cnt total records
+            </div>
+        </div>
     </div>
 }
 else
