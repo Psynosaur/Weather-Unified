@@ -1,0 +1,152 @@
+@model List<WURequest.Models.Observations>
+
+@{
+    var latest = Model.Last();
+
+    var windObj = new
+    {
+        currWind = latest.WindSpeedCur * 3.6,
+        currGust = latest.WindGust10 * 3.6,
+        maxWind = Model.Select(x => x.WindSpeedCur).ToList().Max() * 3.6,
+        minWind = Model.Select(x => x.WindSpeedCur).ToList().Min() * 3.6,
+        avgWind = Model.Select(x => x.WindSpeedCur).ToList().Average() * 3.6,
+        maxGust = Model.Select(x => x.WindGust10).ToList().Max() * 3.6,
+        minGust = Model.Select(x => x.WindGust10).ToList().Min() * 3.6,
+        avgGust = Model.Select(x => x.WindGust10).ToList().Average() * 3.6,
+    };
+}
+<div class="col-lg-2 col-sm" id="first">
+    <h3 style="text-align: center"> Current Conditions</h3>
+    <table>
+        <tr>
+            <th>
+                <strong>Outdoor</strong>
+            </th>
+        </tr>
+        <tr>
+            <td>Current Temp</td>
+            <td>@latest.TempOutCur&#176</td>
+        </tr>
+        <tr>
+            <td>Temp Min</td>
+            <td>@latest.Tmin&#176</td>
+        </tr>
+        <tr>
+            <td>Temp Max</td>
+            <td>@latest.Tmax&#176</td>
+        </tr>
+        <tr>
+            <td>Humidity</td>
+            <td>@latest.HumOutCur%</td>
+        </tr>
+        <tr>
+            <td>Dew Point</td>
+            <td>@latest.DewCur&#176</td>
+        </tr>
+        <tr>
+            <th>
+                <strong>Solar</strong>
+            </th>
+        </tr>
+        <tr>
+            <td>Solar Radiation</td>
+            <td>@latest.SolarRad W/m²</td>
+        </tr>
+        <tr>
+            <td>UV index</td>
+            <td>@latest.UV</td>
+        </tr>
+        <tr>
+            <th>
+                <strong>Indoor</strong>
+            </th>
+        </tr>
+        <tr>
+            <td>Current Temp</td>
+            <td>@latest.TempInCur&#176</td>
+        </tr>
+        <tr>
+            <td>Humidity</td>
+            <td>@latest.HumInCur%</td>
+        </tr>
+        <tr>
+            <td>Pressure</td>
+            <td>@latest.PressCur hPa</td>
+        </tr>
+
+    </table>
+    <table>
+        <tr>
+            <th>
+                <strong>Wind Direction</strong>
+            </th>
+        </tr>
+        <tr>
+            <td>Wind Direction</td>
+            <td>@latest.WindDirCur&#176</td>
+        </tr>
+        <tr>
+            <td>Wind Direction</td>
+            <td>@latest.WindDirCurEng</td>
+        </tr>
+        <tr>
+            <td>Wind Dir Avg</td>
+            <td>@latest.WindDirAvg10Eng</td>
+        </tr>
+        <tr>
+            <td>Wind Chill</td>
+            <td>@latest.WindChillCur&#176</td>
+        </tr>
+        <tr>
+            <td>Wind Dir Avg</td>
+            <td>@latest.WindDirAvg10&#176</td>
+        </tr>
+        <tr>
+            <th>
+                <strong>Wind Speed</strong>
+            </th>
+        </tr>
+        <tr>
+            <td>Wind Current</td>
+            <td>@latest.WindSpeedCur m/s / @(windObj.currWind > 0 ? windObj.currWind.ToString("#.00") : "0") km/h </td>
+
+        </tr>
+        <tr>
+            <td>Wind Average</td>
+            <td>@latest.WindAvgSpeedCur m/s / @(windObj.avgWind > 0 ? windObj.avgWind.ToString("#.00") : "0") km/h</td>
+        </tr>
+        <tr>
+            <td>Wind Gust</td>
+            <td>@latest.WindGust10 m/s / @(windObj.maxGust > 0 ? windObj.maxGust.ToString("#.00") : "0") km/h</td>
+        </tr>
+
+    </table>
+    <table>
+        <tr>
+            <th>
+                <strong>Rain</strong>
+            </th>
+        </tr>
+        <tr>
+            <td>Rain Rate</td>
+            <td>@latest.RainRateCur mm/h</td>
+        </tr>
+        <tr>
+            <td>RainTotal Day</td>
+            <td>@latest.RainDay mm</td>
+        </tr>
+        <tr>
+            <td>RainTotal Yesterday</td>
+            <td>@latest.RainYest mm</td>
+        </tr>
+        <tr>
+            <td>RainTotal Month</td>
+            <td>@latest.RainMonth mm</td>
+        </tr>
+        <tr>
+            <td>RainTotal Year</td>
+            <td>@latest.RainYear mm</td>
+        </tr>
+
+    </table>
+</div>

@@ -1,0 +1,43 @@
+@model List<WURequest.Models.Observations>
+
+@{
+    var latest = Model.Last();
+
+    var windObj = new
+    {
+        currWind = latest.WindSpeedCur * 3.6,
+        currGust = latest.WindGust10 * 3.6,
+        maxWind = Model.Select(x => x.WindSpeedCur).ToList().Max() * 3.6,
+        minWind = Model.Select(x => x.WindSpeedCur).ToList().Min() * 3.6,
+        avgWind = Model.Select(x => x.WindSpeedCur).ToList().Average() * 3.6,
+        maxGust = Model.Select(x => x.WindGust10).ToList().Max() * 3.6,
+        minGust = Model.Select(x => x.WindGust10).ToList().Min() * 3.6,
+        avgGust = Model.Select(x => x.WindGust10).ToList().Average() * 3.6,
+    };
+}
+<div class="col-lg-2 col-sm" id="second">
+    <h3 style="text-align: center">Summary</h3>
+    <table>
+        <tr>
+            <th>
+                <strong>Rain</strong>
+            </th>
+        </tr>
+        <tr>
+            <td>RainTotal Day</td>
+            <td>@latest.RainDay mm</td>
+        </tr>
+        <tr>
+            <td>RainTotal Previous Day</td>
+            <td>@latest.RainYest mm</td>
+        </tr>
+        <tr>
+            <td>RainTotal Month</td>
+            <td>@latest.RainMonth mm</td>
+        </tr>
+        <tr>
+            <td>RainTotal Year</td>
+            <td>@latest.RainYear mm</td>
+        </tr>
+    </table>
+</div>

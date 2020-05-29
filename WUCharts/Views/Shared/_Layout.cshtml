@@ -68,7 +68,7 @@
 
     </div>
 </nav>
-<partial name="_CookieConsentPartial"/>
+@* <partial name="_CookieConsentPartial"/> *@
 
 
 <environment include="Development">
@@ -93,11 +93,11 @@
             crossorigin="anonymous"></script>
     <script src="~/js/site.min.js" asp-append-version="true"></script>
 </environment>
-<div class="container body-content">
+<div class="container-fluid body-content">
     @RenderBody()
     <hr/>
     <footer>
-        <p>&copy; 2020 - WUCharts</p>
+        <p style="text-align: center">&copy; 2020 - WUCharts</p>
     </footer>
 </div>
 

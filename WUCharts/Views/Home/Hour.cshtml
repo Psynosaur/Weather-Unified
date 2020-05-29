@@ -1,7 +1,6 @@
 ﻿@using Newtonsoft.Json
 @model List<WURequest.Models.Observations>
 @{
-    var cnt = Model.Select(x => true).Count();
     var latest = Model.Last();
     var graph = Model
         .Select(c =>
@@ -17,30 +16,15 @@
 
 <div class="containerx col-lg-12 col-md-12 col-sm-12">
     <div class="row">
-        <div class="col-lg-offset-4 col-12">
-            <h2>Hourly Stats</h2>
-            <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy - HH:mm:ss zzz")
+            <div class="col-12" style="text-align: center">
+                <h2>Hourly Stats</h2>
+                <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy - HH:mm:ss zzz")
+            </div>
         </div>
-    </div>
-    @Html.Partial("_stats", Model)
+    
+        @Html.Partial("_DoubleGraph", Model)
 </div>
 
-<div class="row">
-    @if (cnt > 0)
-    {
-        <div class="col-lg-6" id="chartemp" style="height:300px;"></div>
-        <div class="col-lg-6" id="chartminmax" style="height:300px;"></div>
-        <div class="col-lg-6" id="charthum" style="height:300px;"></div>
-        <div class="col-lg-6" id="chartpressure" style="height:300px;"></div>
-        <div class="col-lg-6" id="chartwind" style="height:300px;"></div>
-        <div class="col-lg-6" id="chartrain" style="height:300px;"></div>
-        <div class="col-lg-6" id="chartsolar" style="height:300px;"></div>
-        <div class="col-lg-6" id="chartuv" style="height:300px;"></div>
-        <div class="col-lg-12" id="chartwd" style="height:300px;"></div>
-    }
-
-</div>
-@cnt total records
 
 <script src="//www.amcharts.com/lib/4/core.js"></script>
 <script src="//www.amcharts.com/lib/4/charts.js"></script>

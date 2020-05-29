@@ -33,11 +33,25 @@ body {
     margin: 15px;
 }
 
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 900px) {
     /* Hide captions */
     .carousel-caption {
         display: none;
+    }
+    .containerx{
+        display:flex;
+        flex-flow: column;
+    }
+    #first{
+        order: 1;
+    }
+    #second{
+        order: 2;
+    }
+    #graph{
+        order: 3;
     }
     /*.containerx{*/
     /*    width:100%!important;*/

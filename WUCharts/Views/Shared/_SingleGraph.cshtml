@@ -1,0 +1,32 @@
+@model List<WURequest.Models.Observations>
+@{
+    var cnt = Model.Select(x => true).Count();
+}
+
+<div class="row">
+        @Html.Partial("_CurrentConditions", Model)
+        @if (cnt > 0)
+        {
+            <div class="col-lg" id="graph">
+                <div class="row">
+                    <div class="col-lg" id="chartemp" style="height:300px;"></div>
+                    <div class="col-lg" id="chartminmax" style="height:300px;"></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg" id="charthum" style="height:300px;"></div>
+                    <div class="col-lg" id="chartpressure" style="height:300px;"></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg" id="chartwind" style="height:300px;"></div>
+                    <div class="col-lg" id="chartrain" style="height:300px;"></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg" id="chartsolar" style="height:300px;"></div>
+                    <div class="col-lg" id="chartuv" style="height:300px;"></div>
+                </div>
+                <div class="col-lg" id="chartwd" style="height:300px;"></div>
+            </div>
+        }
+        @Html.Partial("_Stats", Model)
+    </div>
+@cnt total records

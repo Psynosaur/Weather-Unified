@@ -5,7 +5,6 @@
     string url = Context.Request.Path;
     var cnt = Model.Select(x => true).Count();
     var latest = Model.LastOrDefault();
-    string niks = "--";
     // Sets nth record to use for plotting
     int nStep = 17;
     var graph = Model.Where((x, i) => i % nStep == 0);
@@ -22,37 +21,47 @@
 }
 @if (latest != null)
 {
-    <div class="row">
-        <div class="offset-lg-9 col-lg-3">
-            Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@latest.ObsTime.ToLocalTime().ToString("yyyy-MM-dd")">
-        </div>
-    </div>
     <div class="containerx col-lg-12 col-md-12 col-sm-12 ">
-
         <div class="row">
-            <div class="offset-lg-4 col-12">
+            <div class="offset-lg-9 col-lg-3">
+                Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@latest.ObsTime.ToLocalTime().ToString("yyyy-MM-dd")">
+            </div>
+            <div class="col-12" style="text-align: center">
                 <h2>@latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy") Stats</h2>
             </div>
         </div>
-        @Html.Partial("_stats", Model)
+
+
+        <div class="row">
+            @Html.Partial("_Stats", Model)
+            @if (cnt > 0)
+            {
+                <div class="col-lg" id="graph">
+                    <div class="row">
+                        <div class="col-lg-6" id="chartemp" style="height:300px;"></div>
+                        <div class="col-lg-6" id="chartminmax" style="height:300px;"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6" id="charthum" style="height:300px;"></div>
+                        <div class="col-lg-6" id="chartpressure" style="height:300px;"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6" id="chartwind" style="height:300px;"></div>
+                        <div class="col-lg-6" id="chartrain" style="height:300px;"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6" id="chartsolar" style="height:300px;"></div>
+                        <div class="col-lg-6" id="chartuv" style="height:300px;"></div>
+                    </div>
+                    <div class="col-lg" id="chartwd" style="height:300px;"></div>
+                </div>
+            }
+           @Html.Partial("_DateSummary", Model)
+        </div>
+        <span>
+            @cnt total records
+        </span>
     </div>
-    <div class="row">
-        @if (cnt > 0)
-        {
-            <div class="col-md-6" id="chartemp" style="height:300px;"></div>
-            <div class="col-md-6" id="chartminmax" style="height:300px;"></div>
-            <div class="col-md-6" id="charthum" style="height:300px;"></div>
-            <div class="col-md-6" id="chartpressure" style="height:300px;"></div>
-            <div class="col-md-6" id="chartwind" style="height:300px;"></div>
-            <div class="col-md-6" id="chartrain" style="height:300px;"></div>
-            <div class="col-md-6" id="chartsolar" style="height:300px;"></div>
-            <div class="col-md-6" id="chartuv" style="height:300px;"></div>
-            <div class="col-md-12" id="chartwd" style="height:300px;"></div>
-        }
-    </div>
-    <span>
-        @cnt total records 
-    </span>
 }
 else
 {
