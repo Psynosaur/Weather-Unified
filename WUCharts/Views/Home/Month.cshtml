@@ -3,7 +3,6 @@
 @{
     var cnt = Model.Select(x => true).Count();
     var latest = Model.Last();
-    string niks = "--";
     // Sets nth record to use for plotting
     int nStep = 527;
     var graph = Model.Where((x, i) => i % nStep == 0);
