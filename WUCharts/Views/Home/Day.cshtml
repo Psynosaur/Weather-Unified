@@ -12,14 +12,9 @@
             c.WindGust10 *= 3.6;
             return c;
         });
-
-    int nStepRain = 100;
-    var graphrain = Model.Where((x, i) => i % nStepRain == 0);
-
-
-    //ViewData["Title"] = "Temp Past Hour : " + DateTime.Now.ToString("f");
+    // int nStepRain = 100;
+    // var graphrain = Model.Where((x, i) => i % nStepRain == 0);
 }
-
 
 <div class="containerx col-lg-12 col-md-12 col-sm-12 ">
     <div class="row">
@@ -32,18 +27,11 @@
     @Html.Partial("_DoubleGraph", Model)
 </div>
 
-
 <script src="//www.amcharts.com/lib/4/core.js"></script>
 <script src="//www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
 <script type="text/javascript">
     var hrs = 1;
     var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph2));
-    // var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    // if (isMobile) {
-    //  $("#first").appendTo("#second");
-    //  $('#YourID').css('display', 'none')
-    // }
-    
 </script>
 <script type="text/javascript" src="~/js/amcharts.js"></script>

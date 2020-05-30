@@ -2,18 +2,6 @@
 
 @{
     var latest = Model.Last();
-
-    var windObj = new
-    {
-        currWind = latest.WindSpeedCur * 3.6,
-        currGust = latest.WindGust10 * 3.6,
-        maxWind = Model.Select(x => x.WindSpeedCur).ToList().Max() * 3.6,
-        minWind = Model.Select(x => x.WindSpeedCur).ToList().Min() * 3.6,
-        avgWind = Model.Select(x => x.WindSpeedCur).ToList().Average() * 3.6,
-        maxGust = Model.Select(x => x.WindGust10).ToList().Max() * 3.6,
-        minGust = Model.Select(x => x.WindGust10).ToList().Min() * 3.6,
-        avgGust = Model.Select(x => x.WindGust10).ToList().Average() * 3.6,
-    };
 }
 
 
