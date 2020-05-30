@@ -6,10 +6,12 @@ body {
     background-color: #30303d;
     color: #fff;
 }
+
 .datepicker {
-    background-color: #fff ;
-    color: #333 ;
+    background-color: #fff;
+    color: #333;
 }
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
@@ -31,8 +33,20 @@ body {
 /* QR code generator */
 #qrCode {
     margin: 15px;
+} 
+
+#second, #first{
+    background-color: #343A40;
+    height: fit-content;
+}
+.card .col-lg-4 .col-sm-3{
+    background-color: #343A40;
+    height: fit-content;
 }
 
+#second .list-group-item, #first .list-group-item ,.list-group-item, .card{
+    background-color: #343A40;
+}
 
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 900px) {
@@ -40,19 +54,24 @@ body {
     .carousel-caption {
         display: none;
     }
-    .containerx{
-        display:flex;
+
+    .containerx {
+        display: flex;
         flex-flow: column;
     }
-    #first{
+
+    #first {
         order: 1;
     }
-    #second{
+
+    #second {
         order: 2;
     }
-    #graph{
-        order: 3;
+    #middle {
+        order : 3;
     }
+   
+
     /*.containerx{*/
     /*    width:100%!important;*/
     /*    float:left;*/
@@ -65,22 +84,32 @@ body {
 /*.containerx .col-lg-4 table {*/
 /*     width:-webkit-fill-available;*/
 /* }*/
-tr td:nth-of-type(2){
+tr td:nth-of-type(2) {
     text-align: center;
 }
+
 td, th {
     border: 1px solid transparent; /* No more visible border */
     height: 30px;
-    transition: all 0.3s;  /* Simple transition for hover effect */
+    transition: all 0.3s; /* Simple transition for hover effect */
     width: 10%;
 }
+
 /* Cells in even rows (2,4,6...) are one color */
-tr:nth-child(even) td { background: rgba(48,48,61,0.86); }
+tr:nth-child(even) td {
+    background: rgba(48, 48, 61, 0.86);
+}
 
 /* Cells in odd rows (1,3,5...) are another (excludes header cells)  */
-tr:nth-child(odd) td { background: rgba(67,67,81,0.86); }
+tr:nth-child(odd) td {
+    background: rgba(67, 67, 81, 0.86);
+}
 
-tr td:hover { background: #1e28a2; color: #FFF; }
+tr td:hover {
+    background: #1e28a2;
+    color: #FFF;
+}
+
 /* Hover cell effect! */
 
 /*#chartemp {*/

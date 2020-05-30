@@ -15,29 +15,14 @@
         avgGust = Model.Select(x => x.WindGust10).ToList().Average() * 3.6,
     };
 }
-<div class="col-lg-2 col-sm" id="second">
-    <h3 style="text-align: center">Summary</h3>
-    <table>
-        <tr>
-            <th>
-                <strong>Rain</strong>
-            </th>
-        </tr>
-        <tr>
-            <td>RainTotal Day</td>
-            <td>@latest.RainDay mm</td>
-        </tr>
-        <tr>
-            <td>RainTotal Previous Day</td>
-            <td>@latest.RainYest mm</td>
-        </tr>
-        <tr>
-            <td>RainTotal Month</td>
-            <td>@latest.RainMonth mm</td>
-        </tr>
-        <tr>
-            <td>RainTotal Year</td>
-            <td>@latest.RainYear mm</td>
-        </tr>
-    </table>
+
+
+<div class="card col-lg-2 col-sm-2" id="second">
+    <div class="card-header " style="text-align: center"><strong>Rain</strong></div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">Total Day<span style="float:right;">@latest.RainDay mm</span></li>
+        <li class="list-group-item">Total Previous Day<span style="float:right;">@latest.RainYest mm</span></li>
+        <li class="list-group-item">Total Month<span style="float:right;">@latest.RainMonth mm</span></li>
+        <li class="list-group-item">Total Year<span style="float:right;">@latest.RainYear mm</span></li>
+    </ul>
 </div>

@@ -1,0 +1,45 @@
+@model List<WURequest.Models.Observations>
+
+@{
+    var latest = Model.Last();
+
+    var windObj = new
+    {
+        currWind = latest.WindSpeedCur * 3.6,
+        currGust = latest.WindGust10 * 3.6,
+        maxWind = Model.Select(x => x.WindSpeedCur).ToList().Max() * 3.6,
+        minWind = Model.Select(x => x.WindSpeedCur).ToList().Min() * 3.6,
+        avgWind = Model.Select(x => x.WindSpeedCur).ToList().Average() * 3.6,
+        maxGust = Model.Select(x => x.WindGust10).ToList().Max() * 3.6,
+        minGust = Model.Select(x => x.WindGust10).ToList().Min() * 3.6,
+        avgGust = Model.Select(x => x.WindGust10).ToList().Average() * 3.6,
+    };
+}
+
+<div class="card col-lg-4 col-sm-3">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item" style="text-align: center">
+            <strong>Solar</strong>
+        </li>
+        <li class="list-group-item">Solar Radiation<span style="float:right;">@latest.SolarRad W/m²</span></li>
+        <li class="list-group-item">UV index<span style="float:right;">@latest.UV</span></li>
+    </ul>
+</div>
+<div class="card col-lg-4 col-sm-3">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item" style="text-align: center">
+            <strong>Indoor</strong>
+        </li>
+        <li class="list-group-item">Temp / Humidity<span style="float:right;">@latest.TempInCur&#176C / @latest.HumInCur%</span></li>
+        <li class="list-group-item">Pressure<span style="float:right;">@latest.PressCur hPa</span></li>
+    </ul>
+</div>
+<div class="card col-lg-4 col-sm-3">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item" style="text-align: center">
+            <strong>Rain</strong>
+        </li>
+        <li class="list-group-item">Total Day / Yesterday<span style="float:right;">@latest.RainDay mm / @latest.RainYest mm</span></li>
+        <li class="list-group-item">Total Month / Year<span style="float:right;">@latest.RainMonth mm / @latest.RainYear mm</span></li>
+    </ul>
+</div>

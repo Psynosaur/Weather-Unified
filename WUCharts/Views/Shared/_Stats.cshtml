@@ -26,23 +26,15 @@
     statsObj.Add(new KeyValuePair<string, string>("Pressure Max", Model.Select(x => x.PressCur).ToList().Max().ToString("0.#") + " hPa"));
 }
 
-<div class="col-lg-2 col-sm" id="second">
-     <h3 style="text-align: center">Statistics</h3>
-    <table>
-        <thead>
-        <tr>
-            <th>Stats</th>
-            <th>Values</th>
-        </tr>
-        </thead>
-        <tbody>
+
+<div class="card col-lg-2 col-sm-2" id="first">
+    <div class="card-header " style="text-align: center"><strong>Summary</strong></div>
+    <ul class="list-group list-group-flush">
         @foreach (var k in statsObj)
         {
-            <tr>
-                <td>@k.Key</td>
-                <td>@k.Value</td>
-            </tr>
+            <li class="list-group-item">
+                @k.Key<span style="float:right;">@k.Value</span>
+            </li>
         }
-        </tbody>
-    </table>
+    </ul>
 </div>

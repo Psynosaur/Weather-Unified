@@ -34,19 +34,23 @@
         @Html.Partial("_CurrentConditions", Model)
         @if (cnt > 0)
         {
-            <div class="col-lg" id="graph">
-                <div class="col-lg" id="chartemp" style="height:300px;"></div>
-                <div class="col-lg" id="chartminmax" style="height:300px;"></div>
-                <div class="col-lg" id="charthum" style="height:300px;"></div>
-                <div class="col-lg" id="chartpressure" style="height:300px;"></div>
-                <div class="col-lg" id="chartwind" style="height:300px;"></div>
-                <div class="col-lg" id="chartrain" style="height:300px;"></div>
-                <div class="col-lg" id="chartsolar" style="height:300px;"></div>
-                <div class="col-lg" id="chartuv" style="height:300px;"></div>
-                <div class="col-lg" id="chartwd" style="height:300px;"></div>
+            <div class="row col-lg" id="middle">
+                @Html.Partial("_TopBar", Model)
+                <div class="col-lg-12" id="graph">
+                    <div class="col-lg" id="chartemp" style="height:300px;"></div>
+                    <div class="col-lg" id="chartminmax" style="height:300px;"></div>
+                    <div class="col-lg" id="charthum" style="height:300px;"></div>
+                    <div class="col-lg" id="chartpressure" style="height:300px;"></div>
+                    <div class="col-lg" id="chartwind" style="height:300px;"></div>
+                    <div class="col-lg" id="chartrain" style="height:300px;"></div>
+                    <div class="col-lg" id="chartsolar" style="height:300px;"></div>
+                    <div class="col-lg" id="chartuv" style="height:300px;"></div>
+                    <div class="col-lg" id="chartwd" style="height:300px;"></div>
+                </div>
             </div>
         }
         @Html.Partial("_Stats", Model)
+
     </div>
 </div>
 <div class="row" style="text-align: center">

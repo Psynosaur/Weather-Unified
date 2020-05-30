@@ -11,21 +11,21 @@ var h = hrs;
 var temp = am4core.create("chartemp", am4charts.XYChart);
 temp.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
 var labelTemp = temp.chartContainer.createChild(am4core.Label);
-labelTemp.text = "Temp °C";
+labelTemp.text = "Outdoor & Indoor Temp °C";
 labelTemp.align = "center";
 
 // Create TminMax chart instance
 var tminmax = am4core.create("chartminmax", am4charts.XYChart);
 tminmax.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
 var labelTemp = tminmax.chartContainer.createChild(am4core.Label);
-labelTemp.text = "Temp Min/Max °C";
+labelTemp.text = "Outdoor Temp Min/Max °C";
 labelTemp.align = "center";
 
 // Create humidity chart instance
 var hum = am4core.create("charthum", am4charts.XYChart);
 hum.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
 var labelHum = hum.chartContainer.createChild(am4core.Label);
-labelHum.text = "Humidity %";
+labelHum.text = "Outdoor & Indoor Humidity %";
 labelHum.align = "center";
 
 // Create wind chart instance
@@ -47,7 +47,7 @@ labelRain.align = "center";
 var pressure = am4core.create("chartpressure", am4charts.XYChart);
 pressure.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
 var labelPressure = pressure.chartContainer.createChild(am4core.Label);
-labelPressure.text = "Pressure";
+labelPressure.text = "Indoor Pressure";
 labelPressure.align = "center";
 
 // Create Solar chart instance
