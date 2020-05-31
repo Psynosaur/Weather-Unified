@@ -1,0 +1,18 @@
+<script type="text/javascript">
+                $(function(){
+                        var stDate = new Date(2019, 6, 20);
+                        $('.datepicker')
+                            .datepicker({
+                                dateFormat: 'yy-mm-dd',
+                                minDate: stDate,
+                                maxDate: new Date(),
+                                onSelect: function (date) {
+                                  window.location = '/home/date/' + date;
+                                  }
+                            });        
+                        });
+</script>
+<script src="//www.amcharts.com/lib/4/core.js"></script>
+<script src="//www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
+<script type="text/javascript" src="~/js/amcharts.js"></script>

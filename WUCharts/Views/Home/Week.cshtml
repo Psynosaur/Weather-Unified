@@ -2,7 +2,7 @@
 @model List<WURequest.Models.Observations>
 @{
     var cnt = Model.Select(x => true).Count();
-    var latest = Model.Last();
+    var latest = Model.LastOrDefault();
     // Sets nth record to use for plotting
     int nStep = 100;
     var graph = Model.Where((x, i) => i % nStep == 0);
@@ -17,25 +17,24 @@
     int nStepRain = 100;
     var graphrain = Model.Where((x, i) => i % nStepRain == 0);
 }
-
-
 <div class="containerx col-lg-12 col-md-12 col-sm-12 ">
-    <div class="row">
-        <div class="col-12" style="text-align: center">
-            <h2>Weekly Stats</h2>
-            <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy - HH:mm:ss zzz")
+    @if (latest != null)
+    {
+        <div class="row">
+            <div class="col-12" style="text-align: center">
+                <h2>Weekly Stats</h2>
+                <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy - HH:mm:ss zzz")
+            </div>
         </div>
-    </div>
-    @Html.Partial("_DoubleGraph", Model)
-    
+        @await Html.PartialAsync("_DoubleGraph", Model)
+        <script type="text/javascript">
+            var hrs = 2;
+            var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph2));
+        </script>
+        @await Html.PartialAsync("_scripts", Model)
+    }
+    else
+    {
+        @await Html.PartialAsync("_error")
+    }
 </div>
-
-
-<script src="//www.amcharts.com/lib/4/core.js"></script>
-<script src="//www.amcharts.com/lib/4/charts.js"></script>
-<script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
-<script type="text/javascript">
-    var hrs = 2;
-    var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph2));
-</script>
-<script type="text/javascript" src="~/js/amcharts.js"></script>

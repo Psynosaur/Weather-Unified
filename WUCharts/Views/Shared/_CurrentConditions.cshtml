@@ -16,19 +16,19 @@
     };
 }
 
-<div class="card col-lg-2 col-sm-2" id="first">
+<div class="card col-lg-2 col-sm-12" id="first">
     <div class="card-header " style="text-align: center"><strong>Current Conditions</strong></div>
     <ul class="list-group list-group-flush">
         <li class="list-group-item" style="text-align: center"><strong>Outdoor</strong></li>
-        <li class="list-group-item">Temp<span style="float:right;">@latest.TempOutCur&#176C</span></li>
-        <li class="list-group-item">Temp Min<span style="float:right;">@latest.Tmin&#176C</span></li>
-        <li class="list-group-item">Temp Max<span style="float:right;">@latest.Tmax&#176C</span></li>
+        <li class="list-group-item">Temp<span style="float:right;">@latest.TempOutCur &#176C</span></li>
+        <li class="list-group-item">Temp Min<span style="float:right;">@latest.Tmin &#176C</span></li>
+        <li class="list-group-item">Temp Max<span style="float:right;">@latest.Tmax &#176C</span></li>
         <li class="list-group-item">Humidity<span style="float:right;">@latest.HumOutCur%</span></li>
-        <li class="list-group-item">Dew Point<span style="float:right;">@latest.DewCur&#176C</span></li>
+        <li class="list-group-item">Dew Point<span style="float:right;">@latest.DewCur &#176C</span></li>
         <li class="list-group-item" style="text-align: center"><strong>Wind</strong></li>
         <li class="list-group-item">Direction<span style="float:right;">@latest.WindDirCur&#176 / @latest.WindDirCurEng</span></li>
         <li class="list-group-item">Direction Avg<span style="float:right;">@latest.WindDirAvg10&#176 / @latest.WindDirAvg10Eng</span></li>
-        <li class="list-group-item">Chill<span style="float:right;">@latest.WindChillCur&#176</span></li>
+        <li class="list-group-item">Chill<span style="float:right;">@latest.WindChillCur &#176C</span></li>
         <li class="list-group-item">Speed Current<span style="float:right;">@latest.WindSpeedCur m/s / @(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
         <li class="list-group-item">Speed Average<span style="float:right;">@latest.WindAvgSpeedCur m/s / @(windObj.avgWind > 0 ? windObj.avgWind.ToString("0.00") : "0") km/h</span></li>
         <li class="list-group-item">Speed Gust<span style="float:right;">@latest.WindGust10 m/s / @(windObj.maxGust > 0 ? windObj.maxGust.ToString("0.00") : "0") km/h</span></li>

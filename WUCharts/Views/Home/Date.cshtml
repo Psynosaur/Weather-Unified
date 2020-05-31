@@ -19,9 +19,9 @@
     // int nStepRain = 100;
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);
 }
-@if (latest != null)
-{
-    <div class="containerx col-lg-12 col-md-12 col-sm-12 ">
+<div class="containerx col-lg-12 col-md-12 col-sm-12 ">
+    @if (latest != null)
+    {
         <div class="row">
             <div class="offset-lg-9 col-lg-3">
                 Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@latest.ObsTime.ToLocalTime().ToString("yyyy-MM-dd")">
@@ -31,9 +31,8 @@
             </div>
         </div>
 
-
         <div class="row">
-            @Html.Partial("_Stats", Model)
+            @await Html.PartialAsync("_Stats", Model)
             @if (cnt > 0)
             {
                 <div class="col-lg" id="graph">
@@ -56,46 +55,30 @@
                     <div class="col-lg" id="chartwd" style="height:300px;"></div>
                 </div>
             }
-           @Html.Partial("_DateSummary", Model)
+
+            @await Html.PartialAsync("_DateSummary", Model)
         </div>
         <div class="row" style="text-align: center">
             <div class="col-lg">
-                 @cnt total records
+                @cnt total records
             </div>
         </div>
-    </div>
-}
-else
-{
-    <div class="row">
-        <div class="offset-lg-9 col-lg-3">
-            Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@url.Substring(url.Length - 10)">
+        
+        <script type="text/javascript">
+            var hrs = 1;
+            var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph2));
+        </script>
+       
+        @await Html.PartialAsync("_scripts", Model)
+    }
+    else
+    {
+        <div class="row">
+            <div class="offset-lg-9 col-lg-3">
+                Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@url.Substring(url.Length - 10)">
+            </div>
         </div>
-    </div>
-    <h3>Unfortunately my time machine doesn't have these files on record</h3>
-}
-
-
-<script src="//www.amcharts.com/lib/4/core.js"></script>
-<script src="//www.amcharts.com/lib/4/charts.js"></script>
-<script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
-<script type="text/javascript">
-    var hrs = 1;
-    var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph2));
-</script>
-<script type="text/javascript">
-$(function(){
-        var stDate = new Date(2019, 6, 20);
-        $('.datepicker')
-            .datepicker({
-                dateFormat: 'yy-mm-dd',
-                minDate: stDate,
-                maxDate: new Date(),
-                onSelect: function (date) {
-                  window.location = '/home/date/' + date;
-                  }
-            });        
-        });
-
-</script>
-<script type="text/javascript" src="~/js/amcharts.js"></script>
+        @await Html.PartialAsync("_error")
+        @await Html.PartialAsync("_scripts", Model)
+    }
+</div>

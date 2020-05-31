@@ -1,7 +1,7 @@
 ﻿@using Newtonsoft.Json
 @model List<WURequest.Models.Observations>
 @{
-    var latest = Model.Last();
+    var latest = Model.LastOrDefault();
     var graph = Model
         .Select(c =>
         {
@@ -13,24 +13,24 @@
     var rainHour = Model.Any() ? Model.Select(x => x.RainDay).Last() - Model.Select(x => x.RainDay).First() : 0;
     //ViewData["Title"] = "Temp Past Hour : " + DateTime.Now.ToString("f");
 }
-
 <div class="containerx col-lg-12 col-md-12 col-sm-12">
-    <div class="row">
+    @if (latest != null)
+    {
+        <div class="row">
             <div class="col-12" style="text-align: center">
                 <h2>Hourly Stats</h2>
                 <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy - HH:mm:ss zzz")
             </div>
         </div>
-    
         @Html.Partial("_DoubleGraph", Model)
+        <script type="text/javascript">
+             var hrs = 0;
+             var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph));
+        </script>
+        @Html.Partial("_scripts")
+    }
+    else
+    {
+        @Html.Partial("_error")
+    }
 </div>
-
-
-<script src="//www.amcharts.com/lib/4/core.js"></script>
-<script src="//www.amcharts.com/lib/4/charts.js"></script>
-<script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
-<script type="text/javascript">
-    var hrs = 0;
-    var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph));
-</script>
-<script type="text/javascript" src="~/js/amcharts.js"></script>

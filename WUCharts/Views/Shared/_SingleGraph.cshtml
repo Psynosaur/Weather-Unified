@@ -4,8 +4,8 @@
 }
 
 <div class="row">
-        @Html.Partial("_CurrentConditions", Model)
-        @if (cnt > 0)
+    @await Html.PartialAsync("_CurrentConditions", Model)
+    @if (cnt > 0)
         {
             <div class="col-lg" id="graph">
                 <div class="row">
@@ -27,6 +27,7 @@
                 <div class="col-lg" id="chartwd" style="height:300px;"></div>
             </div>
         }
-        @Html.Partial("_Stats", Model)
-    </div>
+
+    @await Html.PartialAsync("_Stats", Model)
+</div>
 @cnt total records

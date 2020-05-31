@@ -4,11 +4,11 @@
 }
 
 <div class="row">
-    @Html.Partial("_CurrentConditions", Model)
+    @await Html.PartialAsync("_CurrentConditions", Model)
     @if (cnt > 0)
     {
-        <div class="row col-lg col-sm" id="middle">
-            @Html.Partial("_TopBar", Model)
+        <div class="row col-lg col-sm-12" id="middle">
+            @await Html.PartialAsync("_TopBar", Model)
             <div class="col-lg-12">
                 <div class="row">
                     <div class="col-lg-6" id="chartemp" style="height:300px;"></div>
@@ -30,7 +30,8 @@
             </div>
         </div>
     }
-    @Html.Partial("_Stats", Model)
+
+    @await Html.PartialAsync("_Stats", Model)
 </div>
 
 <div class="row" style="text-align: center">

@@ -47,7 +47,9 @@ body {
 #second .list-group-item, #first .list-group-item ,.list-group-item, .card{
     background-color: #343A40;
 }
-
+.containerx > h3{
+    text-align: center;
+}
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 900px) {
     /* Hide captions */
@@ -69,6 +71,10 @@ body {
     }
     #middle {
         order : 3;
+        width: auto;
+    }
+    .topbar{
+        /* pew*/
     }
    
 

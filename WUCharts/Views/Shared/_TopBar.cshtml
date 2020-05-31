@@ -4,7 +4,7 @@
     var latest = Model.Last();
 }
 
-<div class="card col-lg-4 col-sm-3">
+<div class="card col-lg-4 col-sm-4 topbar">
     <ul class="list-group list-group-flush">
         <li class="list-group-item" style="text-align: center">
             <strong>Solar</strong>
@@ -13,7 +13,7 @@
         <li class="list-group-item">UV index<span style="float:right;">@latest.UV</span></li>
     </ul>
 </div>
-<div class="card col-lg-4 col-sm-3">
+<div class="card col-lg-4 col-sm-4 topbar">
     <ul class="list-group list-group-flush">
         <li class="list-group-item" style="text-align: center">
             <strong>Indoor</strong>
@@ -22,12 +22,12 @@
         <li class="list-group-item">Pressure<span style="float:right;">@latest.PressCur hPa</span></li>
     </ul>
 </div>
-<div class="card col-lg-4 col-sm-3">
+<div class="card col-lg-4 col-sm-4 topbar">
     <ul class="list-group list-group-flush">
         <li class="list-group-item" style="text-align: center">
             <strong>Rain</strong>
         </li>
-        <li class="list-group-item">Total Day / Yesterday<span style="float:right;">@latest.RainDay mm / @latest.RainYest mm</span></li>
-        <li class="list-group-item">Total Month / Year<span style="float:right;">@latest.RainMonth mm / @latest.RainYear mm</span></li>
+        <li class="list-group-item">Day / Yesterday<span style="float:right;">@latest.RainDay / @latest.RainYest mm</span></li>
+        <li class="list-group-item">Month / Year<span style="float:right;">@latest.RainMonth / @latest.RainYear mm</span></li>
     </ul>
 </div>
