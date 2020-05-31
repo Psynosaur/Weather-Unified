@@ -22,15 +22,15 @@
                 <strong>Date Time :</strong> @latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy - HH:mm:ss zzz")
             </div>
         </div>
-        @Html.Partial("_DoubleGraph", Model)
+        @await Html.PartialAsync("_DoubleGraph", Model)
         <script type="text/javascript">
              var hrs = 0;
              var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph));
         </script>
-        @Html.Partial("_scripts")
+        @await Html.PartialAsync("_scripts")
     }
     else
     {
-        @Html.Partial("_error")
+        @await Html.PartialAsync("_error")
     }
 </div>
