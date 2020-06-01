@@ -6,17 +6,17 @@
     var windObj = new
     {
         currWind = latest.WindSpeedCur * 3.6,
-        currGust = latest.WindGust10 * 3.6,
-        maxWind = Model.Select(x => x.WindSpeedCur).ToList().Max() * 3.6,
-        minWind = Model.Select(x => x.WindSpeedCur).ToList().Min() * 3.6,
+        // currGust = latest.WindGust10 * 3.6,
+        // maxWind = Model.Select(x => x.WindSpeedCur).ToList().Max() * 3.6,
+        // minWind = Model.Select(x => x.WindSpeedCur).ToList().Min() * 3.6,
         avgWind = Model.Select(x => x.WindSpeedCur).ToList().Average() * 3.6,
         maxGust = Model.Select(x => x.WindGust10).ToList().Max() * 3.6,
-        minGust = Model.Select(x => x.WindGust10).ToList().Min() * 3.6,
-        avgGust = Model.Select(x => x.WindGust10).ToList().Average() * 3.6,
+        // minGust = Model.Select(x => x.WindGust10).ToList().Min() * 3.6,
+        // avgGust = Model.Select(x => x.WindGust10).ToList().Average() * 3.6,
     };
 }
 
-<div class="card border-secondary col-lg-2 col-sm-12" id="first">
+<div class="card border-secondary  col-lg-2 col-sm-12" id="first">
     <div class="card-header " style="text-align: center"><strong>Current Conditions</strong></div>
     <ul class="list-group list-group-flush">
         <li class="list-group-item" style="text-align: center"><strong>Outdoor</strong></li>
@@ -29,8 +29,9 @@
         <li class="list-group-item">Direction<span style="float:right;">@latest.WindDirCur&#176 / @latest.WindDirCurEng</span></li>
         <li class="list-group-item">Direction Avg<span style="float:right;">@latest.WindDirAvg10&#176 / @latest.WindDirAvg10Eng</span></li>
         <li class="list-group-item">Chill<span style="float:right;">@latest.WindChillCur &#176C</span></li>
-        <li class="list-group-item">Speed Current<span style="float:right;">@latest.WindSpeedCur m/s / @(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
-        <li class="list-group-item">Speed Average<span style="float:right;">@latest.WindAvgSpeedCur m/s / @(windObj.avgWind > 0 ? windObj.avgWind.ToString("0.00") : "0") km/h</span></li>
-        <li class="list-group-item">Speed Gust<span style="float:right;">@latest.WindGust10 m/s / @(windObj.maxGust > 0 ? windObj.maxGust.ToString("0.00") : "0") km/h</span></li>
+        <li class="list-group-item" style="text-align: center"><strong>Wind Speed</strong></li>
+        <li class="list-group-item">Current<span style="float:right;">@latest.WindSpeedCur m/s / @(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
+        <li class="list-group-item">Average<span style="float:right;">@latest.WindAvgSpeedCur m/s / @(windObj.avgWind > 0 ? windObj.avgWind.ToString("0.00") : "0") km/h</span></li>
+        <li class="list-group-item">Gust<span style="float:right;">@latest.WindGust10 m/s / @(windObj.maxGust > 0 ? windObj.maxGust.ToString("0.00") : "0") km/h</span></li>
     </ul>
 </div>

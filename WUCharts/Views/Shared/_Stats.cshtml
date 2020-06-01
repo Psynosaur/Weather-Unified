@@ -1,3 +1,4 @@
+@using System.Text.RegularExpressions
 @model List<WURequest.Models.Observations>
 
 @{
@@ -27,13 +28,20 @@
 }
 
 <div class="card border-secondary col-lg-2 col-sm-12" id="first">
-    <div class="card-header " style="text-align: center"><strong>Summary</strong></div>
+    <div class="card-header " style="text-align: center">
+        <strong>Summary</strong>
+    </div>
     <ul class="list-group list-group-flush">
         @foreach (var k in statsObj)
         {
-            <li class="list-group-item">
-                @k.Key<span style="float:right;">@k.Value</span>
-            </li>
+            // Do not display a line for information that is zero
+            var match = Regex.Match(k.Value, @"\d*\,?\d+");
+            if (Convert.ToDouble(match.Groups[0].Value) > 0)
+            {
+                <li class="list-group-item">
+                    @k.Key<span style="float:right;">@k.Value</span>
+                </li>
+            }
         }
     </ul>
 </div>
