@@ -151,10 +151,6 @@ body {
     margin: 15px;
 } 
 
-#second, #first{
-    background-color: #343A40;
-    height: fit-content;
-}
 .card .col-lg-4 .col-sm-3, .card{
     background-color: #343A40;
     height: fit-content;

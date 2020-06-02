@@ -23,17 +23,35 @@
             <strong>@Model.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")</strong>
         </div>
     </div>
-    <div class="row" id="second">
-        <div class="card border-secondary col-lg-4 col-sm-4">
+    <div class="row">
+        <div class="card border-secondary col-lg-3 col-sm-12" id="first">
+            <div class="card-header " style="text-align: center">
+                <strong>Current Conditions</strong>
+            </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item" style="text-align: center">
-                    <strong>Solar</strong>
+                    <strong>Outdoor</strong>
                 </li>
-                <li class="list-group-item">Solar Radiation<span style="float:right;">@Model.SolarRad W/m²</span></li>
-                <li class="list-group-item">UV index<span style="float:right;">@Model.UV</span></li>
+                <li class="list-group-item">Temp<span style="float:right;">@Model.TempOutCur &#176C</span></li>
+                <li class="list-group-item">Temp Min<span style="float:right;">@Model.Tmin &#176C</span></li>
+                <li class="list-group-item">Temp Max<span style="float:right;">@Model.Tmax &#176C</span></li>
+                <li class="list-group-item">Humidity<span style="float:right;">@Model.HumOutCur%</span></li>
+                <li class="list-group-item">Dew Point<span style="float:right;">@Model.DewCur &#176C</span></li>
+                <li class="list-group-item" style="text-align: center">
+                    <strong>Wind</strong>
+                </li>
+                <li class="list-group-item">Direction<span style="float:right;">@Model.WindDirCur&#176 / @Model.WindDirCurEng</span></li>
+                <li class="list-group-item">Direction Avg<span style="float:right;">@Model.WindDirAvg10&#176 / @Model.WindDirAvg10Eng</span></li>
+                <li class="list-group-item">Chill<span style="float:right;">@Model.WindChillCur &#176C</span></li>
+                <li class="list-group-item" style="text-align: center">
+                    <strong>Wind Speed</strong>
+                </li>
+                <li class="list-group-item">Current<span style="float:right;">@Model.WindSpeedCur m/s / @(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
+                <li class="list-group-item">Average<span style="float:right;">@Model.WindAvgSpeedCur m/s / @(windObj.avgWind > 0 ? windObj.avgWind.ToString("0.00") : "0") km/h</span></li>
+                <li class="list-group-item">Gust<span style="float:right;">@Model.WindGust10 m/s / @(windObj.maxGust > 0 ? windObj.maxGust.ToString("0.00") : "0") km/h</span></li>
             </ul>
         </div>
-        <div class="card border-secondary col-lg-4 col-sm-4">
+        <div class="card border-secondary col-lg-3 col-sm-4" id="second">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item" style="text-align: center">
                     <strong>Indoor</strong>
@@ -42,7 +60,7 @@
                 <li class="list-group-item">Pressure<span style="float:right;">@Model.PressCur hPa</span></li>
             </ul>
         </div>
-        <div class="card border-secondary col-lg-4 col-sm-4">
+        <div class="card border-secondary col-lg-3 col-sm-4" id="second">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item" style="text-align: center">
                     <strong>Rain</strong>
@@ -51,35 +69,17 @@
                 <li class="list-group-item">Month / Year<span style="float:right;">@Model.RainMonth / @Model.RainYear mm</span></li>
             </ul>
         </div>
+        <div class="card border-secondary col-lg-3 col-sm-4" id="second">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item" style="text-align: center">
+                    <strong>Solar</strong>
+                </li>
+                <li class="list-group-item">Solar Radiation<span style="float:right;">@Model.SolarRad W/m²</span></li>
+                <li class="list-group-item">UV index<span style="float:right;">@Model.UV</span></li>
+            </ul>
+        </div>
+
 
     </div >
-    <div class="row">
-        <div class="card border-secondary mx-auto col-lg-4 col-sm-12" id="first">
-                    <div class="card-header " style="text-align: center">
-                        <strong>Current Conditions</strong>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item" style="text-align: center">
-                            <strong>Outdoor</strong>
-                        </li>
-                        <li class="list-group-item">Temp<span style="float:right;">@Model.TempOutCur &#176C</span></li>
-                        <li class="list-group-item">Temp Min<span style="float:right;">@Model.Tmin &#176C</span></li>
-                        <li class="list-group-item">Temp Max<span style="float:right;">@Model.Tmax &#176C</span></li>
-                        <li class="list-group-item">Humidity<span style="float:right;">@Model.HumOutCur%</span></li>
-                        <li class="list-group-item">Dew Point<span style="float:right;">@Model.DewCur &#176C</span></li>
-                        <li class="list-group-item" style="text-align: center">
-                            <strong>Wind</strong>
-                        </li>
-                        <li class="list-group-item">Direction<span style="float:right;">@Model.WindDirCur&#176 / @Model.WindDirCurEng</span></li>
-                        <li class="list-group-item">Direction Avg<span style="float:right;">@Model.WindDirAvg10&#176 / @Model.WindDirAvg10Eng</span></li>
-                        <li class="list-group-item">Chill<span style="float:right;">@Model.WindChillCur &#176C</span></li>
-                        <li class="list-group-item" style="text-align: center">
-                            <strong>Wind Speed</strong>
-                        </li>
-                        <li class="list-group-item">Current<span style="float:right;">@Model.WindSpeedCur m/s / @(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
-                        <li class="list-group-item">Average<span style="float:right;">@Model.WindAvgSpeedCur m/s / @(windObj.avgWind > 0 ? windObj.avgWind.ToString("0.00") : "0") km/h</span></li>
-                        <li class="list-group-item">Gust<span style="float:right;">@Model.WindGust10 m/s / @(windObj.maxGust > 0 ? windObj.maxGust.ToString("0.00") : "0") km/h</span></li>
-                    </ul>
-                </div>
-    </div>
+
 </div>

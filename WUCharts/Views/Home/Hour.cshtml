@@ -11,7 +11,6 @@
         });
 
     var rainHour = Model.Any() ? Model.Select(x => x.RainDay).Last() - Model.Select(x => x.RainDay).First() : 0;
-    //ViewData["Title"] = "Temp Past Hour : " + DateTime.Now.ToString("f");
 }
 <div class="containerx col-lg-12 col-md-12 col-sm-12">
     @if (latest != null)

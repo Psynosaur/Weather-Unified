@@ -25,12 +25,12 @@ namespace WURequest.Services
         }
 
         //Finds all the observations for a time frame(hourly,daily and weekly) based on DateTime object comparisons
-        public List<Observations> Hourly()
+        public List<Observations> Hourly(int hour)
         {
-            var tm = DateTime.UtcNow;
-            var hm = new DateTime(tm.Year, tm.Month, tm.Day, tm.Hour, 0, 0, DateTimeKind.Utc);
+            var tm = DateTime.Now;
+            var hm = new DateTime(tm.Year, tm.Month, tm.Day, hour, 0, 0, DateTimeKind.Local);
             var obsersvations = _observation.Find(
-                x => x.ObsTime > hm).ToList();
+                x => x.ObsTime > hm && x.ObsTime < hm.AddHours(1)).ToList();
             return obsersvations;
         }
         public List<ChartObs> HObs()
@@ -89,7 +89,7 @@ namespace WURequest.Services
         }
 
         public List<Observations> Gets() =>
-            // This was the method to get a date range when the DateTime object in WeatherDb was a string and not ISODate() 
+            // This was the method to get a date range when the DateTime object in WeatherDb as a string and not ISODate() 
             _observation.Find("{ \"DateTime\" :{ \"$gte\" : \"2019-07-21 13:00\", \"$lt\" : \"2019-07-21 13:10\"}}")
                 .Limit(10).ToList();
 

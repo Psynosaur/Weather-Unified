@@ -32,7 +32,7 @@ namespace WURequest.Controllers
         {
             /*
              This is the Meteobridge TEST string copy from
-             <<<<<<<There all the way to the last "}" then paste 
+             <<<<<<<There all the way to the last "}" then paste into HTTP GET input in meteobridge
              https://localhost:5001/api/weather/Mb?data=
              {
                 %22DateTime%22:%2019-07-20T13:04:21.000%2B00:00%22,
