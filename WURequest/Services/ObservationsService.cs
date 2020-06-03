@@ -25,10 +25,10 @@ namespace WURequest.Services
         }
 
         //Finds all the observations for a time frame(hourly,daily and weekly) based on DateTime object comparisons
-        public List<Observations> Hourly(int hour)
+        public List<Observations> Hourly(int id)
         {
             var tm = DateTime.Now;
-            var hm = new DateTime(tm.Year, tm.Month, tm.Day, hour, 0, 0, DateTimeKind.Local);
+            var hm = new DateTime(tm.Year, tm.Month, tm.Day, id, 0, 0, DateTimeKind.Local);
             var obsersvations = _observation.Find(
                 x => x.ObsTime > hm && x.ObsTime < hm.AddHours(1)).ToList();
             return obsersvations;

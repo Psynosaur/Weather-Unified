@@ -51,10 +51,12 @@ namespace WUCharts.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
        
-        public IActionResult Hour(int id = 0)
+        public IActionResult Hour(int ?id = null)
         {    
-            if (id == 0) id = DateTime.Now.Hour;
-            var model = _observationsService.Hourly(id);
+            bool nulled = String.IsNullOrEmpty(id.ToString());
+            if (nulled) id = DateTime.Now.Hour;
+            int hour = id ?? 0;
+            var model = _observationsService.Hourly(hour);
             return View(model);
         }
 

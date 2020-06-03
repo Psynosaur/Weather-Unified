@@ -1,0 +1,23 @@
+<script type="text/javascript">
+    let loaded = false;
+             $(document).ready(function(){
+                 $('.timepicker').timepicker({
+                      timeFormat: 'HH:mm',
+                      interval: 60,
+                      minTime: '0',
+                      maxTime: lh.toString(),
+                      defaultTime: lh.toString(),
+                      startTime: '0',
+                      dynamic: false,
+                      dropdown: true,
+                      scrollbar: true,
+                      change: function (time) {
+                          if(loaded){
+                              window.location = '/Home/Hour/' + time.getHours();
+                          }
+                          loaded = true;
+                          }
+                      })
+                                               
+             });
+</script>
