@@ -34,9 +34,9 @@
         @await Html.PartialAsync("_DoubleGraph", Model)
     </div>
     <script type="text/javascript">
-            let hrs = 1;
-            let modeldata = @Html.Raw(JsonConvert.SerializeObject(graph2));
-            let lh = @lastestHour;
+            var hrs = 1;
+            var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph2));
+            var lh = @lastestHour;
     </script>
     @await Html.PartialAsync("_timepicker")
     @await Html.PartialAsync("_scripts", Model)

@@ -295,6 +295,8 @@ switch(h) {
         categoryAxisSolar.dateFormats.setKey("second", "HH:mm");
 }
 var valueAxisSolar = solar.yAxes.push(new am4charts.ValueAxis());
+valueAxisSolar.min = 0;
+valueAxisSolar.strictMinMax = true;
 
 // Create UV axes
 var categoryAxisUV = uv.xAxes.push(new am4charts.DateAxis());
@@ -325,6 +327,8 @@ switch(h) {
         categoryAxisUV.dateFormats.setKey("second", "HH:mm");
 }
 var valueAxisUV = uv.yAxes.push(new am4charts.ValueAxis());
+valueAxisUV.min = 0;
+valueAxisUV.strictMinMax = true;
 
 // Create WindDir axes
 var categoryAxisWD = wd.xAxes.push(new am4charts.DateAxis());

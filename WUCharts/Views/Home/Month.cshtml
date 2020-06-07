@@ -65,7 +65,7 @@
             var hrs = 2;
             var pew = @nStep;
             var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph2));
-            console.log(pew);
+            // console.log("Step Size : " + pew);
         </script>
         @await Html.PartialAsync("_scripts", Model)
     }

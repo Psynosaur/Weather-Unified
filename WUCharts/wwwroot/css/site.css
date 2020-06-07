@@ -198,5 +198,8 @@ body {
     /*    text-align:center;*/
     /*}*/
 }
-
+.timepicker{
+    border-radius: 5px;
+    width: 7rem;
+}
 

@@ -2,7 +2,7 @@
 
 @{
     var latest = Model.Last();
-
+    var cnt = Model.Select(x => true).Count();
     var windObj = new
     {
         currWind = latest.WindSpeedCur * 3.6,
@@ -14,24 +14,100 @@
         // minGust = Model.Select(x => x.WindGust10).ToList().Min() * 3.6,
         // avgGust = Model.Select(x => x.WindGust10).ToList().Average() * 3.6,
     };
+    double sd = 0.0;
+    string cloudyness = "";
+    DateTime sunrise = new DateTime();
+    DateTime sunlightLatest = new DateTime();
+    DateTime sunset = new DateTime();
+    bool isSet = false;
+    TimeSpan duration = new TimeSpan();
+    @if (latest != null)
+    {
+        bool sun = Model.Any(x => x.SolarRad > 0);
+        if (sun)
+        {
+            var daylight = Model.Where(x => x.SolarRad > 0).ToList();
+            sunrise = daylight.Select(x => x.ObsTime).FirstOrDefault();
+            sunlightLatest = daylight.Select(x => x.ObsTime).LastOrDefault();
+            duration = sunlightLatest.Subtract(sunrise);
+            var query = daylight.Select(x => x.SolarRad);
+            IEnumerable<double> sunlight = query.ToList();
+            double avg = sunlight.Average();
+            double sumOfSquaresOfDifferences = sunlight.ToList().Select(val => (val - avg) * (val - avg)).Sum();
+            sd = Math.Sqrt(sumOfSquaresOfDifferences / sunlight.Count());
+        }
+        if (sun && (int)latest.SolarRad == 0 && sunlightLatest < latest.ObsTime)
+        {
+            sunset = sunlightLatest;
+            isSet = true;
+        }
+        if (sd >= 150 && sd <= 200)
+        {
+            cloudyness = "Party Cloudy Day";
+        }
+        if (sd >= 100 && sd <= 150)
+        {
+            cloudyness = "Cloudy Day";
+        }
+        if (sd >= 200)
+        {
+            cloudyness = "Sunny Day";
+        }
+        if (sd <= 100)
+        {
+            cloudyness = "Very Cloudy Day";
+        }
+    }
+    double halfdisk = 0.26667;
+    //var atmosRefrac = (0.83333);//0.34' for Refraction plus 0.16' for Half Disk (Alternate calculation)
+    // https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml -> get mag declination
+    double magDeclinaion = 23.2;
+    double lat = 33.864577;
+    var declin = (magDeclinaion * Math.PI / 180);
+    var numday = latest.ObsTime.DayOfYear;
+    var elevat = declin * Math.Sin(Math.PI * 2 / 365 * (284 + numday)) / (Math.PI * 2) * 360 - (90 - lat);
+    var secs = 1 / 3600;
+    var radh = elevat * Math.PI / 180;
+    var tanradh = Math.Tan(radh);
+    var atmosRefrac = secs * (58.1 / tanradh - 0.07 / Math.Pow(tanradh, 3) + 0.000086 / Math.Pow(tanradh, 5));
+    var finalEle = -(Math.Round(10 * (elevat + atmosRefrac + halfdisk)) / 10);
+   
 }
 
 <div class="card border-secondary  col-lg-2 col-sm-12" id="first">
-    <div class="card-header " style="text-align: center"><strong>Current Conditions</strong></div>
+    <div class="card-header " style="text-align: center">
+        <strong>Current Conditions</strong>
+    </div>
     <ul class="list-group list-group-flush">
-        <li class="list-group-item" style="text-align: center"><strong>Outdoor</strong></li>
+        <li class="list-group-item" style="text-align: center">
+            <strong>Outdoor</strong>
+        </li>
         <li class="list-group-item">Temp<span style="float:right;">@latest.TempOutCur &#176C</span></li>
         <li class="list-group-item">Temp Min<span style="float:right;">@latest.Tmin &#176C</span></li>
         <li class="list-group-item">Temp Max<span style="float:right;">@latest.Tmax &#176C</span></li>
         <li class="list-group-item">Humidity<span style="float:right;">@latest.HumOutCur%</span></li>
         <li class="list-group-item">Dew Point<span style="float:right;">@latest.DewCur &#176C</span></li>
-        <li class="list-group-item" style="text-align: center"><strong>Wind</strong></li>
+        <li class="list-group-item" style="text-align: center">
+            <strong>Wind</strong>
+        </li>
         <li class="list-group-item">Direction<span style="float:right;">@latest.WindDirCur&#176 / @latest.WindDirCurEng</span></li>
         <li class="list-group-item">Direction Avg<span style="float:right;">@latest.WindDirAvg10&#176 / @latest.WindDirAvg10Eng</span></li>
         <li class="list-group-item">Chill<span style="float:right;">@latest.WindChillCur &#176C</span></li>
-        <li class="list-group-item" style="text-align: center"><strong>Wind Speed</strong></li>
+        <li class="list-group-item" style="text-align: center">
+            <strong>Wind Speed</strong>
+        </li>
         <li class="list-group-item">Current<span style="float:right;">@latest.WindSpeedCur m/s / @(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
         <li class="list-group-item">Average<span style="float:right;">@latest.WindAvgSpeedCur m/s / @(windObj.avgWind > 0 ? windObj.avgWind.ToString("0.00") : "0") km/h</span></li>
         <li class="list-group-item">Gust<span style="float:right;">@latest.WindGust10 m/s / @(windObj.maxGust > 0 ? windObj.maxGust.ToString("0.00") : "0") km/h</span></li>
+        @if (duration.Seconds > 0 && cnt < 5005 && cnt > 210)
+        {
+            <li class="list-group-item" style="text-align: center">
+                <strong>Sunlight</strong>
+            </li>
+            <li class="list-group-item">Sunrise<span style="float:right;">@sunrise.ToLocalTime().ToString("HH:mm")</span></li>
+            @if(isSet){<li class="list-group-item">Sunset<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>}                                                                                          
+            <li class="list-group-item">Daytime<span style="float:right;">@duration.ToString("g")</span></li>
+            <li class="list-group-item">Max Solar Elevation<span style="float:right;">@finalEle°</span></li>
+        }
     </ul>
 </div>

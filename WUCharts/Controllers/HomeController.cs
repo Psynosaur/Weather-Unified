@@ -53,11 +53,20 @@ namespace WUCharts.Controllers
        
         public IActionResult Hour(int ?id = null)
         {    
-            bool nulled = String.IsNullOrEmpty(id.ToString());
-            if (nulled) id = DateTime.Now.Hour;
-            int hour = id ?? 0;
-            var model = _observationsService.Hourly(hour);
-            return View(model);
+            if (id <= 24 && id >= 0 || id == null)
+            {
+                bool nulled = String.IsNullOrEmpty(id.ToString());
+                if (nulled) id = DateTime.Now.Hour;
+                int hour = id ?? 0;
+                var model = _observationsService.Hourly(hour);
+                return View(model);
+            }
+            else
+            {
+                var model = _observationsService.Hourly(0);
+                return View(model);
+            }
+            
         }
 
         public IActionResult Day()

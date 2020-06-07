@@ -15,7 +15,38 @@
             c.WindGust10 *= 3.6;
             return c;
         });
-
+    double sd = 0.0;
+    string cloudyness = "";
+   
+    @if (latest != null)
+    {
+        if (Model.Any(x => x.SolarRad > 0))
+        {
+            var daylight = Model.Where(x => x.SolarRad > 0).ToList();
+            var query = daylight.Select(x => x.SolarRad);
+            IEnumerable<double> sunlight = query.ToList();
+            double avg = sunlight.Average();
+            double sumOfSquaresOfDifferences = sunlight.ToList().Select(val => (val - avg) * (val - avg)).Sum();
+            sd = Math.Sqrt(sumOfSquaresOfDifferences / sunlight.Count());
+        }
+        if (sd >= 125 && sd <= 200)
+        {
+            cloudyness = "Party Cloudy Day";
+        }
+        if (sd >= 100 && sd <= 125)
+        {
+            cloudyness = "Cloudy Day";
+        }
+        if (sd >= 200)
+        {
+            cloudyness = "Sunny Day";
+        }
+        if (sd <= 100)
+        {
+            cloudyness = "Very Cloudy Day";
+        }
+        
+    }
     // int nStepRain = 100;
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);
 }
@@ -28,6 +59,9 @@
             </div>
             <div class="col-12" style="text-align: center">
                 <h2>@latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy")</h2>
+            </div>
+            <div class="col-12" style="text-align: center">
+                <h3>@cloudyness</h3>
             </div>
         </div>
 
@@ -63,12 +97,14 @@
                 @cnt total records
             </div>
         </div>
-        
+
         <script type="text/javascript">
             var hrs = 1;
             var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph2));
+            var std = '@sd';
+            console.log("Std Deviation Solar : " + std);
         </script>
-       
+
         @await Html.PartialAsync("_scripts", Model)
     }
     else
