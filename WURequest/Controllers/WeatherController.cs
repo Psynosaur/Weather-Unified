@@ -107,7 +107,7 @@ namespace WURequest.Controllers
                             using (StreamWriter outputFile =
                                 new StreamWriter(Path.Combine(webRootPath + "/logs/wudata11.txt"), append: true))
                             {
-                                await outputFile.WriteAsync(responseBody);
+                                await outputFile.WriteAsync(responseBody).ConfigureAwait(false);
                             }
                             JObject jObj = JObject.Parse(responseBody);
                             string some = jObj["observations"][0].ToString();

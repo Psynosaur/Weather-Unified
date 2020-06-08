@@ -1,7 +1,4 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
-for details on configuring this project to bundle and minify static web assets. */
-body {
-    /*padding-top: 50px;*/
+﻿body {
     padding-bottom: 20px;
     background-color: #30303d;
     color: #fff;
@@ -11,13 +8,12 @@ body {
     background-color: #fff;
     color: #333;
 }
+
 .ui-datepicker {
     width: 250px;
     height: 250px;
     margin: 5px auto 0;
     font: 12pt Arial, sans-serif;
-    /*-webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);
-    -moz-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);*/
 }
 
 .ui-datepicker table {
@@ -27,7 +23,7 @@ body {
 .ui-datepicker-header {
     background: #30303d;
     color: #ffffff;
-    font-family:'Arial';
+    font-family: 'Arial';
     border-width: 1px 0 0 0;
     border-style: solid;
     border-color: #111;
@@ -58,7 +54,7 @@ body {
 }
 
 .ui-datepicker th {
-    background-color:#808080;
+    background-color: #808080;
     text-transform: uppercase;
     font-size: 8pt;
     color: #666666;
@@ -101,9 +97,9 @@ body {
 
 .ui-datepicker-calendar .ui-state-default {
     background: linear-gradient(#999999, #737373);
-    color:#ffffff;
-    height:40px;
-    width:40px;
+    color: #ffffff;
+    height: 40px;
+    width: 40px;
 
 }
 
@@ -128,6 +124,7 @@ body {
     background: #D6E4BE;
     color: #000;
 }
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
@@ -149,19 +146,21 @@ body {
 /* QR code generator */
 #qrCode {
     margin: 15px;
-} 
+}
 
-.card .col-lg-4 .col-sm-3, .card{
+.card .col-lg-4 .col-sm-3, .card {
     background-color: #343A40;
     height: fit-content;
 }
 
-#second .list-group-item, #first .list-group-item ,.list-group-item, .card{
+#second .list-group-item, #first .list-group-item, .list-group-item, .card {
     background-color: #343A40;
 }
-.containerx h3{
+
+.containerx h3 {
     text-align: center;
 }
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 900px) {
     /* Hide captions */
@@ -181,24 +180,18 @@ body {
     #second {
         order: 2;
     }
+
     #middle {
-        order : 3;
+        order: 3;
         width: auto;
     }
-    .topbar{
+
+    .topbar {
         /* pew*/
     }
-   
-
-    /*.containerx{*/
-    /*    width:100%!important;*/
-    /*    float:left;*/
-    /*    clear:both;*/
-    /*    display:block;*/
-    /*    text-align:center;*/
-    /*}*/
 }
-.timepicker{
+
+.timepicker {
     border-radius: 5px;
     width: 7rem;
 }
