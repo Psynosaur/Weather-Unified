@@ -62,8 +62,8 @@
     
 </div>
 <script>
-        var rise = '@sunrise';
-        var set = '@sunset';
+        var rise = '@sunrise.ToLocalTime()';
+        var set = '@sunset.ToLocalTime';
         var light = '@duration';
         console.log("Sunrise : " + rise);
         console.log("Sunset : " + set);

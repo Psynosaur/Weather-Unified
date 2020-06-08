@@ -56,7 +56,6 @@ namespace WURequest.Services
         }
         public List<Observations> Date(string date)
         {
-            // var tm = DateTime.Now;
             DateTime tm = DateTime.ParseExact(date, "yyyy-MM-dd",
                 System.Globalization.CultureInfo.InvariantCulture);
             var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
@@ -70,7 +69,6 @@ namespace WURequest.Services
 
         public List<Observations> Weekly()
         {
-//            var weekstart = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Saturday);
             var tm = DateTime.UtcNow;
             var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
             var weekstart = hm.AddDays(-6);
@@ -87,23 +85,16 @@ namespace WURequest.Services
                 x => x.ObsTime > hm).ToList();
             return obsersvations;
         }
-
-        public List<Observations> Gets() =>
-            // This was the method to get a date range when the DateTime object in WeatherDb as a string and not ISODate() 
-            _observation.Find("{ \"DateTime\" :{ \"$gte\" : \"2019-07-21 13:00\", \"$lt\" : \"2019-07-21 13:10\"}}")
-                .Limit(10).ToList();
-
-        //_observation.Find(Observation => true).Sort("{DateTime: -1}").Limit(10).ToList();
-        //_observation.Find(x => x.TempOutCur == 13.0).ToList();
+        
         public List<Observations> Latest() =>
             _observation
-                .Find(Observation => true)
+                .Find(observation => true)
                 .Sort("{DateTime: -1}")
                 .Limit(1)
                 .ToList();
 
         public Observations Get(string id) =>
-            _observation.Find(Observation => Observation.Id == id).FirstOrDefault();
+            _observation.Find(observation => observation.Id == id).FirstOrDefault();
 
         public Observations Create(Observations observations)
         {
@@ -112,12 +103,12 @@ namespace WURequest.Services
         }
 
         public void Update(string id, Observations observationsIn) =>
-            _observation.ReplaceOne(Observation => Observation.Id == id, observationsIn);
+            _observation.ReplaceOne(observation => observation.Id == id, observationsIn);
 
         public void Remove(Observations observationsIn) =>
-            _observation.DeleteOne(Observation => Observation.Id == observationsIn.Id);
+            _observation.DeleteOne(observation => observation.Id == observationsIn.Id);
 
         public void Remove(string id) =>
-            _observation.DeleteOne(Observation => Observation.Id == id);
+            _observation.DeleteOne(observation => observation.Id == id);
     }
 }

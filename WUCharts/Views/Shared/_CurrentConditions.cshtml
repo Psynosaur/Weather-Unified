@@ -21,7 +21,7 @@
     DateTime sunset = new DateTime();
     bool isSet = false;
     TimeSpan duration = new TimeSpan();
-    @if (latest != null)
+    if (latest != null)
     {
         bool sun = Model.Any(x => x.SolarRad > 0);
         if (sun)

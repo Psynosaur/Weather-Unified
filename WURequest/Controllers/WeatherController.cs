@@ -70,7 +70,6 @@ namespace WURequest.Controllers
                     _observationsService.Create(json.ToObject<Observations>());
                     return "DATA OK";
                 }
-
                 return "DATA BAD";
             }
             catch (Exception ex)
@@ -125,7 +124,7 @@ namespace WURequest.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                
                 throw;
             }
         }
@@ -161,15 +160,5 @@ namespace WURequest.Controllers
         }
     }
 }
-
-// GET api/values
-//
-//File Out
-//string webRootPath = _hostingEnvironment.WebRootPath;
-//using (StreamWriter outputFile = new StreamWriter(Path.Combine(webRootPath + "/logs/wudata11.txt"), append: true))
-//{
-//    //await outputFile.WriteAsync(responseBody);
-//    await outputFile.WriteLineAsync(str);
-//}
 
 
