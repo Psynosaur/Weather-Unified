@@ -573,3 +573,59 @@ var bullet2 = seriesWindDirAvg.bullets.push(new am4charts.CircleBullet());
 bullet2.circle.radius = 1;
 
 wd.cursor = new am4charts.XYCursor();
+
+/* Create windrose instance */
+var chart = am4core.create("windrose", am4charts.RadarChart);
+
+/* Create axes */
+var xAxis = chart.xAxes.push(new am4charts.ValueAxis());
+xAxis.renderer.maxLabelPosition = 0.99;
+xAxis.min = 0;
+xAxis.max = 360;
+xAxis.renderer.minGridDistance = 40;
+xAxis.strictMinMax = true;
+
+var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+yAxis.renderer.labels.template.verticalCenter = "bottom";
+yAxis.renderer.labels.template.horizontalCenter = "right";
+yAxis.renderer.maxLabelPosition = 0.99;
+yAxis.renderer.labels.template.paddingBottom = 1;
+yAxis.renderer.labels.template.paddingRight = 3;
+
+/* Create and configure series */
+var series1 = chart.series.push(new am4charts.RadarSeries());
+series1.bullets.push(new am4charts.CircleBullet());
+series1.strokeOpacity = 0;
+series1.dataFields.valueX = "WindDirCur";
+series1.dataFields.valueY = "WindSpeedCur";
+series1.name = "Wind Speed";
+series1.sequencedInterpolation = true;
+series1.sequencedInterpolationDelay = 10;
+series1.data = data;
+series1.stroke = am4core.color("#5043ff");
+series1.fill = am4core.color("#43fff9");
+// series1.tooltipText = "{WindDirCur}° / {WindSpeedCur} km/h";
+// series1.showTooltipOn = "hover";
+series1.tooltipPosition = "pointer";
+
+
+var series2 = chart.series.push(new am4charts.RadarSeries());
+series2.bullets.push(new am4charts.CircleBullet());
+series2.strokeOpacity = 0;
+series2.dataFields.valueX = "WindDirAvg10";
+series2.dataFields.valueY = "WindGust10";
+series2.name = "Wind Gust";
+series2.sequencedInterpolation = true;
+series2.sequencedInterpolationDelay = 10;
+series2.data = data;
+series2.stroke = am4core.color("#5043ff");
+series2.fill = am4core.color("rgba(255,67,105,0.91)");
+series2.tooltipText = "{WindDirAvg10}° / {WindGust10} km/h";
+
+
+/* Add legend */
+chart.legend = new am4charts.Legend();
+
+/* Add cursor */
+
+chart.cursor = new am4charts.RadarCursor();
