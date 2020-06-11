@@ -203,3 +203,9 @@
 #ui-datepicker-div{
     display: none;
 }
+.topbar {
+   max-height: 10rem;
+}
+/*#graph{*/
+/*    margin-top: -10rem;*/
+/*}*/

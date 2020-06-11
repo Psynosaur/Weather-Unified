@@ -68,11 +68,11 @@ am4core.ready(function() {
     labelUV.align = "center";
 
     // Create winddir chart instance
-    // var wd = am4core.create("chartwd", am4charts.XYChart);
-    // wd.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-    // var labelWD = wd.chartContainer.createChild(am4core.Label);
-    // labelWD.text = "Wind Direction";
-    // labelWD.align = "center";
+    var wd = am4core.create("chartwd", am4charts.XYChart);
+    wd.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+    var labelWD = wd.chartContainer.createChild(am4core.Label);
+    labelWD.text = "Wind Direction";
+    labelWD.align = "center";
     // var labelWD2 = wd.yAxes.push(new am4charts.ValueAxis());
     // labelWD2.title.text = "N";
     // labelWD2.renderer.opposite = true;
@@ -86,7 +86,7 @@ am4core.ready(function() {
     pressure.data = objdat;
     solar.data = objdat;
     uv.data = objdat;
-    // wd.data = data;
+    wd.data = objdat;
 
     // Create temp axes
     var categoryAxisTemp = temp.xAxes.push(new am4charts.DateAxis());
@@ -334,38 +334,38 @@ am4core.ready(function() {
     valueAxisUV.strictMinMax = true;
 
     // Create WindDir axes
-    // var categoryAxisWD = wd.xAxes.push(new am4charts.DateAxis());
-    // categoryAxisWD.renderer.grid.template.location = 0;
-    // categoryAxisWD.renderer.minGridDistance = 60;
-    // categoryAxisWD.baseInterval = {
-    //     "timeUnit": "minute"
-    // };
-    // switch (h) {
-    //     case 1:
-    //         categoryAxisWD.baseInterval = {
-    //             "timeUnit": "minute"
-    //         };
-    //         categoryAxisWD.dateFormats.setKey("minute", "HH:mm");
-    //         break;
-    //     case 2:
-    //         categoryAxisWD.baseInterval = {
-    //             "timeUnit": "minute"
-    //             // "count" : 30
-    //         };
-    //         categoryAxisWD.dateFormats.setKey("minute", "dd-MM HH:mm");
-    //         break;
-    //     default:
-    //         categoryAxisWD.baseInterval = {
-    //             "timeUnit": "second"
-    //             // "count" : 15
-    //         };
-    //         categoryAxisWD.dateFormats.setKey("second", "HH:mm");
-    // }
-    // var valueAxisWD = wd.yAxes.push(new am4charts.ValueAxis());
-    // valueAxisWD.min = 0;
-    // valueAxisWD.max = 360;
-    // valueAxisWD.renderer.minGridDistance = 12.3;
-    // valueAxisWD.strictMinMax = true;
+    var categoryAxisWD = wd.xAxes.push(new am4charts.DateAxis());
+    categoryAxisWD.renderer.grid.template.location = 0;
+    categoryAxisWD.renderer.minGridDistance = 60;
+    categoryAxisWD.baseInterval = {
+        "timeUnit": "minute"
+    };
+    switch (h) {
+        case 1:
+            categoryAxisWD.baseInterval = {
+                "timeUnit": "minute"
+            };
+            categoryAxisWD.dateFormats.setKey("minute", "HH:mm");
+            break;
+        case 2:
+            categoryAxisWD.baseInterval = {
+                "timeUnit": "minute"
+                // "count" : 30
+            };
+            categoryAxisWD.dateFormats.setKey("minute", "dd-MM HH:mm");
+            break;
+        default:
+            categoryAxisWD.baseInterval = {
+                "timeUnit": "second"
+                // "count" : 15
+            };
+            categoryAxisWD.dateFormats.setKey("second", "HH:mm");
+    }
+    var valueAxisWD = wd.yAxes.push(new am4charts.ValueAxis());
+    valueAxisWD.min = 0;
+    valueAxisWD.max = 360;
+    valueAxisWD.renderer.minGridDistance = 12.3;
+    valueAxisWD.strictMinMax = true;
 
     // Create temp series
     var seriesTemp = temp.series.push(new am4charts.LineSeries());
@@ -556,39 +556,39 @@ am4core.ready(function() {
     uv.cursor = new am4charts.XYCursor();
 
     // Create windir series
-    // var seriesWindDir = wd.series.push(new am4charts.LineSeries());
-    // seriesWindDir.dataFields.valueY = "WindDirCur";
-    // seriesWindDir.dataFields.dateX = "DateTime";
-    // seriesWindDir.tooltipText = "{WindDirCur}° / {WindDirCurEng} current";
-    // seriesWindDir.strokeWidth = 1;
-    // seriesWindDir.stroke = am4core.color("#7fdfff");
-    // seriesWindDir.tooltip.getFillFromObject = false;
-    // seriesWindDir.tooltip.background.fill = am4core.color("#7fdfff");
-    // seriesWindDir.tooltip.label.fill = am4core.color("#000");
-    // seriesWindDir.tensionY = 1;
-    // seriesWindDir.tensionX = 0.8;
-    // seriesWindDir.connect = false;
-    //
-    // var bullet1 = seriesWindDir.bullets.push(new am4charts.CircleBullet());
-    // bullet1.circle.radius = 1;
-    //
-    //
-    // var seriesWindDirAvg = wd.series.push(new am4charts.LineSeries());
-    // seriesWindDirAvg.dataFields.valueY = "WindDirAvg10";
-    // seriesWindDirAvg.dataFields.dateX = "DateTime";
-    // seriesWindDirAvg.tooltipText = "{WindDirAvg10}° / {WindDirAvg10Eng} average";
-    // seriesWindDirAvg.strokeWidth = 1;
-    // seriesWindDirAvg.stroke = am4core.color("#dafaff");
-    // seriesWindDirAvg.tooltip.getFillFromObject = false;
-    // seriesWindDirAvg.tooltip.background.fill = am4core.color("#dafaff");
-    // seriesWindDirAvg.tooltip.label.fill = am4core.color("#000");
-    // seriesWindDirAvg.tensionY = 1;
-    // seriesWindDirAvg.tensionX = 0.8;
-    // seriesWindDirAvg.connect = false;
-    // var bullet2 = seriesWindDirAvg.bullets.push(new am4charts.CircleBullet());
-    // bullet2.circle.radius = 1;
-    //
-    // wd.cursor = new am4charts.XYCursor();
+    var seriesWindDir = wd.series.push(new am4charts.LineSeries());
+    seriesWindDir.dataFields.valueY = "WindDirCur";
+    seriesWindDir.dataFields.dateX = "ObsTime";
+    seriesWindDir.tooltipText = "{WindDirCur}° / {WindDirCurEng} current";
+    seriesWindDir.strokeWidth = 1;
+    seriesWindDir.stroke = am4core.color("#7fdfff");
+    seriesWindDir.tooltip.getFillFromObject = false;
+    seriesWindDir.tooltip.background.fill = am4core.color("#7fdfff");
+    seriesWindDir.tooltip.label.fill = am4core.color("#000");
+    seriesWindDir.tensionY = 1;
+    seriesWindDir.tensionX = 0.8;
+    seriesWindDir.connect = false;
+
+    var bullet1 = seriesWindDir.bullets.push(new am4core.Circle());
+    bullet1.radius = 1;
+
+
+    var seriesWindDirAvg = wd.series.push(new am4charts.LineSeries());
+    seriesWindDirAvg.dataFields.valueY = "WindDirAvg10";
+    seriesWindDirAvg.dataFields.dateX = "ObsTime";
+    seriesWindDirAvg.tooltipText = "{WindDirAvg10}° / {WindDirAvg10Eng} average";
+    seriesWindDirAvg.strokeWidth = 1;
+    seriesWindDirAvg.stroke = am4core.color("#dafaff");
+    seriesWindDirAvg.tooltip.getFillFromObject = false;
+    seriesWindDirAvg.tooltip.background.fill = am4core.color("#dafaff");
+    seriesWindDirAvg.tooltip.label.fill = am4core.color("#000");
+    seriesWindDirAvg.tensionY = 1;
+    seriesWindDirAvg.tensionX = 0.8;
+    seriesWindDirAvg.connect = false;
+    var bullet2 = seriesWindDirAvg.bullets.push(new am4core.Circle());
+    bullet2.radius = 1;
+
+    wd.cursor = new am4charts.XYCursor();
 
     /* Create windrose instance */
     var windrose = am4core.create("windrose", am4charts.RadarChart);
