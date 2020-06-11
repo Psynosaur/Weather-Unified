@@ -2,13 +2,56 @@
 @model List<WURequest.Models.Observations>
 @{
     var latest = Model.LastOrDefault();
+    var raing = Model.Where(obs => obs.RainRateCur > 0);
     var graph = Model
         .Select(c =>
         {
             c.WindSpeedCur *= 3.6;
             c.WindGust10 *= 3.6;
+            c.WindAvgSpeedCur *= 3.6;
             return c;
         });
+    var observationses = graph.ToList();
+    var obj = observationses.Where(x=>true).Select(o =>
+        new
+        {
+            ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds), 
+            TempOutCur = Convert.ToDecimal(o.TempOutCur),
+            TempInCur = Convert.ToDecimal(o.TempInCur),
+            DewCur = Convert.ToDecimal(o.DewCur),
+            Tmin = Convert.ToDecimal(o.Tmin),
+            Tmax = Convert.ToDecimal(o.Tmax),
+            HumOutCur= Convert.ToInt32(o.HumOutCur),
+            HumInCur =  Convert.ToInt32(o.HumInCur),
+            PressCur = Convert.ToDecimal(o.PressCur),
+            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur),
+            WindDirCur = Convert.ToInt32(o.WindDirCur),
+            WindDirCurEng = o.WindDirCurEng,
+            WindGust10 = Convert.ToDecimal(o.WindGust10),
+            WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
+            WindDirAvg10Eng = o.WindDirAvg10Eng,
+            RainRateCur = Convert.ToDecimal(o.RainRateCur),
+            RainDay = Convert.ToDecimal(o.RainDay),
+            SolarRad = Convert.ToInt32(o.SolarRad),
+            UV = Convert.ToInt32(o.UV)
+        }).ToList();
+    var rainobj = Model.Where(obs => obs.RainRateCur > 0).Select(o =>
+        new
+        {
+            WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
+            WindDirAvg10Eng = o.WindDirAvg10Eng, 
+            RainRateCur = Convert.ToInt32(o.RainRateCur)
+        }).ToList();
+    var windobj = observationses.Where(obs => obs.WindSpeedCur > 0).Select(o =>
+        new
+        {
+            WindDirCur = Convert.ToInt32(o.WindDirCur),
+            WindDirCurEng = o.WindDirCurEng,
+            WindGust10 = Convert.ToInt32(o.WindGust10),
+            WindAvgSpeedCur = Convert.ToInt32(o.WindAvgSpeedCur),
+            WindSpeedCur = Convert.ToInt32(o.WindSpeedCur)
+        }).ToList();
 
     var rainHour = Model.Any() ? Model.Select(x => x.RainDay).Last() - Model.Select(x => x.RainDay).First() : 0;
 }
@@ -24,7 +67,9 @@
         @await Html.PartialAsync("_DoubleGraph", Model)
         <script type="text/javascript">
              var hrs = 0;
-             var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph));
+             var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
+             var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
+             var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
         </script>
         @await Html.PartialAsync("_scripts")
     }

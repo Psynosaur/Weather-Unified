@@ -6,11 +6,12 @@
     var windObj = new
     {
         currWind = latest.WindSpeedCur * 3.6,
-        // currGust = latest.WindGust10 * 3.6,
+        currGust = latest.WindGust10 * 3.6,
+        currWAvg = latest.WindAvgSpeedCur * 3.6,
         // maxWind = Model.Select(x => x.WindSpeedCur).ToList().Max() * 3.6,
         // minWind = Model.Select(x => x.WindSpeedCur).ToList().Min() * 3.6,
-        avgWind = Model.Select(x => x.WindSpeedCur).ToList().Average() * 3.6,
-        maxGust = Model.Select(x => x.WindGust10).ToList().Max() * 3.6,
+        // avgWind = Model.Select(x => x.WindSpeedCur).ToList().Average() * 3.6,
+        // maxGust = Model.Select(x => x.WindGust10).ToList().Max()
         // minGust = Model.Select(x => x.WindGust10).ToList().Min() * 3.6,
         // avgGust = Model.Select(x => x.WindGust10).ToList().Average() * 3.6,
     };
@@ -36,7 +37,7 @@
             double sumOfSquaresOfDifferences = sunlight.ToList().Select(val => (val - avg) * (val - avg)).Sum();
             sd = Math.Sqrt(sumOfSquaresOfDifferences / sunlight.Count());
         }
-        if (sun && (int)latest.SolarRad == 0 && sunlightLatest < latest.ObsTime)
+        if (sun && (int) latest.SolarRad == 0 && sunlightLatest < latest.ObsTime)
         {
             sunset = sunlightLatest;
             isSet = true;
@@ -71,7 +72,7 @@
     var tanradh = Math.Tan(radh);
     var atmosRefrac = secs * (58.1 / tanradh - 0.07 / Math.Pow(tanradh, 3) + 0.000086 / Math.Pow(tanradh, 5));
     var finalEle = -(Math.Round(10 * (elevat + atmosRefrac + halfdisk)) / 10);
-   
+
 }
 
 <div class="card border-secondary  col-lg-2 col-sm-12" id="first">
@@ -97,20 +98,26 @@
             <strong>Wind Speed</strong>
         </li>
         <li class="list-group-item">Current<span style="float:right;">@latest.WindSpeedCur m/s / @(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
-        <li class="list-group-item">Average<span style="float:right;">@latest.WindAvgSpeedCur m/s / @(windObj.avgWind > 0 ? windObj.avgWind.ToString("0.00") : "0") km/h</span></li>
-        <li class="list-group-item">Gust<span style="float:right;">@latest.WindGust10 m/s / @(windObj.maxGust > 0 ? windObj.maxGust.ToString("0.00") : "0") km/h</span></li>
+        <li class="list-group-item">Average<span style="float:right;">@latest.WindAvgSpeedCur m/s / @(windObj.currWAvg > 0 ? windObj.currWAvg.ToString("0.00") : "0") km/h</span></li>
+        <li class="list-group-item">Gust<span style="float:right;">@latest.WindGust10 m/s / @(windObj.currGust > 0 ? windObj.currGust.ToString("0.00") : "0") km/h</span></li>
         @if (duration.Seconds > 0 && cnt < 5005 && cnt > 210)
         {
             <li class="list-group-item" style="text-align: center">
                 <strong>Sunlight</strong>
             </li>
             <li class="list-group-item">Sunrise<span style="float:right;">@sunrise.ToLocalTime().ToString("HH:mm")</span></li>
-            @if(isSet){<li class="list-group-item">Sunset<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>}                                                                                          
+            @if (isSet)
+            {
+                <li class="list-group-item">Sunset<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>
+            }
             <li class="list-group-item">Daytime<span style="float:right;">@duration.ToString("g")</span></li>
             <li class="list-group-item">Max Solar Elevation<span style="float:right;">@finalEle°</span></li>
         }
     </ul>
-     <div class="card-header " style="text-align: center"><strong>Wind Rose</strong></div>
-        <ul class="list-group list-group-flush" id="windrose">
-        </ul>
+    <div class="card-header " style="text-align: center">
+        <strong>Wind Rose</strong>
+    </div>
+    <ul class="list-group list-group-flush" id="windrose">
+    </ul>
+    
 </div>

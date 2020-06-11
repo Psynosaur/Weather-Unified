@@ -7,17 +7,63 @@
     var latest = Model.LastOrDefault();
     // Sets nth record to use for plotting
     int nStep = 17;
+    var raing = Model.Where(obs => obs.RainRateCur > 0);
+    // var obj = offices.Select(p => new {Id = p.Id, Employess = p.Employess.Select(e => new { e.Id })}).ToList();
+
+    
     var graph = Model.Where((x, i) => i % nStep == 0);
     var graph2 = graph
         .Select(c =>
         {
             c.WindSpeedCur *= 3.6;
             c.WindGust10 *= 3.6;
+            c.WindAvgSpeedCur *= 3.6;
             return c;
         });
+    var observationses = graph2.ToList();
+    var obj = observationses.Where(x=>true).Select(o =>
+        new
+        {
+            ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds), 
+            TempOutCur = Convert.ToDecimal(o.TempOutCur),
+            TempInCur = Convert.ToDecimal(o.TempInCur),
+            DewCur = Convert.ToDecimal(o.DewCur),
+            Tmin = Convert.ToDecimal(o.Tmin),
+            Tmax = Convert.ToDecimal(o.Tmax),
+            HumOutCur= Convert.ToInt32(o.HumOutCur),
+            HumInCur =  Convert.ToInt32(o.HumInCur),
+            PressCur = Convert.ToDecimal(o.PressCur),
+            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur),
+            WindDirCur = Convert.ToInt32(o.WindDirCur),
+            WindDirCurEng = o.WindDirCurEng,
+            WindGust10 = Convert.ToDecimal(o.WindGust10),
+            WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
+            WindDirAvg10Eng = o.WindDirAvg10Eng,
+            RainRateCur = Convert.ToDecimal(o.RainRateCur),
+            RainDay = Convert.ToDecimal(o.RainDay),
+            SolarRad = Convert.ToInt32(o.SolarRad),
+            UV = Convert.ToInt32(o.UV)
+        }).ToList();
+    var rainobj = Model.Where(obs => obs.RainRateCur > 0).Select(o =>
+        new
+        {
+            WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
+            WindDirAvg10Eng = o.WindDirAvg10Eng, 
+            RainRateCur = Convert.ToInt32(o.RainRateCur)
+        }).ToList();
+    var windobj = observationses.Where(obs => obs.WindSpeedCur > 0).Select(o =>
+        new
+        {
+            WindDirCur = Convert.ToInt32(o.WindDirCur),
+            WindDirCurEng = o.WindDirCurEng,
+            WindGust10 = Convert.ToInt32(o.WindGust10),
+            WindAvgSpeedCur = Convert.ToInt32(o.WindAvgSpeedCur),
+            WindSpeedCur = Convert.ToInt32(o.WindSpeedCur)
+        }).ToList();
     double sd = 0.0;
     string cloudyness = "";
-   
+
     @if (latest != null)
     {
         if (Model.Any(x => x.SolarRad > 0))
@@ -45,7 +91,6 @@
         {
             cloudyness = "Very Cloudy Day";
         }
-        
     }
     // int nStepRain = 100;
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);
@@ -85,7 +130,6 @@
                         <div class="col-lg-6" id="chartsolar" style="height:300px;"></div>
                         <div class="col-lg-6" id="chartuv" style="height:300px;"></div>
                     </div>
-                    <div class="col-lg" id="chartwd" style="height:300px;"></div>
                 </div>
             }
             @await Html.PartialAsync("_DateSummary", Model)
@@ -97,7 +141,10 @@
         </div>
         <script type="text/javascript">
             var hrs = 1;
-            var modeldata = @Html.Raw(JsonConvert.SerializeObject(graph2));
+            var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
+            var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
+            var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+
             var std = '@sd';
             console.log("Std Deviation Solar : " + std);
         </script>
@@ -114,3 +161,110 @@
         @await Html.PartialAsync("_scripts", Model)
     }
 </div>
+<script type="text/javascript">
+
+                $(function(){
+                        var stDate = new Date(2019, 6, 20);
+                        $('.datepicker')
+                            .datepicker({
+                                dateFormat: 'yy-mm-dd',
+                                minDate: stDate,
+                                maxDate: new Date(),
+                                onSelect: function (date) {
+                                  window.location = '/Home/Date/' + date;
+                                  }
+                            });        
+                        });
+</script>
+@* <style> *@
+@* *@
+@* #chartdiv { *@
+@*   width: 100%; *@
+@*   height: 500px; *@
+@* } *@
+@* *@
+@* </style> *@
+@* <script> *@
+@* am4core.ready(function() { *@
+@* *@
+@* // Themes begin *@
+@* *@
+@* // Themes end *@
+@* *@
+@* /* Create chart instance */ *@
+@* var chart = am4core.create("chartdiv", am4charts.RadarChart); *@
+@* *@
+@* /* Add data */ *@
+@* // chart.data = [ { *@
+@* //   "direction": "N", *@
+@* //   "value": 8 *@
+@* // }, { *@
+@* //      "direction": "NNE", *@
+@* //      "value": 8 *@
+@* //    },{ *@
+@* //   "direction": "NE", *@
+@* //   "value": 9 *@
+@* // },{ *@
+@* //     "direction": "ENE", *@
+@* //     "value": 8 *@
+@* //   }, { *@
+@* //   "direction": "E", *@
+@* //   "value": 4.5 *@
+@* // },{ *@
+@* //     "direction": "ESE", *@
+@* //     "value": 8 *@
+@* //   }, { *@
+@* //   "direction": "SE", *@
+@* //   "value": 3.5 *@
+@* // },{ *@
+@* //     "direction": "SSE", *@
+@* //     "value": 8 *@
+@* //   }, { *@
+@* //   "direction": "S", *@
+@* //   "value": 9.2 *@
+@* // },{ *@
+@* //     "direction": "SSW", *@
+@* //     "value": 8 *@
+@* //   }, { *@
+@* //   "direction": "SW", *@
+@* //   "value": 8.4 *@
+@* // },{ *@
+@* //     "direction": "WSW", *@
+@* //     "value": 8 *@
+@* //   }, { *@
+@* //   "direction": "W", *@
+@* //   "value": 11.1 *@
+@* // },{ *@
+@* //     "direction": "WNW", *@
+@* //     "value": 8 *@
+@* //   }, { *@
+@* //   "direction": "NW", *@
+@* //   "value": 10 *@
+@* // },{ *@
+@* //     "direction": "NNW", *@
+@* //     "value": 8 *@
+@* //   }, ]; *@
+@* *@
+@* chart.data = modeldata; *@
+@* *@
+@* /* Create axes */ *@
+@* var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis()); *@
+@* categoryAxis.dataFields.category = "WindDirCurEng"; *@
+@* *@
+@* var valueAxis = chart.yAxes.push(new am4charts.ValueAxis()); *@
+@* //valueAxis.renderer.gridType = "polygons"; *@
+@* *@
+@* /* Create and configure series */ *@
+@* var series = chart.series.push(new am4charts.RadarSeries()); *@
+@* series.dataFields.valueY = "WindSpeedCur"; *@
+@* series.dataFields.categoryX = "WindDirCurEng"; *@
+@* series.name = "Wind direction"; *@
+@* series.data = modeldata; *@
+@* series.strokeWidth = 3; *@
+@* series.fillOpacity = 0.2; *@
+@* *@
+@* }); // end am4core.ready() *@
+@* </script> *@
+@* *@
+@* <!-- HTML --> *@
+@* <div id="chartdiv"></div> *@

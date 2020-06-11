@@ -18,12 +18,11 @@
             sunlightLatest = daylight.Select(x => x.ObsTime).LastOrDefault();
             duration = sunlightLatest.Subtract(sunrise);
         }
-        if (sun && (int)latest.SolarRad == 0 && sunlightLatest < latest.ObsTime)
+        if (sun && (int) latest.SolarRad == 0 && sunlightLatest < latest.ObsTime)
         {
             sunset = sunlightLatest;
             isSet = true;
         }
-        
     }
     double halfdisk = 0.26667;
     //var atmosRefrac = (0.83333);//0.34' for Refraction plus 0.16' for Half Disk (Alternate calculation)
@@ -42,7 +41,9 @@
 
 
 <div class="card border-secondary col-lg-2 col-sm-12" id="second">
-    <div class="card-header " style="text-align: center"><strong>Rain</strong></div>
+    <div class="card-header " style="text-align: center">
+        <strong>Rain</strong>
+    </div>
     <ul class="list-group list-group-flush">
         <li class="list-group-item">Day<span style="float:right;">@latest.RainDay mm</span></li>
         <li class="list-group-item">Previous Day<span style="float:right;">@latest.RainYest mm</span></li>
@@ -54,15 +55,19 @@
                 <strong>Sunlight</strong>
             </li>
             <li class="list-group-item">Sunrise<span style="float:right;">@sunrise.ToLocalTime().ToString("HH:mm")</span></li>
-            @if(isSet){<li class="list-group-item">Sunset<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>}                                                                                          
+            @if (isSet)
+            {
+                <li class="list-group-item">Sunset<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>
+            }
             <li class="list-group-item">Daytime<span style="float:right;">@duration.ToString("g")</span></li>
             <li class="list-group-item">Max Solar Elevation<span style="float:right;">@finalEle°</span></li>
         }
     </ul>
-    <div class="card-header " style="text-align: center"><strong>Wind Rose</strong></div>
+    <div class="card-header " style="text-align: center">
+        <strong>Wind Rose</strong>
+    </div>
     <ul class="list-group list-group-flush" id="windrose">
     </ul>
-    
 </div>
 <script>
         var rise = '@sunrise.ToLocalTime()';

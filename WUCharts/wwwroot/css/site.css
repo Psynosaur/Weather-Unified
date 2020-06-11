@@ -196,7 +196,10 @@
     width: 7rem;
 }
 
-#windrose {
+#windrose, #rainrose {
     width: 100%;
     height: 500px;
+}
+#ui-datepicker-div{
+    display: none;
 }
