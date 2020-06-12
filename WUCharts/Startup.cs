@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.IO.Compression;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -23,6 +26,22 @@ namespace WUCharts
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+            services.AddResponseCompression(options =>
+            {
+                options.MimeTypes = new string[]{
+                    "text/html",
+                    "text/css",
+                    "application/javascript",
+                    "text/javascript",
+                    "text/json",
+                    "application/json"
+                };
+                options.Providers.Add<GzipCompressionProvider>();
+                
+                options.EnableForHttps = true;
+            });
+          
             services.Configure<ObservationDatabaseSettings>(
                 Configuration.GetSection(nameof(ObservationDatabaseSettings)));
 
@@ -57,10 +76,48 @@ namespace WUCharts
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/home/error");
                 app.UseHsts();
             }
+            app.Use(async (context,next) =>
+            {
+                var url = context.Request.Path.Value;
+                
+                // Does the url contain "home" or "Home"
+                if (url.IndexOf("/home/",StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    var suburl = url.Substring(url.IndexOf("/home/", StringComparison.OrdinalIgnoreCase) + 6);
+                    // rewrite and continue processing
+                    context.Request.Path = "/" + suburl;
+                }
 
+                await next();
+                if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
+                {
+                    string originalPath = context.Request.Path.Value;
+                    context.Items["originalPath"] = originalPath;
+                    context.Request.Path = "/home/error";
+                    await next();
+                }
+            });
+            app.UseRobotsTxt(builder =>
+                builder
+                    .AddSection(section => 
+                        section
+                            .AddComment("Allow All")
+                            .AddUserAgent("*")
+                            .Allow("/")
+                    )
+                    // .AddSection(section => 
+                    //     section
+                    //         .AddComment("Disallow the rest")
+                    //         .AddUserAgent("*")
+                    //         .AddCrawlDelay(TimeSpan.FromSeconds(10))
+                    //         .Disallow("/")
+                    // )
+                    .AddSitemap("https://cptsats.co.za/sitemap.xml")
+            );
+            app.UseResponseCompression();
             app.UseCors(options => options.AllowAnyOrigin());
             app.UseHttpsRedirection();
             app.UseStaticFiles();
