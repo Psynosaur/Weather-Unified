@@ -104,7 +104,7 @@ namespace WUCharts.Controllers
         {
             return View();
         }
-
+        [Route("/error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -152,7 +152,7 @@ namespace WUCharts.Controllers
                 var model = _observationsService.Date(id);
                 return View(model);
             }
-            return Day();
+            return RedirectToAction("Error");
         }
 
         [Route("/week")]

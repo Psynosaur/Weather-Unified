@@ -76,7 +76,7 @@ namespace WUCharts
             }
             else
             {
-                app.UseExceptionHandler("/home/error");
+                app.UseExceptionHandler("/error");
                 app.UseHsts();
             }
             app.Use(async (context,next) =>
@@ -96,7 +96,7 @@ namespace WUCharts
                 {
                     string originalPath = context.Request.Path.Value;
                     context.Items["originalPath"] = originalPath;
-                    context.Request.Path = "/home/error";
+                    context.Request.Path = "/error";
                     await next();
                 }
             });

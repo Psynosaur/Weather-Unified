@@ -338,3 +338,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/WUCharts/wwwroot/robots.txt/
+/WUCharts/wwwroot/lib/
