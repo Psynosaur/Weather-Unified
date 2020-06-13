@@ -45,34 +45,16 @@ namespace WURequest.Models
         public double SolarRad { get; set; }
     }
     
-    public class ChartObs
+    
+    public class RainObs
     {
-
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-        [BsonElement("DateTime")]
-        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
-        [BsonRepresentation(BsonType.DateTime)]
-        [JsonProperty("DateTime")]
-        public DateTime ObsTime { get; set; } 
-        public double TempOutCur { get; set; }
-        public double Tmin { get; set; }
-        public double Tmax { get; set; }
-        public double HumOutCur { get; set; }
-        public double PressCur { get; set; }
-        public double DewCur { get; set; }
-        public double TempInCur { get; set; }
-        public double HumInCur { get; set; }
-        public double WindSpeedCur { get; set; }
-        public double WindAvgSpeedCur { get; set; }
-        public double WindDirCur { get; set; }
-        public double WindGust10 { get; set; }
-        public double WindDirAvg10 { get; set; }
-        public double RainRateCur { get; set; }
-        public double RainDay { get; set; }
-        public double UV { get; set; }
-        public double SolarRad { get; set; }
+        public long ObsTime { get; set; } = 0;
+        public decimal WindDirAvg10 { get; set; } = 0;
+        public decimal RainRateCur { get; set; } = 0;
+        public string WindDirAvg10Eng { get; set; } = string.Empty;
+    }
+    public class WindObs
+    {
     }
     
     public class Metric

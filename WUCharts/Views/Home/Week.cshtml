@@ -45,16 +45,16 @@
         {
             WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
             WindDirAvg10Eng = o.WindDirAvg10Eng, 
-            RainRateCur = Convert.ToInt32(o.RainRateCur)
+            RainRateCur = Convert.ToDecimal(o.RainRateCur)
         }).ToList();
     var windobj = observationses.Where(obs => obs.WindSpeedCur > 0).Select(o =>
         new
         {
             WindDirCur = Convert.ToInt32(o.WindDirCur),
             WindDirCurEng = o.WindDirCurEng,
-            WindGust10 = Convert.ToInt32(o.WindGust10),
-            WindAvgSpeedCur = Convert.ToInt32(o.WindAvgSpeedCur),
-            WindSpeedCur = Convert.ToInt32(o.WindSpeedCur)
+            WindGust10 = Convert.ToDecimal(o.WindGust10),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur),
+            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur)
         }).ToList();
     // int nStepRain = 100;
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);

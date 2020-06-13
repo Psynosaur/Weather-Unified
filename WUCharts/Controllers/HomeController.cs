@@ -154,6 +154,14 @@ namespace WUCharts.Controllers
             }
             return RedirectToAction("Error");
         }
+        [Route("/rain")]
+        public IActionResult Rain(string start, string end)
+        {
+            ViewData["Title"] = "Rain"; 
+            ViewData["Description"] = "Rain data for Durbanville Stellenberg - South Africa";
+            var model = _observationsService.Rain(start, end);
+            return View(model);
+        }
 
         [Route("/week")]
         public IActionResult Week()

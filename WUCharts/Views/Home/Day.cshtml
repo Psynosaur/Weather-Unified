@@ -1,4 +1,5 @@
 ﻿@using Newtonsoft.Json
+@using WURequest.Models
 @model List<WURequest.Models.Observations>
 @{
     var latest = Model.LastOrDefault();
@@ -39,8 +40,9 @@
             UV = Convert.ToInt32(o.UV)
         }).ToList();
     var rainobj = Model.Where(obs => obs.RainRateCur > 0).Select(o =>
-        new
+        new RainObs
         {
+            ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
             WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
             WindDirAvg10Eng = o.WindDirAvg10Eng,
             RainRateCur = Convert.ToInt32(o.RainRateCur)
@@ -50,9 +52,9 @@
         {
             WindDirCur = Convert.ToInt32(o.WindDirCur),
             WindDirCurEng = o.WindDirCurEng,
-            WindGust10 = Convert.ToInt32(o.WindGust10),
-            WindAvgSpeedCur = Convert.ToInt32(o.WindAvgSpeedCur),
-            WindSpeedCur = Convert.ToInt32(o.WindSpeedCur)
+            WindGust10 = Convert.ToDecimal(o.WindGust10),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur),
+            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur)
         }).ToList();
     // int nStepRain = 100;
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);

@@ -1,0 +1,104 @@
+@using Newtonsoft.Json
+@using WURequest.Models
+@model List<List<RainObs>>
+
+@{
+    var cnt = 0;
+    string chartname = "chart";
+}
+
+<div class="containerx col-lg-12 col-md-12 col-sm-12 ">
+    <div class="row">
+        @if (Model.Any())
+        {
+            <script src="//www.amcharts.com/lib/4/core.js"></script>
+            <script src="//www.amcharts.com/lib/4/charts.js"></script>
+            <script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
+
+            @foreach (var day in Model)
+            {
+                chartname = chartname + cnt;
+               <div class="card border-secondary col-lg-2 col-sm-12">
+                    <div class="card-header " style="text-align: center">
+                        <strong>Rain Summary @day.First().ObsTime.ToString("G")</strong>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <div class="card-header " style="text-align: center">
+                            <strong>Rain Rose</strong>
+                        </div>
+                        <ul class="list-group list-group-flush" id="@chartname" style="height: 500px;">
+                        </ul>
+                        <script type="text/javascript">
+                        var i = @cnt;
+                        console.log(i);
+                        am4core.ready(function() {
+                            // am4core.useTheme(am4themes_animated);
+                            am4core.options.minPolylineStep = 5;
+                            am4core.options.queue = true;
+                            am4core.useTheme(am4themes_dark);
+                            // We set our data to the model with reduced data points
+                            var chart = [];
+                            var rainrose = [];
+                            var xAxisRR = [];
+                            var yAxisRR = [];
+                            var rainRate = [];
+                            var circleBulletRR = [];
+                            chart[i] = "@chartname";
+                            console.log("chart id : " + chart[i]);
+                            rainrose[i] = am4core.create(chart[i], am4charts.RadarChart);
+                            // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
+                            // categoryAxis.dataFields.category = "WindDirCurEng";
+                            /* Create axes */
+                            xAxisRR[i] = rainrose[i].xAxes.push(new am4charts.ValueAxis());
+                            xAxisRR[i].renderer.maxLabelPosition = 0.99;
+                            xAxisRR[i].min = 0;
+                            xAxisRR[i].max = 360;
+                            xAxisRR[i].renderer.minGridDistance = 40;
+                            xAxisRR[i].strictMinMax = true;
+                            xAxisRR[i].dateFormatter = new am4core.DateFormatter();
+                            xAxisRR[i].dateFormatter.dateFormat = "HH:mm";
+                            // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
+                            // categoryAxisWR.tooltipDateFormat = "HH:mm";
+                            // xAxis.numberFormatter.numberFormat = "#.0°|0°";
+                        
+                        
+                            yAxisRR[i] = rainrose[i].yAxes.push(new am4charts.ValueAxis());
+                            yAxisRR[i].renderer.labels.disabled = true;
+                            // yAxis.renderer.labels.template.verticalCenter = "bottom";
+                            // yAxis.renderer.labels.template.horizontalCenter = "right";
+                            // yAxis.renderer.maxLabelPosition = 01;
+                            // yAxis.renderer.labels.template.paddingBottom = 1;
+                            // yAxis.renderer.labels.template.paddingRight = 3;
+                            // yAxis.renderer.minGridDistance = 20;
+                        
+                        
+                            /* Create and configure series */
+                            rainRate[i] = rainrose[i].series.push(new am4charts.RadarSeries());
+                            circleBulletRR[i] = rainRate[i].bullets.push(new am4core.Circle());
+                            circleBulletRR[i].tooltipText = "{RainRateCur} mm/h from {WindDirAvg10}° {WindDirAvg10Eng}";
+                            circleBulletRR[i].radius = 3;
+                            circleBulletRR[i].strokeWidth = 1;
+                            // rainRate.minBulletDistance = 1.5;
+                            rainRate[i].strokeOpacity = 0;
+                            rainRate[i].dataFields.valueX = "WindDirAvg10";
+                            rainRate[i].dataFields.valueY = "RainRateCur";
+                            rainRate[i].name = "Rain Rate";
+                            rainRate.sequencedInterpolation = true;
+                            rainRate.sequencedInterpolationDelay = 10;
+                            rainRate[i].data = @Html.Raw(JsonConvert.SerializeObject(day));
+                            rainRate[i].fill = am4core.color("#43fff9");
+                            /* Add legend */
+                            rainrose[i].legend = new am4charts.Legend();
+                        });
+                    </script>
+
+                    </ul>
+                </div>
+
+                cnt += 1;
+               
+            }
+        }
+         <span>@cnt days of rain</span>
+    </div>
+</div>

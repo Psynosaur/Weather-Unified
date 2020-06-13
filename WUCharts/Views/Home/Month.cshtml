@@ -4,7 +4,7 @@
     var cnt = Model.Select(x => true).Count();
     var latest = Model.LastOrDefault();
     // Sets nth record to use for plotting
-    int nStep = 527;
+    int nStep = 333;
     if (cnt < 51000)
     {
         nStep = nStep / 4;
@@ -16,6 +16,7 @@
         {
             c.WindSpeedCur *= 3.6;
             c.WindGust10 *= 3.6;
+            c.WindAvgSpeedCur *= 3.6;
             return c;
         });
     var observationses = graph2.ToList();
@@ -48,16 +49,16 @@
         {
             WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
             WindDirAvg10Eng = o.WindDirAvg10Eng, 
-            RainRateCur = Convert.ToInt32(o.RainRateCur)
+            RainRateCur = Convert.ToDecimal(o.RainRateCur)
         }).ToList();
     var windobj = observationses.Where(obs => obs.WindSpeedCur > 0).Select(o =>
         new
         {
             WindDirCur = Convert.ToInt32(o.WindDirCur),
             WindDirCurEng = o.WindDirCurEng,
-            WindGust10 = Convert.ToInt32(o.WindGust10),
-            WindAvgSpeedCur = Convert.ToInt32(o.WindAvgSpeedCur),
-            WindSpeedCur = Convert.ToInt32(o.WindSpeedCur)
+            WindGust10 = Convert.ToDecimal(o.WindGust10),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur),
+            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur)
         }).ToList();
 
     // int nStepRain = 100;
