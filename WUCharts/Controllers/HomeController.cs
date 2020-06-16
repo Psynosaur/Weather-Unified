@@ -22,7 +22,7 @@ namespace WUCharts.Controllers
         public IActionResult Index()
 
         {
-            ViewData["Title"] = "Home";
+            ViewData["Title"] = "moment";
             ViewData["Description"] = "Weather information for Durbanville South Africa, captured " +
                                       "using a Fine Offset WH2310 weather station and a meteobridge weather interface";
             var model = _observationsService.Latest().FirstOrDefault();
@@ -114,8 +114,8 @@ namespace WUCharts.Controllers
         [Route("/hour/{id?}")]
         public IActionResult Hour(int? id = null)
         {
-            ViewData["Title"] = "Hour";
-            ViewData["Description"] = "Hourly weather data for the day";
+            ViewData["Title"] = "hour";
+            ViewData["Description"] = "Live Hourly weather data for the day";
             if (id <= 24 && id >= 0 || id == null)
             {
                 bool nulled = String.IsNullOrEmpty(id.ToString());
@@ -134,8 +134,8 @@ namespace WUCharts.Controllers
         [Route("/day")]
         public IActionResult Day()
         {
-            ViewData["Title"] = "Day";
-            ViewData["Description"] = "Daily weather data for the day";
+            ViewData["Title"] = "day";
+            ViewData["Description"] = "Live weather data for the day";
             var model = _observationsService.Daily();
             return View(model);
         }
@@ -143,7 +143,7 @@ namespace WUCharts.Controllers
         [Route("/date/{id?}")]
         public IActionResult Date(string id = null)
         {
-            ViewData["Title"] = "Historical";
+            ViewData["Title"] = "past";
             ViewData["Description"] = "Historical weather data for Durbanville South Africa";
             DateTime temp;
             if (id == null) id = DateTime.Now.ToString("yyyy-MM-dd");
@@ -166,8 +166,8 @@ namespace WUCharts.Controllers
         [Route("/week")]
         public IActionResult Week()
         {
-            ViewData["Title"] = "Week";
-            ViewData["Description"] = "Weather data for Durbanville South Africa - past week";
+            ViewData["Title"] = "week";
+            ViewData["Description"] = "Weather data for Durbanville Stellenberg South Africa - past week";
             var model = _observationsService.Weekly();
             return View(model);
         }
@@ -175,8 +175,8 @@ namespace WUCharts.Controllers
         [Route("/month")]
         public IActionResult Month()
         {
-            ViewData["Title"] = "Month";
-            ViewData["Description"] = "Weather data for Durbanville South Africa - current month";
+            ViewData["Title"] = "month";
+            ViewData["Description"] = "Weather data for Durbanville Stellenberg South Africa - current month";
             var model = _observationsService.Monthly();
             return View(model);
         }

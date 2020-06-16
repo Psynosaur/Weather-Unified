@@ -160,7 +160,9 @@
 .containerx h3, h2, h1 ,p {
     text-align: center;
 }
-
+h1 {
+    font-size: xx-large;
+}
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 900px) {
     /* Hide captions */

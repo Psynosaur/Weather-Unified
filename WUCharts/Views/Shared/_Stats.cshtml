@@ -14,7 +14,7 @@
     statsObj.Add(new KeyValuePair<string, string>("Dewpoint Min", Model.Select(x => x.DewCur).ToList().Min().ToString("0.#") + " °C"));
     statsObj.Add(new KeyValuePair<string, string>("Dewpoint Avg", Model.Select(x => x.DewCur).ToList().Average().ToString("0.#") + " °C"));
     statsObj.Add(new KeyValuePair<string, string>("Dewpoint Max", Model.Select(x => x.DewCur).ToList().Max().ToString("0.#") + " °C"));
-    statsObj.Add(new KeyValuePair<string, string>("Wind Max", (Model.Select(x => x.WindGust10).ToList().Max()).ToString("0.#") + " km/h"));
+    statsObj.Add(new KeyValuePair<string, string>("Wind Max", (Model.Select(x => x.WindGust10).ToList().Max() * 3.6).ToString("0.#") + " km/h"));
     statsObj.Add(new KeyValuePair<string, string>("Wind Avg", (Model.Select(x => x.WindSpeedCur).ToList().Average() * 3.6).ToString("0.#") + " km/h"));
     statsObj.Add(new KeyValuePair<string, string>("WindDir Avg", Model.Select(x => x.WindDirCur).ToList().Average().ToString("0.#") + " °"));
     statsObj.Add(new KeyValuePair<string, string>("Rain Avg", Model.Select(x => x.RainDay).ToList().Average().ToString("0.#") + " mm"));

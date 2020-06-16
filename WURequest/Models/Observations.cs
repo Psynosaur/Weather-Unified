@@ -48,10 +48,10 @@ namespace WURequest.Models
     
     public class RainObs
     {
-        public long ObsTime { get; set; } = 0;
-        public decimal WindDirAvg10 { get; set; } = 0;
-        public decimal RainRateCur { get; set; } = 0;
-        public string WindDirAvg10Eng { get; set; } = string.Empty;
+        public long ObsTime { get; set; } 
+        public decimal WindDirAvg10 { get; set; }
+        public decimal RainRateCur { get; set; } 
+        public string WindDirAvg10Eng { get; set; } 
     }
     public class WindObs
     {

@@ -17,14 +17,18 @@
 }
 
 <div class="containerx col-lg-12 col-sm-12">
+
+
     <div class="row">
-        <div class="col-12" style="text-align: center">
-            <h2>Latest Stats</h2>
-            <strong>@Model.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")</strong>
+        <div class="card border-secondary col-lg-4 col-sm-12 mx-auto">
+            <div class="col-12" style="text-align: center">
+                <h1>Latest weather data - Stellenberg Durbanville</h1>
+                <strong>@Model.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")</strong>
+            </div>
         </div>
     </div>
     <div class="row">
-        <div class="card border-secondary col-lg-3 col-sm-12" id="first">
+        <div class="card border-secondary col-lg-4 col-sm-12 mx-auto" id="first">
             <div class="card-header " style="text-align: center">
                 <strong>Current Conditions</strong>
             </div>
@@ -50,8 +54,6 @@
                 <li class="list-group-item">Average<span style="float:right;">@Model.WindAvgSpeedCur m/s / @(windObj.avgWind > 0 ? windObj.avgWind.ToString("0.00") : "0") km/h</span></li>
                 <li class="list-group-item">Gust<span style="float:right;">@Model.WindGust10 m/s / @(windObj.maxGust > 0 ? windObj.maxGust.ToString("0.00") : "0") km/h</span></li>
             </ul>
-        </div>
-        <div class="card border-secondary col-lg-3 col-sm-4" id="second">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item" style="text-align: center">
                     <strong>Indoor</strong>
@@ -59,8 +61,6 @@
                 <li class="list-group-item">Temp / Humidity<span style="float:right;">@Model.TempInCur&#176C / @Model.HumInCur%</span></li>
                 <li class="list-group-item">Pressure<span style="float:right;">@Model.PressCur hPa</span></li>
             </ul>
-        </div>
-        <div class="card border-secondary col-lg-3 col-sm-4" id="second">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item" style="text-align: center">
                     <strong>Rain</strong>
@@ -68,8 +68,6 @@
                 <li class="list-group-item">Day / Yesterday<span style="float:right;">@Model.RainDay / @Model.RainYest mm</span></li>
                 <li class="list-group-item">Month / Year<span style="float:right;">@Model.RainMonth / @Model.RainYear mm</span></li>
             </ul>
-        </div>
-        <div class="card border-secondary col-lg-3 col-sm-4" id="second">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item" style="text-align: center">
                     <strong>Solar</strong>

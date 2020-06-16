@@ -6,15 +6,15 @@
     // Sets nth record to use for plotting
     int nStep = 17;
     var graph = Model.Where((x, i) => i % nStep == 0);
-    var graph2 = graph
-        .Select(c =>
-        {
-            c.WindSpeedCur *= 3.6;
-            c.WindGust10 *= 3.6;
-            c.WindAvgSpeedCur *= 3.6;
-            return c;
-        });
-    var observationses = graph2.ToList();
+    // var graph2 = graph
+    //     .Select(c =>
+    //     {
+    //         c.WindSpeedCur *= 3.6;
+    //         c.WindGust10 *= 3.6;
+    //         c.WindAvgSpeedCur *= 3.6;
+    //         return c;
+    //     });
+    var observationses = graph.ToList();
     var obj = observationses.Where(x => true).Select(o =>
         new
         {
@@ -27,11 +27,11 @@
             HumOutCur = Convert.ToInt32(o.HumOutCur),
             HumInCur = Convert.ToInt32(o.HumInCur),
             PressCur = Convert.ToDecimal(o.PressCur),
-            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur),
-            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur),
+            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
             WindDirCur = Convert.ToInt32(o.WindDirCur),
             WindDirCurEng = o.WindDirCurEng,
-            WindGust10 = Convert.ToDecimal(o.WindGust10),
+            WindGust10 = Convert.ToDecimal(o.WindGust10 * 3.6),
             WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
             WindDirAvg10Eng = o.WindDirAvg10Eng,
             RainRateCur = Convert.ToDecimal(o.RainRateCur),
@@ -67,16 +67,15 @@
 <div class="containerx col-lg-12 col-md-12 col-sm-12 ">
     @if (latest != null)
     {
+        <h1>Daily weather data - Stellenberg Durbanville</h1>
         <div class="row">
             <div class="col-12" style="text-align: center">
-                <h2 id="onselectTarget">Daily Stats</h2>
                 <strong> @latest.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")</strong><br/>
                 <input class="timepicker timepicker-with-dropdown text-center">
             </div>
         </div>
 
         @await Html.PartialAsync("_DoubleGraph", Model)
-
         <script type="text/javascript">
             var hrs = 1;
             var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
@@ -84,8 +83,8 @@
             var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
             var lh = @lastestHour;
         </script>
+        @await Html.PartialAsync("_scripts")
         @await Html.PartialAsync("_timepicker")
-        @await Html.PartialAsync("_scripts", Model)
     }
     else
     {

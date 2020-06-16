@@ -120,7 +120,14 @@ namespace WUCharts
             app.UseResponseCompression();
             app.UseCors(options => options.AllowAnyOrigin());
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            var cachePeriod = env.IsDevelopment() ? "600" : "604800";
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={cachePeriod}");
+                }
+            });
             app.UseCookiePolicy();
 
             app.UseMvc(routes =>

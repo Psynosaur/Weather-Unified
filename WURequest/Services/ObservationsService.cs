@@ -33,7 +33,8 @@ namespace WURequest.Services
             var tm = DateTime.Now;
             var hm = new DateTime(tm.Year, tm.Month, tm.Day, id, 0, 0, DateTimeKind.Local);
             var obsersvations = _observation.Find(
-                x => x.ObsTime > hm && x.ObsTime < hm.AddHours(1)).ToList();
+                x => x.ObsTime > hm && x.ObsTime < hm.AddHours(1))
+                .SortBy(e => e.ObsTime).ToList();;
             return obsersvations;
         }
         // public List<ChartObs> HObs()
@@ -124,7 +125,9 @@ namespace WURequest.Services
             {
                 var date = sd;
                 var obs = _observation.Find(
-                    x => x.ObsTime > date && x.ObsTime < date.AddHours(24) && x.RainRateCur > 0).ToList().Select(o =>
+                    x => x.ObsTime > date && x.ObsTime < date.AddHours(24) && x.RainRateCur > 0)
+                    .SortBy(e => e.ObsTime).ToList()
+                    .Select(o =>
                     new RainObs
                     {
                         ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
