@@ -56,7 +56,7 @@
             WindDirCur = Convert.ToDecimal(o.WindDirCur),
             WindDirCurEng = o.WindDirCurEng,
             WindGust10 = Convert.ToDecimal(o.WindGust10 * 3.6),
-            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur* 3.6),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
             WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6)
         }).ToList();
     double sd = 0.0;
@@ -73,7 +73,7 @@
             double sumOfSquaresOfDifferences = sunlight.ToList().Select(val => (val - avg) * (val - avg)).Sum();
             sd = Math.Sqrt(sumOfSquaresOfDifferences / sunlight.Count());
         }
-        if (sd >= 125 && sd <= 200)
+        if (sd >= 125 && sd <= 140)
         {
             cloudyness = "Party Cloudy Day";
         }
@@ -81,7 +81,7 @@
         {
             cloudyness = "Cloudy Day";
         }
-        if (sd >= 200)
+        if (sd >= 140)
         {
             cloudyness = "Sunny Day";
         }
@@ -99,7 +99,8 @@
     <script type="text/javascript">
                 var hrs = 1;
                 var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
-                var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
+                var raining = @rainobj.Count >0;
+                if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
                 var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
                 var std = '@sd';
                 console.log("Std Deviation Solar : " + std);
@@ -143,6 +144,11 @@
                         <div class="col-lg-6" id="chartuv" style="height:300px;"></div>
                     </div>
                     <div class="col-lg" id="chartwd" style="height:300px;"></div>
+                    <div class="row">
+                        <div class="col-lg-4" id="chartTR" style="height:400px;"></div>
+                        <div class="col-lg-4" id="chartPR" style="height:400px;"></div>
+                        <div class="col-lg-4" id="chartHR" style="height:400px;"></div>
+                    </div>
                 </div>
             }
             @await Html.PartialAsync("_DateSummary", Model)

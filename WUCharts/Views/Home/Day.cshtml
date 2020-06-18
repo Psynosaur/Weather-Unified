@@ -70,7 +70,8 @@
     <script type="text/javascript">
         var hrs = 1;
         var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
-        var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
+        var raining = @rainobj.Count >0;
+        if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
         var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
         var lh = "@lastestHour";
     </script>

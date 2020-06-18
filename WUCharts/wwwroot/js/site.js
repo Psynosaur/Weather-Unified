@@ -3,7 +3,7 @@
 
 // Write your JavaScript code.
 // amCharts JS
-am4core.ready(function() {
+am4core.ready(function () {
     // am4core.useTheme(am4themes_animated);
     am4core.options.minPolylineStep = 5;
     // am4core.options.queue = true;
@@ -673,200 +673,200 @@ am4core.ready(function() {
     windrose.legend = new am4charts.Legend();
     /* Add cursor */
     // windrose.cursor = new am4charts.RadarCursor();
+    if (raining) {
+        var rainrose = am4core.create("rainrose", am4charts.RadarChart);
+        // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
+        // categoryAxis.dataFields.category = "WindDirCurEng";
+        /* Create axes */
+        var xAxisRR = rainrose.xAxes.push(new am4charts.ValueAxis());
+        xAxisRR.renderer.maxLabelPosition = 0.99;
+        xAxisRR.min = 0;
+        xAxisRR.max = 360;
+        xAxisRR.renderer.minGridDistance = 40;
+        xAxisRR.strictMinMax = true;
+        xAxisRR.dateFormatter = new am4core.DateFormatter();
+        xAxisRR.dateFormatter.dateFormat = "HH:mm";
+        // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
+        // categoryAxisWR.tooltipDateFormat = "HH:mm";
+        // xAxis.numberFormatter.numberFormat = "#.0°|0°";
 
 
-    var rainrose = am4core.create("rainrose", am4charts.RadarChart);
-    // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-    // categoryAxis.dataFields.category = "WindDirCurEng";
-    /* Create axes */
-    var xAxisRR = rainrose.xAxes.push(new am4charts.ValueAxis());
-    xAxisRR.renderer.maxLabelPosition = 0.99;
-    xAxisRR.min = 0;
-    xAxisRR.max = 360;
-    xAxisRR.renderer.minGridDistance = 40;
-    xAxisRR.strictMinMax = true;
-    xAxisRR.dateFormatter = new am4core.DateFormatter();
-    xAxisRR.dateFormatter.dateFormat = "HH:mm";
-    // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
-    // categoryAxisWR.tooltipDateFormat = "HH:mm";
-    // xAxis.numberFormatter.numberFormat = "#.0°|0°";
-    
-
-    var yAxisRR = rainrose.yAxes.push(new am4charts.ValueAxis());
-    yAxisRR.renderer.labels.disabled = true;
-    // yAxis.renderer.labels.template.verticalCenter = "bottom";
-    // yAxis.renderer.labels.template.horizontalCenter = "right";
-    // yAxis.renderer.maxLabelPosition = 01;
-    // yAxis.renderer.labels.template.paddingBottom = 1;
-    // yAxis.renderer.labels.template.paddingRight = 3;
-    // yAxis.renderer.minGridDistance = 20;
+        var yAxisRR = rainrose.yAxes.push(new am4charts.ValueAxis());
+        yAxisRR.renderer.labels.disabled = true;
+        // yAxis.renderer.labels.template.verticalCenter = "bottom";
+        // yAxis.renderer.labels.template.horizontalCenter = "right";
+        // yAxis.renderer.maxLabelPosition = 01;
+        // yAxis.renderer.labels.template.paddingBottom = 1;
+        // yAxis.renderer.labels.template.paddingRight = 3;
+        // yAxis.renderer.minGridDistance = 20;
 
 
-    /* Create and configure series */
-    var rainRate = rainrose.series.push(new am4charts.RadarSeries());
-    var circleBulletRR = rainRate.bullets.push(new am4core.Circle());
-    circleBulletRR.tooltipText = "{RainRateCur} mm/h from {WindDirAvg10}° {WindDirAvg10Eng}";
-    circleBulletRR.radius = 3;
-    circleBulletRR.strokeWidth = 1;
-    // rainRate.minBulletDistance = 1.5;
-    rainRate.strokeOpacity = 0;
-    rainRate.dataFields.valueX = "WindDirAvg10";
-    rainRate.dataFields.valueY = "RainRateCur";
-    rainRate.name = "Rain Rate";
-    // rainRate.sequencedInterpolation = true;
-    // rainRate.sequencedInterpolationDelay = 10;
-    rainRate.data = raindat;
-    rainRate.fill = am4core.color("#ffffff");
+        /* Create and configure series */
+        var rainRate = rainrose.series.push(new am4charts.RadarSeries());
+        var circleBulletRR = rainRate.bullets.push(new am4core.Circle());
+        circleBulletRR.tooltipText = "{RainRateCur} mm/h from {WindDirAvg10}° {WindDirAvg10Eng}";
+        circleBulletRR.radius = 3;
+        circleBulletRR.strokeWidth = 1;
+        // rainRate.minBulletDistance = 1.5;
+        rainRate.strokeOpacity = 0;
+        rainRate.dataFields.valueX = "WindDirAvg10";
+        rainRate.dataFields.valueY = "RainRateCur";
+        rainRate.name = "Rain Rate";
+        // rainRate.sequencedInterpolation = true;
+        // rainRate.sequencedInterpolationDelay = 10;
+        rainRate.data = raindat;
+        rainRate.fill = am4core.color("#ffffff");
+    }
+
+    if (h < 2) {
+        var tempRose = am4core.create("chartTR", am4charts.RadarChart);
+        // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
+        // categoryAxis.dataFields.category = "WindDirCurEng";
+        /* Create axes */
+        var xAxisTR = tempRose.xAxes.push(new am4charts.ValueAxis());
+        xAxisTR.renderer.maxLabelPosition = 0.99;
+        xAxisTR.min = 0;
+        xAxisTR.max = 360;
+        xAxisTR.renderer.minGridDistance = 40;
+        xAxisTR.strictMinMax = true;
+        xAxisTR.dateFormatter = new am4core.DateFormatter();
+        xAxisTR.dateFormatter.dateFormat = "HH:mm";
+        // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
+        // categoryAxisWR.tooltipDateFormat = "HH:mm";
+        // xAxis.numberFormatter.numberFormat = "#.0°|0°";
 
 
-    var tempRose = am4core.create("chartTR", am4charts.RadarChart);
-    // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-    // categoryAxis.dataFields.category = "WindDirCurEng";
-    /* Create axes */
-    var xAxisTR = tempRose.xAxes.push(new am4charts.ValueAxis());
-    xAxisTR.renderer.maxLabelPosition = 0.99;
-    xAxisTR.min = 0;
-    xAxisTR.max = 360;
-    xAxisTR.renderer.minGridDistance = 40;
-    xAxisTR.strictMinMax = true;
-    xAxisTR.dateFormatter = new am4core.DateFormatter();
-    xAxisTR.dateFormatter.dateFormat = "HH:mm";
-    // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
-    // categoryAxisWR.tooltipDateFormat = "HH:mm";
-    // xAxis.numberFormatter.numberFormat = "#.0°|0°";
+        var yAxisTR = tempRose.yAxes.push(new am4charts.ValueAxis());
+        yAxisTR.renderer.labels.disabled = true;
+        // yAxis.renderer.labels.template.verticalCenter = "bottom";
+        // yAxis.renderer.labels.template.horizontalCenter = "right";
+        // yAxis.renderer.maxLabelPosition = 01;
+        // yAxis.renderer.labels.template.paddingBottom = 1;
+        // yAxis.renderer.labels.template.paddingRight = 3;
+        // yAxis.renderer.minGridDistance = 20;
 
 
-    var yAxisTR = tempRose.yAxes.push(new am4charts.ValueAxis());
-    yAxisTR.renderer.labels.disabled = true;
-    // yAxis.renderer.labels.template.verticalCenter = "bottom";
-    // yAxis.renderer.labels.template.horizontalCenter = "right";
-    // yAxis.renderer.maxLabelPosition = 01;
-    // yAxis.renderer.labels.template.paddingBottom = 1;
-    // yAxis.renderer.labels.template.paddingRight = 3;
-    // yAxis.renderer.minGridDistance = 20;
+        /* Create and configure series */
+        var tempd = tempRose.series.push(new am4charts.RadarSeries());
+        var circleBulletTR = tempd.bullets.push(new am4core.Circle());
+        circleBulletTR.tooltipText = "{Tmin} °C from {WindDirAvg10}° {WindDirAvg10Eng}";
+        circleBulletTR.radius = 3;
+        circleBulletTR.strokeWidth = 1;
+        // rainRate.minBulletDistance = 1.5;
+        tempd.strokeOpacity = 0;
+        tempd.dataFields.valueX = "WindDirAvg10";
+        tempd.dataFields.valueY = "Tmin";
+        tempd.name = "Temp Min";
+        // rainRate.sequencedInterpolation = true;
+        // rainRate.sequencedInterpolationDelay = 10;
+        tempd.data = objdat;
+        tempd.fill = am4core.color("#0ec7ff");
+
+        var tempMd = tempRose.series.push(new am4charts.RadarSeries());
+        var circleBulletTmR = tempMd.bullets.push(new am4core.Circle());
+        circleBulletTmR.tooltipText = "{Tmax} °C from {WindDirAvg10}° {WindDirAvg10Eng}";
+        circleBulletTmR.radius = 3;
+        circleBulletTmR.strokeWidth = 1;
+        // rainRate.minBulletDistance = 1.5;
+        tempMd.strokeOpacity = 0;
+        tempMd.dataFields.valueX = "WindDirAvg10";
+        tempMd.dataFields.valueY = "Tmax";
+        tempMd.name = "Temp Max";
+        // rainRate.sequencedInterpolation = true;
+        // rainRate.sequencedInterpolationDelay = 10;
+        tempMd.data = objdat;
+        tempMd.fill = am4core.color("#ff2955");
+        tempRose.legend = new am4charts.Legend();
+        tempRose.cursor = new am4charts.RadarCursor();
+
+        var pressR = am4core.create("chartPR", am4charts.RadarChart);
+        // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
+        // categoryAxis.dataFields.category = "WindDirCurEng";
+        /* Create axes */
+        var xAxisPR = pressR.xAxes.push(new am4charts.ValueAxis());
+        xAxisPR.renderer.maxLabelPosition = 0.99;
+        xAxisPR.min = 0;
+        xAxisPR.max = 360;
+        xAxisPR.renderer.minGridDistance = 40;
+        xAxisPR.strictMinMax = true;
+        xAxisPR.dateFormatter = new am4core.DateFormatter();
+        xAxisPR.dateFormatter.dateFormat = "HH:mm";
+        // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
+        // categoryAxisWR.tooltipDateFormat = "HH:mm";
+        // xAxis.numberFormatter.numberFormat = "#.0°|0°";
 
 
-    /* Create and configure series */
-    var tempd = tempRose.series.push(new am4charts.RadarSeries());
-    var circleBulletTR = tempd.bullets.push(new am4core.Circle());
-    circleBulletTR.tooltipText = "{Tmin} °C from {WindDirAvg10}° {WindDirAvg10Eng}";
-    circleBulletTR.radius = 3;
-    circleBulletTR.strokeWidth = 1;
-    // rainRate.minBulletDistance = 1.5;
-    tempd.strokeOpacity = 0;
-    tempd.dataFields.valueX = "WindDirAvg10";
-    tempd.dataFields.valueY = "Tmin";
-    tempd.name = "Temp Min";
-    // rainRate.sequencedInterpolation = true;
-    // rainRate.sequencedInterpolationDelay = 10;
-    tempd.data = objdat;
-    tempd.fill = am4core.color("#0ec7ff");
-
-    var tempMd = tempRose.series.push(new am4charts.RadarSeries());
-    var circleBulletTmR = tempMd.bullets.push(new am4core.Circle());
-    circleBulletTmR.tooltipText = "{Tmax} °C from {WindDirAvg10}° {WindDirAvg10Eng}";
-    circleBulletTmR.radius = 3;
-    circleBulletTmR.strokeWidth = 1;
-    // rainRate.minBulletDistance = 1.5;
-    tempMd.strokeOpacity = 0;
-    tempMd.dataFields.valueX = "WindDirAvg10";
-    tempMd.dataFields.valueY = "Tmax";
-    tempMd.name = "Temp Max";
-    // rainRate.sequencedInterpolation = true;
-    // rainRate.sequencedInterpolationDelay = 10;
-    tempMd.data = objdat;
-    tempMd.fill = am4core.color("#ff2955");
-    tempRose.legend = new am4charts.Legend();
-    tempRose.cursor = new am4charts.RadarCursor();
-
-    var pressR = am4core.create("chartPR", am4charts.RadarChart);
-    // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-    // categoryAxis.dataFields.category = "WindDirCurEng";
-    /* Create axes */
-    var xAxisPR = pressR.xAxes.push(new am4charts.ValueAxis());
-    xAxisPR.renderer.maxLabelPosition = 0.99;
-    xAxisPR.min = 0;
-    xAxisPR.max = 360;
-    xAxisPR.renderer.minGridDistance = 40;
-    xAxisPR.strictMinMax = true;
-    xAxisPR.dateFormatter = new am4core.DateFormatter();
-    xAxisPR.dateFormatter.dateFormat = "HH:mm";
-    // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
-    // categoryAxisWR.tooltipDateFormat = "HH:mm";
-    // xAxis.numberFormatter.numberFormat = "#.0°|0°";
+        var yAxisPR = pressR.yAxes.push(new am4charts.ValueAxis());
+        yAxisPR.renderer.labels.disabled = true;
+        // yAxis.renderer.labels.template.verticalCenter = "bottom";
+        // yAxis.renderer.labels.template.horizontalCenter = "right";
+        // yAxis.renderer.maxLabelPosition = 01;
+        // yAxis.renderer.labels.template.paddingBottom = 1;
+        // yAxis.renderer.labels.template.paddingRight = 3;
+        // yAxis.renderer.minGridDistance = 20;
 
 
-    var yAxisPR = pressR.yAxes.push(new am4charts.ValueAxis());
-    yAxisPR.renderer.labels.disabled = true;
-    // yAxis.renderer.labels.template.verticalCenter = "bottom";
-    // yAxis.renderer.labels.template.horizontalCenter = "right";
-    // yAxis.renderer.maxLabelPosition = 01;
-    // yAxis.renderer.labels.template.paddingBottom = 1;
-    // yAxis.renderer.labels.template.paddingRight = 3;
-    // yAxis.renderer.minGridDistance = 20;
+        /* Create and configure series */
+        var pressD = pressR.series.push(new am4charts.RadarSeries());
+        var circleBulletPR = pressD.bullets.push(new am4core.Circle());
+        circleBulletPR.tooltipText = "{PressCur} hPa from {WindDirAvg10}° {WindDirAvg10Eng}";
+        circleBulletPR.radius = 3;
+        circleBulletPR.strokeWidth = 1;
+        // rainRate.minBulletDistance = 1.5;
+        pressD.strokeOpacity = 0;
+        pressD.dataFields.valueX = "WindDirAvg10";
+        pressD.dataFields.valueY = "PressCur";
+        pressD.name = "Pressure";
+        // rainRate.sequencedInterpolation = true;
+        // rainRate.sequencedInterpolationDelay = 10;
+        pressD.data = objdat;
+        pressD.fill = am4core.color("#43fff9");
+        pressR.legend = new am4charts.Legend();
+        pressR.cursor = new am4charts.RadarCursor();
+
+        var humRose = am4core.create("chartHR", am4charts.RadarChart);
+        // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
+        // categoryAxis.dataFields.category = "WindDirCurEng";
+        /* Create axes */
+        var xAxisHR = humRose.xAxes.push(new am4charts.ValueAxis());
+        xAxisHR.renderer.maxLabelPosition = 0.99;
+        xAxisHR.min = 0;
+        xAxisHR.max = 360;
+        xAxisHR.renderer.minGridDistance = 40;
+        xAxisHR.strictMinMax = true;
+        xAxisHR.dateFormatter = new am4core.DateFormatter();
+        xAxisHR.dateFormatter.dateFormat = "HH:mm";
+        // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
+        // categoryAxisWR.tooltipDateFormat = "HH:mm";
+        // xAxis.numberFormatter.numberFormat = "#.0°|0°";
 
 
-    /* Create and configure series */
-    var pressD = pressR.series.push(new am4charts.RadarSeries());
-    var circleBulletPR = pressD.bullets.push(new am4core.Circle());
-    circleBulletPR.tooltipText = "{PressCur} hPa from {WindDirAvg10}° {WindDirAvg10Eng}";
-    circleBulletPR.radius = 3;
-    circleBulletPR.strokeWidth = 1;
-    // rainRate.minBulletDistance = 1.5;
-    pressD.strokeOpacity = 0;
-    pressD.dataFields.valueX = "WindDirAvg10";
-    pressD.dataFields.valueY = "PressCur";
-    pressD.name = "Pressure";
-    // rainRate.sequencedInterpolation = true;
-    // rainRate.sequencedInterpolationDelay = 10;
-    pressD.data = objdat;
-    pressD.fill = am4core.color("#43fff9");
-    pressR.legend = new am4charts.Legend();
-    pressR.cursor = new am4charts.RadarCursor();
-
-    var humRose = am4core.create("chartHR", am4charts.RadarChart);
-    // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-    // categoryAxis.dataFields.category = "WindDirCurEng";
-    /* Create axes */
-    var xAxisHR = humRose.xAxes.push(new am4charts.ValueAxis());
-    xAxisHR.renderer.maxLabelPosition = 0.99;
-    xAxisHR.min = 0;
-    xAxisHR.max = 360;
-    xAxisHR.renderer.minGridDistance = 40;
-    xAxisHR.strictMinMax = true;
-    xAxisHR.dateFormatter = new am4core.DateFormatter();
-    xAxisHR.dateFormatter.dateFormat = "HH:mm";
-    // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
-    // categoryAxisWR.tooltipDateFormat = "HH:mm";
-    // xAxis.numberFormatter.numberFormat = "#.0°|0°";
+        var yAxisHR = humRose.yAxes.push(new am4charts.ValueAxis());
+        yAxisHR.renderer.labels.disabled = true;
+        // yAxis.renderer.labels.template.verticalCenter = "bottom";
+        // yAxis.renderer.labels.template.horizontalCenter = "right";
+        // yAxis.renderer.maxLabelPosition = 01;
+        // yAxis.renderer.labels.template.paddingBottom = 1;
+        // yAxis.renderer.labels.template.paddingRight = 3;
+        // yAxis.renderer.minGridDistance = 20;
 
 
-    var yAxisHR = humRose.yAxes.push(new am4charts.ValueAxis());
-    yAxisHR.renderer.labels.disabled = true;
-    // yAxis.renderer.labels.template.verticalCenter = "bottom";
-    // yAxis.renderer.labels.template.horizontalCenter = "right";
-    // yAxis.renderer.maxLabelPosition = 01;
-    // yAxis.renderer.labels.template.paddingBottom = 1;
-    // yAxis.renderer.labels.template.paddingRight = 3;
-    // yAxis.renderer.minGridDistance = 20;
-
-
-    /* Create and configure series */
-    var humd = humRose.series.push(new am4charts.RadarSeries());
-    var circleBulletHR = humd.bullets.push(new am4core.Circle());
-    circleBulletHR.tooltipText = "{HumOutCur} % from {WindDirAvg10}° {WindDirAvg10Eng}";
-    circleBulletHR.radius = 3;
-    circleBulletHR.strokeWidth = 1;
-    // rainRate.minBulletDistance = 1.5;
-    humd.strokeOpacity = 0;
-    humd.dataFields.valueX = "WindDirAvg10";
-    humd.dataFields.valueY = "HumOutCur";
-    humd.name = "Humidity";
-    // rainRate.sequencedInterpolation = true;
-    // rainRate.sequencedInterpolationDelay = 10;
-    humd.data = objdat;
-    humd.fill = am4core.color("#43fff9");
-    humRose.legend = new am4charts.Legend();
-    humRose.cursor = new am4charts.RadarCursor();
-
+        /* Create and configure series */
+        var humd = humRose.series.push(new am4charts.RadarSeries());
+        var circleBulletHR = humd.bullets.push(new am4core.Circle());
+        circleBulletHR.tooltipText = "{HumOutCur} % from {WindDirAvg10}° {WindDirAvg10Eng}";
+        circleBulletHR.radius = 3;
+        circleBulletHR.strokeWidth = 1;
+        // rainRate.minBulletDistance = 1.5;
+        humd.strokeOpacity = 0;
+        humd.dataFields.valueX = "WindDirAvg10";
+        humd.dataFields.valueY = "HumOutCur";
+        humd.name = "Humidity";
+        // rainRate.sequencedInterpolation = true;
+        // rainRate.sequencedInterpolationDelay = 10;
+        humd.data = objdat;
+        humd.fill = am4core.color("#43fff9");
+        humRose.legend = new am4charts.Legend();
+        humRose.cursor = new am4charts.RadarCursor();
+    }
 });
