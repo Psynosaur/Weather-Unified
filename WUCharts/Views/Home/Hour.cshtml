@@ -47,32 +47,35 @@
     var windobj = observationses.Where(obs => obs.WindSpeedCur > 0).Select(o =>
         new
         {
-            WindDirCur = Convert.ToInt32(o.WindDirCur),
+            WindDirCur = Convert.ToDecimal(o.WindDirCur),
             WindDirCurEng = o.WindDirCurEng,
-            WindGust10 = Convert.ToDecimal(o.WindGust10),
-            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur),
-            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur)
+            WindGust10 = Convert.ToDecimal(o.WindGust10 * 3.6),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur* 3.6),
+            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6)
         }).ToList();
 
     var rainHour = Model.Any() ? Model.Select(x => x.RainDay).Last() - Model.Select(x => x.RainDay).First() : 0;
 }
+@section Scripts
+{
+     <script type="text/javascript">
+                 var hrs = 0;
+                 var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
+                 var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
+                 var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+            </script>
+}
 <div class="containerx col-lg-12 col-md-12 col-sm-12">
     @if (latest != null)
     {
-        <h1>Hourly weather data - Stellenberg Durbanville</h1>
+        <h1>Hourly weather<br/>Stellenberg Durbanville</h1>
         <div class="row">
             <div class="col-12" style="text-align: center">
                 <strong>@latest.ObsTime.ToLocalTime().ToString("dddd dd MMM yyyy - HH:mm:ss zzz")</strong>
             </div>
         </div>
         @await Html.PartialAsync("_DoubleGraph", Model)
-        <script type="text/javascript">
-             var hrs = 0;
-             var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
-             var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
-             var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
-        </script>
-        @await Html.PartialAsync("_scripts")
+       
     }
     else
     {

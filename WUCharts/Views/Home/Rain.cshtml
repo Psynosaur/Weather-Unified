@@ -19,15 +19,19 @@
     }
 }
 
+@section Scripts
+{
+    <script type="text/javascript">
+                var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
+    </script>
+    <script type="text/javascript" src="~/js/raincharts.min.js"></script>
+}
+
 <div class="containerx col-lg-12 col-md-12 col-sm-12 ">
     <div class="row">
         <div class="col-lg-12">
             @if (Model.Any())
             {
-                <script src="//www.amcharts.com/lib/4/core.js"></script>
-                <script src="//www.amcharts.com/lib/4/charts.js"></script>
-                <script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
-
                 @foreach (var day in Model)
                 {
                     chartname = chartname + cnt;
@@ -125,10 +129,8 @@
                     cnt += 1;
                 }
             }
-            <script type="text/javascript">
-            var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
-            </script>
-            <script type="text/javascript" src="~/js/raincharts.min.js"></script>
+
+
             <div class="card border-secondary col-lg-2 col-sm-12  mx-auto">
                 <div class="card-header " style="text-align: center">
                     <strong>Rainy days</strong>

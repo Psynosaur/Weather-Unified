@@ -50,24 +50,38 @@
     var windobj = observationses.Where(obs => obs.WindSpeedCur > 0).Select(o =>
         new
         {
-            WindDirCur = Convert.ToInt32(o.WindDirCur),
+            WindDirCur = Convert.ToDecimal(o.WindDirCur),
             WindDirCurEng = o.WindDirCurEng,
-            WindGust10 = Convert.ToDecimal(o.WindGust10),
-            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur),
-            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur)
+            WindGust10 = Convert.ToDecimal(o.WindGust10 * 3.6),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur* 3.6),
+            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6)
         }).ToList();
     // int nStepRain = 100;
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);
-    var lastestHour = 0;
+    var lastestHour = "";
     if (latest != null)
     {
-        lastestHour = latest.ObsTime.ToLocalTime().Hour;
+        lastestHour = latest.ObsTime.ToLocalTime().ToString("HH:mm");
     }
 }
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var hrs = 1;
+        var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
+        var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
+        var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+        var lh = "@lastestHour";
+    </script>
+    <script src="~/js/timepicker.min.js"></script>
+}
+
 <div class="containerx col-lg-12 col-md-12 col-sm-12 ">
     @if (latest != null)
     {
-        <h1>Daily weather data - Stellenberg Durbanville</h1>
+        <h1>Daily weather<br/>
+            Stellenberg Durbanville</h1>
         <div class="row">
             <div class="col-12" style="text-align: center">
                 <strong> @latest.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")</strong><br/>
@@ -76,15 +90,7 @@
         </div>
 
         @await Html.PartialAsync("_DoubleGraph", Model)
-        <script type="text/javascript">
-            var hrs = 1;
-            var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
-            var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
-            var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
-            var lh = @lastestHour;
-        </script>
-        @await Html.PartialAsync("_scripts")
-        @await Html.PartialAsync("_timepicker")
+
     }
     else
     {

@@ -22,11 +22,7 @@ namespace WUCharts.Controllers
         public IActionResult Index()
 
         {
-            ViewData["Title"] = "moment";
-            ViewData["Description"] = "Weather information for Durbanville South Africa, captured " +
-                                      "using a Fine Offset WH2310 weather station and a meteobridge weather interface";
-            var model = _observationsService.Latest().FirstOrDefault();
-            return View(model);
+            return RedirectToAction("Day");
         }
 
         [Route("/sitemap.xml")]
@@ -135,7 +131,8 @@ namespace WUCharts.Controllers
         public IActionResult Day()
         {
             ViewData["Title"] = "day";
-            ViewData["Description"] = "Live weather data for the day";
+            ViewData["Description"] = "Weather information for Durbanville South Africa, captured " +
+                                      "using a Fine Offset WH2310 weather station and a meteobridge weather interface";
             var model = _observationsService.Daily();
             return View(model);
         }

@@ -18,17 +18,17 @@
     //         return c;
     //     });
     var observationses = graphPoints.ToList();
-    var obj = observationses.Where(x=>true).Select(o =>
+    var obj = observationses.Where(x => true).Select(o =>
         new
         {
-            ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds), 
+            ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
             TempOutCur = Convert.ToDecimal(o.TempOutCur),
             TempInCur = Convert.ToDecimal(o.TempInCur),
             DewCur = Convert.ToDecimal(o.DewCur),
             Tmin = Convert.ToDecimal(o.Tmin),
             Tmax = Convert.ToDecimal(o.Tmax),
-            HumOutCur= Convert.ToInt32(o.HumOutCur),
-            HumInCur =  Convert.ToInt32(o.HumInCur),
+            HumOutCur = Convert.ToInt32(o.HumOutCur),
+            HumInCur = Convert.ToInt32(o.HumInCur),
             PressCur = Convert.ToDecimal(o.PressCur),
             WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6),
             WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
@@ -51,13 +51,13 @@
             RainRateCur = Convert.ToDecimal(o.RainRateCur)
         }).ToList();
     var windobj = observationses.Where(obs => obs.WindSpeedCur > 0).Select(o =>
-        new 
+        new
         {
             WindDirCur = Convert.ToDecimal(o.WindDirCur),
             WindDirCurEng = o.WindDirCurEng,
-            WindGust10 = Convert.ToDecimal(o.WindGust10),
-            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur),
-            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur)
+            WindGust10 = Convert.ToDecimal(o.WindGust10 * 3.6),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur* 3.6),
+            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6)
         }).ToList();
     double sd = 0.0;
     string cloudyness = "";
@@ -93,10 +93,23 @@
     // int nStepRain = 100;
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);
 }
+
+@section Scripts
+{
+    <script type="text/javascript">
+                var hrs = 1;
+                var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
+                var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
+                var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+                var std = '@sd';
+                console.log("Std Deviation Solar : " + std);
+            </script>
+}
+
 <div class="containerx col-lg-12 col-md-12 col-sm-12 ">
     @if (latest != null)
     {
-        <h1>Historical weather data - Stellenberg Durbanville</h1>
+        <h1>Historical weather<br/>Stellenberg Durbanville</h1>
         <div class="row">
             <div class="offset-lg-9 col-lg-3">
                 Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@latest.ObsTime.ToLocalTime().ToString("yyyy-MM-dd")">
@@ -139,15 +152,6 @@
                 @cnt total records
             </div>
         </div>
-        <script type="text/javascript">
-            var hrs = 1;
-            var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
-            var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));
-            var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
-            var std = '@sd';
-            console.log("Std Deviation Solar : " + std);
-        </script>
-        @await Html.PartialAsync("_scripts")
     }
     else
     {
