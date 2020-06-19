@@ -1,11 +1,10 @@
 ﻿using System;
-using System.IO.Compression;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -27,51 +26,48 @@ namespace WUCharts
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<KestrelServerOptions>(
-                Configuration.GetSection("Kestrel"));
-            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+            services.AddHealthChecks();
+            // services.Configure<KestrelServerOptions>(
+            //     Configuration.GetSection("Kestrel"));
+            // services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options =>
             {
-                options.MimeTypes = new string[]{
-                    "text/html",
-                    "text/css",
-                    "application/javascript",
-                    "text/javascript",
-                    "text/json",
-                    "application/json"
-                };
+                options.Providers.Add<BrotliCompressionProvider>();
                 options.Providers.Add<GzipCompressionProvider>();
-                
-                options.EnableForHttps = true;
+                options.MimeTypes = 
+                    ResponseCompressionDefaults.MimeTypes.Concat(
+                        new[]
+                        {
+                            "text/html",
+                            "text/css",
+                            "application/javascript",
+                            "text/javascript",
+                            "text/json",
+                            "application/json"
+                        });
             });
-          
             services.Configure<ObservationDatabaseSettings>(
                 Configuration.GetSection(nameof(ObservationDatabaseSettings)));
 
             services.AddSingleton<IObservationDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
             services.AddSingleton<ObservationsService>();
-            services.Configure<CookiePolicyOptions>(options =>
+            // services.Configure<CookiePolicyOptions>(options =>
+            // {
+            //     // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            //     options.CheckConsentNeeded = context => true;
+            //     options.MinimumSameSitePolicy = SameSiteMode.None;
+            // });
+            services.AddControllersWithViews();
+            services.AddRazorPages().AddRazorPagesOptions(options =>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.Conventions.AddPageRoute("/robotstxt", "/Robots.Txt");
             });
-            services.AddNodeServices(options =>
-            {
-                // options.DebuggingPort 
-            });
-            services.AddCors(c =>
-            {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
-            });
-            services.AddMvc()
-                .AddJsonOptions(options => options.UseMemberCasing())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMemoryCache();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -133,11 +129,12 @@ namespace WUCharts
             });
             app.UseCookiePolicy();
 
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHealthChecks("/healthcheck");
+                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
