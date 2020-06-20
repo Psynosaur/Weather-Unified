@@ -15,11 +15,11 @@ namespace WURequest.Controllers
     [ApiController]
     public class WeatherController : ControllerBase
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ObservationsService _observationsService;
         public WeatherController(
             ObservationsService observationsService,
-            IHostingEnvironment hostingEnvironment)
+            IWebHostEnvironment hostingEnvironment)
         {
             _observationsService = observationsService;
             _hostingEnvironment = hostingEnvironment;
