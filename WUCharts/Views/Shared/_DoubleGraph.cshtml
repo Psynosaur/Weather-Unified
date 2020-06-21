@@ -3,39 +3,41 @@
     var cnt = Model.Select(x => true).Count();
 }
 
-<div class="row">
+<div class="columns is-12-mobile">
     @await Html.PartialAsync("_CurrentConditions", Model)
     @if (cnt > 0)
     {
-        <div class="row col-lg col-sm-12" id="middle">
-            @await Html.PartialAsync("_TopBar", Model)
-            <div class="col-lg-12">
-                <div class="row">
-                    <div class="col-lg-6" id="chartemp" style="height:300px;"></div>
-                    <div class="col-lg-6" id="chartminmax" style="height:300px;"></div>
+       
+            <div class="column is-8" id="middle">
+                @await Html.PartialAsync("_TopBar", Model)
+           
+                <div class="columns">
+                    <div class="column is-half" id="chartemp" style="height:300px;"></div>
+                    <div class="column is-half" id="chartminmax" style="height:300px;"></div>
                 </div>
-                <div class="row">
-                    <div class="col-lg-6" id="charthum" style="height:300px;"></div>
-                    <div class="col-lg-6" id="chartpressure" style="height:300px;"></div>
+                <div class="columns">
+                    <div class="column is-half" id="charthum" style="height:300px;"></div>
+                    <div class="column is-half" id="chartpressure" style="height:300px;"></div>
                 </div>
-                <div class="row">
-                    <div class="col-lg-6" id="chartwind" style="height:300px;"></div>
-                    <div class="col-lg-6" id="chartrain" style="height:300px;"></div>
+                <div class="columns">
+                    <div class="column is-half" id="chartwind" style="height:300px;"></div>
+                    <div class="column is-half" id="chartrain" style="height:300px;"></div>
                 </div>
-                <div class="row">
-                    <div class="col-lg-6" id="chartsolar" style="height:300px;"></div>
-                    <div class="col-lg-6" id="chartuv" style="height:300px;"></div>
+                <div class="columns">
+                    <div class="column is-half" id="chartsolar" style="height:300px;"></div>
+                    <div class="column is-half" id="chartuv" style="height:300px;"></div>
                 </div>
-                <div class="row">
-                    <div class="col-lg" id="chartwd" style="height:300px;"></div>
+                <div class="columns">
+                    <div class="column is-full" id="chartwd" style="height:300px;"></div>
                 </div>
-                <div class="row">
-                    <div class="col-lg-4" id="chartTR" style="height:400px;"></div>
-                    <div class="col-lg-4" id="chartPR" style="height:400px;"></div>
-                    <div class="col-lg-4" id="chartHR" style="height:400px;"></div>
+                <div class="columns">
+                    <div class="column is-third" id="chartTR" style="height:400px;"></div>
+                    <div class="column is-third" id="chartPR" style="height:400px;"></div>
+                    <div class="column is-third" id="chartHR" style="height:400px;"></div>
                 </div>
+           
             </div>
-        </div>
+   
     }
 
     @await Html.PartialAsync("_Stats", Model)

@@ -2,8 +2,8 @@
   {
     "outputFileName": "wwwroot/css/site.min.css",
     "inputFiles": [
-      "wwwroot/lib/assets/bootstrap.min.css",
-      "wwwroot/lib/assets/jquery.timepicker.min.css",
+      "wwwroot/lib/assets/bulma.min.css",
+      "wwwroot/lib/assets/flatpickr.css",      
       "wwwroot/css/site.css"
     ]
   },
@@ -13,11 +13,7 @@
       "wwwroot/lib/assets/core.js",
       "wwwroot/lib/assets/charts.js",
       "wwwroot/lib/assets/dark.js",
-      "wwwroot/lib/assets/jquery-3.5.1.js",
-      "wwwroot/lib/assets/jquery-ui.js",
-      "wwwroot/lib/assets/jquery.timepicker.min.js",
-      "wwwroot/lib/assets/popper.min.js",
-      "wwwroot/lib/assets/bootstrap.min.js",
+      "wwwroot/lib/assets/flatpickr.js",
       "wwwroot/js/site.js"
     ],
     "minify": {

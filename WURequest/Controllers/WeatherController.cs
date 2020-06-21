@@ -122,9 +122,9 @@ namespace WURequest.Controllers
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                
+                Console.WriteLine(e.ToString());
                 throw;
             }
         }
@@ -134,9 +134,9 @@ namespace WURequest.Controllers
         [ApiController]
         public class DataController : ControllerBase
         {
-            private readonly IHostingEnvironment _hostingEnvironment;
+            private readonly IWebHostEnvironment _hostingEnvironment;
 
-            public DataController(IHostingEnvironment hostingEnvironment)
+            public DataController(IWebHostEnvironment hostingEnvironment)
             {
                 _hostingEnvironment = hostingEnvironment;
             }

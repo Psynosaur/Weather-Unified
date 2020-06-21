@@ -39,41 +39,47 @@
     var finalEle = -(Math.Round(10 * (elevat + atmosRefrac + halfdisk)) / 10);
 }
 
+@section Scripts
+{
+    <script>
+            var rise = '@sunrise.ToLocalTime()';
+            var set = '@sunset.ToLocalTime()';
+            var light = '@duration';
+            console.log("Sunrise : " + rise);
+            console.log("Sunset : " + set);
+            console.log("Daylight : " + light);
+    </script>
+}
 
-<div class="card border-secondary col-lg-2 col-sm-12" id="second">
-    <div class="card-header " style="text-align: center">
-        <strong>Rain</strong>
+<div class="column is-2" id="second">
+    <div class="card has-text-light">
+        <div class="card-content " style="text-align: center">
+            <strong>Rain</strong>
+
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Day<span style="float:right;">@latest.RainDay mm</span></li>
+                <li class="list-group-item">Previous Day<span style="float:right;">@latest.RainYest mm</span></li>
+                <li class="list-group-item">Month<span style="float:right;">@latest.RainMonth mm</span></li>
+                <li class="list-group-item">Year<span style="float:right;">@latest.RainYear mm</span></li>
+                @if (duration.Seconds > 0)
+                {
+                    <li class="list-group-item" style="text-align: center">
+                        <strong>Sunlight</strong>
+                    </li>
+                    <li class="list-group-item">Sunrise<span style="float:right;">@sunrise.ToLocalTime().ToString("HH:mm")</span></li>
+                    @if (isSet)
+                    {
+                        <li class="list-group-item">Sunset<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>
+                    }
+                    <li class="list-group-item">Daytime<span style="float:right;">@duration.ToString("g")</span></li>
+                    <li class="list-group-item">Max Solar Elevation<span style="float:right;">@finalEle°</span></li>
+                }
+            </ul>
+            <div class="card-header " style="text-align: center">
+                <strong>Wind Rose</strong>
+            </div>
+            <ul class="list-group list-group-flush" id="windrose">
+            </ul>
+        </div>
     </div>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item">Day<span style="float:right;">@latest.RainDay mm</span></li>
-        <li class="list-group-item">Previous Day<span style="float:right;">@latest.RainYest mm</span></li>
-        <li class="list-group-item">Month<span style="float:right;">@latest.RainMonth mm</span></li>
-        <li class="list-group-item">Year<span style="float:right;">@latest.RainYear mm</span></li>
-        @if (duration.Seconds > 0)
-        {
-            <li class="list-group-item" style="text-align: center">
-                <strong>Sunlight</strong>
-            </li>
-            <li class="list-group-item">Sunrise<span style="float:right;">@sunrise.ToLocalTime().ToString("HH:mm")</span></li>
-            @if (isSet)
-            {
-                <li class="list-group-item">Sunset<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>
-            }
-            <li class="list-group-item">Daytime<span style="float:right;">@duration.ToString("g")</span></li>
-            <li class="list-group-item">Max Solar Elevation<span style="float:right;">@finalEle°</span></li>
-        }
-    </ul>
-    <div class="card-header " style="text-align: center">
-        <strong>Wind Rose</strong>
-    </div>
-    <ul class="list-group list-group-flush" id="windrose">
-    </ul>
 </div>
-<script>
-        var rise = '@sunrise.ToLocalTime()';
-        var set = '@sunset.ToLocalTime()';
-        var light = '@duration';
-        console.log("Sunrise : " + rise);
-        console.log("Sunset : " + set);
-        console.log("Daylight : " + light);
-</script>

@@ -14,11 +14,7 @@ namespace WUCharts
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.ConfigureKestrel(serverOptions =>
-                        {
-                            // Set properties and call methods on options
-                            serverOptions.Limits.MaxConcurrentConnections = 512;
-                        })
+                    webBuilder
                         .UseIIS()
                         .UseStartup<Startup>();
                 });

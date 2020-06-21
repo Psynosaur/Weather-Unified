@@ -53,7 +53,7 @@
             WindDirCur = Convert.ToDecimal(o.WindDirCur),
             WindDirCurEng = o.WindDirCurEng,
             WindGust10 = Convert.ToDecimal(o.WindGust10 * 3.6),
-            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur* 3.6),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
             WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6)
         }).ToList();
     // int nStepRain = 100;
@@ -73,28 +73,38 @@
         var raining = @rainobj.Count >0;
         if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
         var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
-        var lh = "@lastestHour";
+        // var lh = "@lastestHour";
+        
+                        flatpickr("#test", {
+                                   enableTime: true,
+                                       noCalendar: true,
+                                       dateFormat: "H:i",
+                                       time_24hr: true,
+                                       defaultDate: "@latest.ObsTime.ToLocalTime().ToString("HH:mm")",
+                                       minTime: "00:00",
+                                       maxTime: "@latest.ObsTime.ToLocalTime().ToString("HH:mm")",               
+                        });
     </script>
-    <script src="~/js/timepicker.min.js"></script>
+    @* <script src="~/js/timepicker.min.js"></script> *@
 }
 
-<div class="containerx col-lg-12 col-md-12 col-sm-12 ">
-    @if (latest != null)
-    {
-        <h1>Daily weather<br/>
-            Stellenberg Durbanville</h1>
-        <div class="row">
-            <div class="col-12" style="text-align: center">
-                <strong> @latest.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")</strong><br/>
-                <input class="timepicker timepicker-with-dropdown text-center">
-            </div>
+
+@if (latest != null)
+{
+    <h1>
+        Daily weather<br/>
+        Stellenberg Durbanville
+    </h1>
+    <div class="row">
+        <div class="column" style="text-align: center">
+            <strong> @latest.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")</strong><br/>
+            <input id="test" class="flatpickr flatpickr-input active" type="text" placeholder="@latest.ObsTime.ToLocalTime().ToString("HH:mm")" data-id="multipleCustomConjunction">
         </div>
+    </div>
 
-        @await Html.PartialAsync("_DoubleGraph", Model)
-
-    }
-    else
-    {
-        @await Html.PartialAsync("_error")
-    }
-</div>
+    @await Html.PartialAsync("_DoubleGraph", Model)
+}
+else
+{
+    @await Html.PartialAsync("_error")
+}

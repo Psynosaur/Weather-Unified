@@ -58,7 +58,10 @@ namespace WUCharts
             //     options.CheckConsentNeeded = context => true;
             //     options.MinimumSameSitePolicy = SameSiteMode.None;
             // });
-            services.AddControllersWithViews();
+            services
+                .AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
+           
             services.AddRazorPages().AddRazorPagesOptions(options =>
             {
                 options.Conventions.AddPageRoute("/robotstxt", "/Robots.Txt");

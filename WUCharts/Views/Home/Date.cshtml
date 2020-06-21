@@ -104,86 +104,98 @@
                 var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
                 var std = '@sd';
                 console.log("Std Deviation Solar : " + std);
-            </script>
+    </script>
+    <script type="text/javascript">
+             flatpickr("#test", {
+                                           
+                   // enableTime: true,
+                   minDate: "2019-07-20",
+                   maxDate: "@DateTime.Now.ToString("yyyy-MM-dd")",
+                   dateFormat: "Y-m-d",
+                   onChange: function(selectedDates, dateStr, instance){
+                                         window.location = '/date/' + dateStr;
+                                         },
+                    startDate: "@DateTime.Now.ToString("yyyy-MM-dd")"
+                                         
+                                                                    
+                                                      
+                                });
+        
+                         
+                            
+    </script>
+
 }
 
-<div class="containerx col-lg-12 col-md-12 col-sm-12 ">
-    @if (latest != null)
-    {
-        <h1>Historical weather<br/>Stellenberg Durbanville</h1>
-        <div class="row">
-            <div class="offset-lg-9 col-lg-3">
-                Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@latest.ObsTime.ToLocalTime().ToString("yyyy-MM-dd")">
-            </div>
-            <div class="col-12" style="text-align: center">
-                <h2>@latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy")</h2>
-            </div>
-            <div class="col-12" style="text-align: center">
-                <h3>@cloudyness</h3>
-            </div>
-        </div>
-        <div class="row">
-            @await Html.PartialAsync("_Stats", Model)
-            @if (cnt > 0)
-            {
-                <div class="col-lg" id="graph">
-                    <div class="row">
-                        <div class="col-lg-6" id="chartemp" style="height:300px;"></div>
-                        <div class="col-lg-6" id="chartminmax" style="height:300px;"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6" id="charthum" style="height:300px;"></div>
-                        <div class="col-lg-6" id="chartpressure" style="height:300px;"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6" id="chartwind" style="height:300px;"></div>
-                        <div class="col-lg-6" id="chartrain" style="height:300px;"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6" id="chartsolar" style="height:300px;"></div>
-                        <div class="col-lg-6" id="chartuv" style="height:300px;"></div>
-                    </div>
-                    <div class="col-lg" id="chartwd" style="height:300px;"></div>
-                    <div class="row">
-                        <div class="col-lg-4" id="chartTR" style="height:400px;"></div>
-                        <div class="col-lg-4" id="chartPR" style="height:400px;"></div>
-                        <div class="col-lg-4" id="chartHR" style="height:400px;"></div>
-                    </div>
-                </div>
-            }
-            @await Html.PartialAsync("_DateSummary", Model)
-        </div>
-        <div class="row" style="text-align: center">
-            <div class="col-lg">
-                @cnt total records
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="row">
-            <div class="offset-lg-9 col-lg-3">
-                Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@DateTime.Now.ToString("yyyy-MM-dd")">
-            </div>
-        </div>
-        @await Html.PartialAsync("_error")
-    }
-</div>
-<script type="text/javascript">
 
-                $(function(){
-                        var stDate = new Date(2019, 6, 20);
-                        $('.datepicker')
-                            .datepicker({
-                                dateFormat: 'yy-mm-dd',
-                                minDate: stDate,
-                                maxDate: new Date(),
-                                onSelect: function (date) {
-                                  window.location = '/date/' + date;
-                                  }
-                            });        
-                        });
-</script>
+@if (latest != null)
+{
+    <h1>Historical weather<br/>Stellenberg Durbanville</h1>
+    <div class="row">
+        <div class="column is-3">
+            @* Date: <input id="timepick" data-date-format="yyyy-mm-dd" value="@latest.ObsTime.ToLocalTime().ToString("yyyy-MM-dd")"> *@
+            <input id="test" class="flatpickr flatpickr-input active" type="text" placeholder="@latest.ObsTime.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
+        </div>
+        <div class="column is-3" style="text-align: center">
+            <h2>@latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy")</h2>
+        </div>
+        <div class="column is-3" style="text-align: center">
+            <h3>@cloudyness</h3>
+        </div>
+    </div>
+    <div class="columns is-0-mobile">
+        @await Html.PartialAsync("_Stats", Model)
+        @if (cnt > 0)
+        {
+            <div class="column is-8" id="middle">
+
+                <div class="columns">
+                    <div class="column is-half" id="chartemp" style="height:300px;"></div>
+                    <div class="column is-half" id="chartminmax" style="height:300px;"></div>
+                </div>
+                <div class="columns">
+                    <div class="column is-half" id="charthum" style="height:300px;"></div>
+                    <div class="column is-half" id="chartpressure" style="height:300px;"></div>
+                </div>
+                <div class="columns">
+                    <div class="column is-half" id="chartwind" style="height:300px;"></div>
+                    <div class="column is-half" id="chartrain" style="height:300px;"></div>
+                </div>
+                <div class="columns">
+                    <div class="column is-half" id="chartsolar" style="height:300px;"></div>
+                    <div class="column is-half" id="chartuv" style="height:300px;"></div>
+                </div>
+                <div class="columns">
+                    <div class="column is-full" id="chartwd" style="height:300px;"></div>
+                </div>
+                <div class="columns">
+                    <div class="column is-third" id="chartTR" style="height:400px;"></div>
+                    <div class="column is-third" id="chartPR" style="height:400px;"></div>
+                    <div class="column is-third" id="chartHR" style="height:400px;"></div>
+                </div>
+
+            </div>
+        }
+        @await Html.PartialAsync("_DateSummary", Model)
+    </div>
+    <div class="row" style="text-align: center">
+        <div class="col-lg">
+            @cnt total records
+        </div>
+    </div>
+}
+else
+{
+    <div class="columns is-0-mobile">
+        <div class="column">
+             <input id="test" class="flatpickr flatpickr-input active" type="text" placeholder="@DateTime.Now.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
+            @* Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@DateTime.Now.ToString("yyyy-MM-dd")"> *@
+        </div>
+    </div>
+    @await Html.PartialAsync("_error")
+}
+
+
 @* <style> *@
 @* *@
 @* #chartdiv { *@

@@ -20,17 +20,17 @@
     //         return c;
     //     });
     var observationses = graph.ToList();
-    var obj = observationses.Where(x=>true).Select(o =>
+    var obj = observationses.Where(x => true).Select(o =>
         new
         {
-            ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds), 
+            ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
             TempOutCur = Convert.ToDecimal(o.TempOutCur),
             TempInCur = Convert.ToDecimal(o.TempInCur),
             DewCur = Convert.ToDecimal(o.DewCur),
             Tmin = Convert.ToDecimal(o.Tmin),
             Tmax = Convert.ToDecimal(o.Tmax),
-            HumOutCur= Convert.ToInt32(o.HumOutCur),
-            HumInCur =  Convert.ToInt32(o.HumInCur),
+            HumOutCur = Convert.ToInt32(o.HumOutCur),
+            HumInCur = Convert.ToInt32(o.HumInCur),
             PressCur = Convert.ToDecimal(o.PressCur),
             WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6),
             WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
@@ -48,7 +48,7 @@
         new
         {
             WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
-            WindDirAvg10Eng = o.WindDirAvg10Eng, 
+            WindDirAvg10Eng = o.WindDirAvg10Eng,
             RainRateCur = Convert.ToDecimal(o.RainRateCur)
         }).ToList();
     var windobj = observationses.Where(obs => obs.WindSpeedCur > 0).Select(o =>
@@ -57,16 +57,17 @@
             WindDirCur = Convert.ToDecimal(o.WindDirCur),
             WindDirCurEng = o.WindDirCurEng,
             WindGust10 = Convert.ToDecimal(o.WindGust10 * 3.6),
-            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur* 3.6),
+            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
             WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6)
         }).ToList();
 
     // int nStepRain = 100;
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);
 }
+
 @section Scripts
 {
-     <script type="text/javascript">
+    <script type="text/javascript">
                 var hrs = 2;
                 var pew = @nStep;
                 var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
@@ -75,49 +76,49 @@
                 var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
             </script>
 }
-<div class="containerx col-lg-12 col-md-12 col-sm-12 ">
-    @if (latest != null)
-    {
-        <h1>Monthly weather<br/>Stellenberg Durbanville</h1>
-        <div class="row">
-            <div class="col-12" style="text-align: center">
-                <strong>@latest.ObsTime.ToLocalTime().ToString("dddd dd MMM yyyy - HH:mm:ss zzz")</strong>
+
+@if (latest != null)
+{
+    <h1>Monthly weather<br/>Stellenberg Durbanville</h1>
+    <div class="row">
+        <div class="col-12" style="text-align: center">
+            <strong>@latest.ObsTime.ToLocalTime().ToString("dddd dd MMM yyyy - HH:mm:ss zzz")</strong>
+        </div>
+    </div>
+
+    <div class="columns is-12-mobile">
+        @await Html.PartialAsync("_CurrentConditions", Model)
+        @if (cnt > 0)
+        {
+            <div class="column is-8" id="middle">
+                @await Html.PartialAsync("_TopBar", Model)
+
+
+                <div class="column is-12" id="chartemp" style="height:300px;"></div>
+
+                <div class="column is-12" id="chartminmax" style="height:300px;"></div>
+                <div class="column is-12" id="charthum" style="height:300px;"></div>
+                <div class="column is-12" id="chartpressure" style="height:300px;"></div>
+                <div class="column is-12" id="chartwind" style="height:300px;"></div>
+                <div class="column is-12" id="chartrain" style="height:300px;"></div>
+                <div class="column is-12" id="chartsolar" style="height:300px;"></div>
+                <div class="column is-12" id="chartuv" style="height:300px;"></div>
+                <div class="column is-12" id="chartwd" style="height:300px;"></div>
+
             </div>
+        }
+
+        @await Html.PartialAsync("_Stats", Model)
+
+    </div>
+
+    <div class="row" style="text-align: center">
+        <div class="col-lg">
+            @cnt total records
         </div>
-
-        <div class="row">
-            @await Html.PartialAsync("_CurrentConditions", Model)
-            @if (cnt > 0)
-            {
-                <div class="row col-lg" id="middle">
-                    @await Html.PartialAsync("_TopBar", Model)
-                    <div class="col-lg-12">
-                        <div class="col-lg" id="chartemp" style="height:300px;"></div>
-                        <div class="col-lg" id="chartminmax" style="height:300px;"></div>
-                        <div class="col-lg" id="charthum" style="height:300px;"></div>
-                        <div class="col-lg" id="chartpressure" style="height:300px;"></div>
-                        <div class="col-lg" id="chartwind" style="height:300px;"></div>
-                        <div class="col-lg" id="chartrain" style="height:300px;"></div>
-                        <div class="col-lg" id="chartsolar" style="height:300px;"></div>
-                        <div class="col-lg" id="chartuv" style="height:300px;"></div>
-                        <div class="col-lg" id="chartwd" style="height:300px;"></div>
-                    </div>
-                </div>
-            }
-
-            @await Html.PartialAsync("_Stats", Model)
-
-        </div>
-
-        <div class="row" style="text-align: center">
-            <div class="col-lg">
-                @cnt total records
-            </div>
-        </div>
-       
-    }
-    else
-    {
-        @await Html.PartialAsync("_error")
-    }
-</div>
+    </div>
+}
+else
+{
+    @await Html.PartialAsync("_error")
+}

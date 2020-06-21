@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>7fbbc6bf-b172-4dca-bf5b-947e7bb7234f</UserSecretsId>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <StartupObject />
     <ApplicationIcon />
     <OutputType>WinExe</OutputType>
@@ -12,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoIdentity" Version="1.0.0.1" />
+<!--    <PackageReference Include="MongoIdentity" Version="1.0.0.1" />-->
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.10.3" />
