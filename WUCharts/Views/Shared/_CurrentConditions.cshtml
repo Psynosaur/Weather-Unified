@@ -61,48 +61,48 @@
 <div class="column is-2" id="first">
     <div class="card has-text-light">
         <div class="card-content">
-                    <strong>Current Conditions</strong>
+            <div class="media">
+                <div class="media-content">
+                    <p class="subtitle has-text-light is-4">Current Conditions</p>
 
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item" style="text-align: center">
-                    <strong>Outdoor</strong>
-                </li>
-                <li class="list-group-item">Temp<span style="float:right;">@latest.TempOutCur &#176C</span></li>
-                <li class="list-group-item">Temp Min<span style="float:right;">@latest.Tmin &#176C</span></li>
-                <li class="list-group-item">Temp Max<span style="float:right;">@latest.Tmax &#176C</span></li>
-                <li class="list-group-item">Humidity<span style="float:right;">@latest.HumOutCur%</span></li>
-                <li class="list-group-item">Dew Point<span style="float:right;">@latest.DewCur &#176C</span></li>
-                <li class="list-group-item" style="text-align: center">
-                    <strong>Wind</strong>
-                </li>
-                <li class="list-group-item">Direction<span style="float:right;">@latest.WindDirCur&#176 / @latest.WindDirCurEng</span></li>
-                <li class="list-group-item">Direction Avg<span style="float:right;">@latest.WindDirAvg10&#176 / @latest.WindDirAvg10Eng</span></li>
-                <li class="list-group-item">Chill<span style="float:right;">@latest.WindChillCur &#176C</span></li>
-                <li class="list-group-item" style="text-align: center">
-                    <strong>Wind Speed</strong>
-                </li>
-                <li class="list-group-item">Current<span style="float:right;">@latest.WindSpeedCur m/s / @(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
-                <li class="list-group-item">Average<span style="float:right;">@latest.WindAvgSpeedCur m/s / @(windObj.currWAvg > 0 ? windObj.currWAvg.ToString("0.00") : "0") km/h</span></li>
-                <li class="list-group-item">Gust<span style="float:right;">@latest.WindGust10 m/s / @(windObj.currGust > 0 ? windObj.currGust.ToString("0.00") : "0") km/h</span></li>
-                @if (duration.Seconds > 0 && cnt < 5050 && cnt > 210)
-                {
-                    <li class="list-group-item" style="text-align: center">
-                        <strong>Sunlight</strong>
-                    </li>
-                    <li class="list-group-item">Sunrise<span style="float:right;">@sunrise.ToLocalTime().ToString("HH:mm")</span></li>
-                    @if (isSet)
-                    {
-                        <li class="list-group-item">Sunset<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>
-                    }
-                    <li class="list-group-item">Daytime<span style="float:right;">@duration.ToString("g")</span></li>
-                    <li class="list-group-item">Max Solar Elevation<span style="float:right;">@finalEle°</span></li>
-                }
-            </ul>
-            <div class="card" style="text-align: center">
-                <strong>Wind Rose</strong>
+                    
+                    <ul class="list-group list-group-flush">
+                        <p class="subtitle has-text-light is-4">Outdoor</p>
+                        <li class="list-group-item">Temp<span style="float:right;">@latest.TempOutCur &#176C</span></li>
+                        <li class="list-group-item">Temp Min<span style="float:right;">@latest.Tmin &#176C</span></li>
+                        <li class="list-group-item">Temp Max<span style="float:right;">@latest.Tmax &#176C</span></li>
+                        <li class="list-group-item">Humidity<span style="float:right;">@latest.HumOutCur%</span></li>
+                        <li class="list-group-item">Dew Point<span style="float:right;">@latest.DewCur &#176C</span></li>
+                        <p class="subtitle has-text-light is-4">Wind</p>
+                        <li class="list-group-item">Direction<span style="float:right;">@latest.WindDirCur&#176 / @latest.WindDirCurEng</span></li>
+                        <li class="list-group-item">Direction Avg<span style="float:right;">@latest.WindDirAvg10&#176 / @latest.WindDirAvg10Eng</span></li>
+                        <li class="list-group-item">Chill<span style="float:right;">@latest.WindChillCur &#176C</span></li>
+                        <p class="subtitle has-text-light is-4">Speed</p>
+                        <li class="list-group-item">Current<span style="float:right;">@latest.WindSpeedCur m/s / @(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
+                        <li class="list-group-item">Average<span style="float:right;">@latest.WindAvgSpeedCur m/s / @(windObj.currWAvg > 0 ? windObj.currWAvg.ToString("0.00") : "0") km/h</span></li>
+                        <li class="list-group-item">Gust<span style="float:right;">@latest.WindGust10 m/s / @(windObj.currGust > 0 ? windObj.currGust.ToString("0.00") : "0") km/h</span></li>
+                        @if (duration.Seconds > 0 && cnt < 5050 && cnt > 210)
+                        {
+                            <p class="subtitle has-text-light is-4">Sunlight</p>
+                            <li class="list-group-item">Sunrise<span style="float:right;">@sunrise.ToLocalTime().ToString("HH:mm")</span></li>
+                            @if (isSet)
+                            {
+                                <li class="list-group-item">Sunset<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>
+                            }
+                            <li class="list-group-item">Daytime<span style="float:right;">@duration.ToString("g")</span></li>
+                            <li class="list-group-item">Max Solar Elevation<span style="float:right;">@finalEle°</span></li>
+                        }
+                    </ul>
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="subtitle has-text-light is-4">Wind Rose</p>
+                            <ul class="list-group list-group-flush" id="windrose">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <ul class="list-group list-group-flush" id="windrose">
-            </ul>
         </div>
+
     </div>
 </div>
