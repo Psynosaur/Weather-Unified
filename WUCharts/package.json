@@ -1,3 +1,5 @@
 {
-  "dependencies": {}
+  "name": "WUCharts",
+  "version": "1.1.1",
+  "devDependencies": {}
 }

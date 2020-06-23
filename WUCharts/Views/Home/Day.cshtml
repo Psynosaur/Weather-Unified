@@ -2,7 +2,9 @@
 @using WURequest.Models
 @model List<WURequest.Models.Observations>
 @{
+    var cnt = Model.Select(x => true).Count();
     var latest = Model.LastOrDefault();
+    var start = "";
     // Sets nth record to use for plotting
     int nStep = 17;
     var graph = Model.Where((x, i) => i % nStep == 0);
@@ -74,16 +76,30 @@
         if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
         var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
         // var lh = "@lastestHour";
-        
-                        flatpickr("#test", {
-                                   enableTime: true,
-                                       noCalendar: true,
-                                       dateFormat: "H:i",
-                                       time_24hr: true,
-                                       defaultDate: "@latest.ObsTime.ToLocalTime().ToString("HH:mm")",
-                                       minTime: "00:00",
-                                       maxTime: "@latest.ObsTime.ToLocalTime().ToString("HH:mm")",               
-                        });
+       @if (cnt > 0){
+            start = latest.ObsTime.ToLocalTime().ToString("HH:mm");
+        }
+        else{
+            start = DateTime.Now.ToString("HH:mm");
+        }
+       
+        flatpickr("#time", {
+                   enableTime: true,
+                   // plugins: [new confirmDatePlugin({})],
+                   // confirmText: "OK ",
+                   
+                   noCalendar: true,
+                   dateFormat: "H:i",
+                   time_24hr: true,
+                   defaultDate: "@start",
+                   minTime: "00:00",
+                   maxTime: "@start",
+                   onClose: function(selectedDates, dateStr, instance){
+                                     window.location = '/hour/' + dateStr.substring(0, dateStr.length - 3);
+                            },
+                   // theme: "dark"               
+        });
+                        
     </script>
     @* <script src="~/js/timepicker.min.js"></script> *@
 }
@@ -95,10 +111,10 @@
         Daily weather<br/>
         Stellenberg Durbanville
     </h1>
-    <div class="row">
-        <div class="column" style="text-align: center">
-            <strong> @latest.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")</strong><br/>
-            <input id="test" class="flatpickr flatpickr-input active" type="text" placeholder="@latest.ObsTime.ToLocalTime().ToString("HH:mm")" data-id="multipleCustomConjunction">
+    <div class="columns has-text-light">
+        <div class="column has-text-light" style="text-align: center">
+             @latest.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")<br/>
+            <input id="time" class="flatpickr flatpickr-input active" type="text" placeholder="@latest.ObsTime.ToLocalTime().ToString("HH:mm")" data-id="multipleCustomConjunction">
         </div>
     </div>
 

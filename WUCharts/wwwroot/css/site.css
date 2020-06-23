@@ -1,4 +1,4 @@
-﻿body {
+﻿body , footer div p{
     padding-bottom: 20px;
     background-color: #30303d;
     color: #fff;
@@ -78,7 +78,7 @@ h1 {
 
 #windrose, #rainrose {
     width: 100%;
-    height: 500px;
+    height: 370px;
 }
 /*.topbar {*/
 /*   max-height: 10rem;*/

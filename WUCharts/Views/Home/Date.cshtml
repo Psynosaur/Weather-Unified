@@ -6,6 +6,7 @@
 @{
     var cnt = Model.Select(x => true).Count();
     var latest = Model.LastOrDefault();
+    var start = "";
     // Sets nth record to use for plotting
     int nStep = 17;
     var graphPoints = Model.Where((x, i) => i % nStep == 0);
@@ -106,23 +107,31 @@
                 console.log("Std Deviation Solar : " + std);
     </script>
     <script type="text/javascript">
-             flatpickr("#test", {
+            @if (cnt > 0)
+            {
+                start = latest.ObsTime.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                start = DateTime.Now.ToString("yyyy-MM-dd");
+            }
+             flatpickr("#date", {
                                            
                    // enableTime: true,
                    minDate: "2019-07-20",
                    maxDate: "@DateTime.Now.ToString("yyyy-MM-dd")",
                    dateFormat: "Y-m-d",
                    onChange: function(selectedDates, dateStr, instance){
-                                         window.location = '/date/' + dateStr;
-                                         },
-                    startDate: "@DateTime.Now.ToString("yyyy-MM-dd")"
-                                         
-                                                                    
-                                                      
-                                });
-        
-                         
-                            
+                                 window.location = '/date/' + dateStr;
+                             },
+                    startDate: "@start",
+                    defaultDate: "@start",
+                    disable: [
+                            {
+                                from: "2019-08-30",
+                                to: "2019-10-06"
+                            }]
+             });
     </script>
 
 }
@@ -131,15 +140,16 @@
 @if (latest != null)
 {
     <h1>Historical weather<br/>Stellenberg Durbanville</h1>
-    <div class="row">
-        <div class="column is-3">
+    <h2>@latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy")</h2>
+    <div class="columns has-text-light is-centered">
+        <div class="column is-1">
             @* Date: <input id="timepick" data-date-format="yyyy-mm-dd" value="@latest.ObsTime.ToLocalTime().ToString("yyyy-MM-dd")"> *@
-            <input id="test" class="flatpickr flatpickr-input active" type="text" placeholder="@latest.ObsTime.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
-        </div>
-        <div class="column is-3" style="text-align: center">
-            <h2>@latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy")</h2>
-        </div>
-        <div class="column is-3" style="text-align: center">
+            <input id="date" class="flatpickr flatpickr-input active" type="text" placeholder="@latest.ObsTime.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
+        @* </div> *@
+        @* <div class="column has-text-light is-3" style="text-align: center"> *@
+            
+        @* </div> *@
+        @* <div class="column has-text-light is-3" style="text-align: center"> *@
             <h3>@cloudyness</h3>
         </div>
     </div>
@@ -186,9 +196,9 @@
 }
 else
 {
-    <div class="columns is-0-mobile">
-        <div class="column">
-             <input id="test" class="flatpickr flatpickr-input active" type="text" placeholder="@DateTime.Now.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
+    <div class="columns is-0-mobile is-centered">
+        <div class="column is-third">
+             <input id="date" class="flatpickr flatpickr-input active" type="text" placeholder="@DateTime.Now.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
             @* Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@DateTime.Now.ToString("yyyy-MM-dd")"> *@
         </div>
     </div>

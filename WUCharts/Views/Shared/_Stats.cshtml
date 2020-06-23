@@ -30,29 +30,35 @@
 <div class="column is-2" id="first">
     <div class="card has-text-light">
         <div class="card-content">
-            <strong>Summary</strong>
+            <div class="media">
+                <div class="media-content">
+                    <p class="subtitle has-text-light is-4">Summary</p>
 
-            <ul class="list-group list-group-flush">
-                @foreach (var k in statsObj)
-                {
-                    // Do not display a line for information that is zero
-                    var match = Regex.Match(k.Value, @"\d*\,?\d+");
-                    if (Convert.ToDouble(match.Groups[0].Value) > 0)
+                    <ul class="content">
+                        @foreach (var k in statsObj)
+                        {
+                            // Do not display a line for information that is zero
+                            var match = Regex.Match(k.Value, @"\d*\,?\d+");
+                            if (Convert.ToDouble(match.Groups[0].Value) > 0)
+                            {
+                                <li>
+                                    @k.Key<span style="float:right;">@k.Value</span>
+                                </li>
+                            }
+                        }
+                    </ul>
+                    @if (Model.Any(x => x.RainRateCur > 0))
                     {
-                        <li class="list-group-item">
-                            @k.Key<span style="float:right;">@k.Value</span>
-                        </li>
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="subtitle has-text-light is-4">Rain Rose</p>
+                                <ul class="list-group list-group-flush" id="rainrose">
+                                </ul>
+                            </div>
+                        </div>
                     }
-                }
-            </ul>
-            @if (Model.Any(x => x.RainRateCur > 0))
-            {
-                <div class="card-header " style="text-align: center">
-                    <strong>Rain Rose</strong>
                 </div>
-                <ul class="list-group list-group-flush" id="rainrose">
-                </ul>
-            }
+            </div>
         </div>
     </div>
 </div>

@@ -5,30 +5,58 @@
 }
 <div class="columns">
     <div class="column topbar">
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item" style="text-align: center">
-                <strong>Solar</strong>
-            </li>
-            <li class="list-group-item">Solar Radiation<span style="float:right;">@latest.SolarRad W/m²</span></li>
-            <li class="list-group-item">UV index<span style="float:right;">@latest.UV</span></li>
-        </ul>
+        <div class="card">
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-content">
+                        @* <p class="subtitle has-text-light is-4">Summary</p> *@
+                        <ul class="content has-text-light">
+                            <li class="list-group-item" style="text-align: center">
+                                Solar
+                            </li>
+                            <li class="list-group-item">Solar Radiation<span style="float:right;">@latest.SolarRad W/m²</span></li>
+                            <li class="list-group-item">UV index<span style="float:right;">@latest.UV</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="column topbar">
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item" style="text-align: center">
-                <strong>Indoor</strong>
-            </li>
-            <li class="list-group-item">Temp / Humidity<span style="float:right;">@latest.TempInCur&#176C / @latest.HumInCur%</span></li>
-            <li class="list-group-item">Pressure<span style="float:right;">@latest.PressCur hPa</span></li>
-        </ul>
+        <div class="card">
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-content">
+                        @* <p class="subtitle has-text-light is-4">Summary</p> *@
+                        <ul class="content has-text-light">
+                            <li class="list-group-item" style="text-align: center">
+                                Indoor
+                            </li>
+                            <li class="list-group-item">Temp / Humidity<span style="float:right;">@latest.TempInCur&#176C / @latest.HumInCur%</span></li>
+                            <li class="list-group-item">Pressure<span style="float:right;">@latest.PressCur hPa</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="column topbar">
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item" style="text-align: center">
-                <strong>Rain</strong>
-            </li>
-            <li class="list-group-item">Day / Yesterday<span style="float:right;">@latest.RainDay / @latest.RainYest mm</span></li>
-            <li class="list-group-item">Month / Year<span style="float:right;">@latest.RainMonth / @latest.RainYear mm</span></li>
-        </ul>
+        <div class="card">
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-content">
+                        @* <p class="subtitle has-text-light is-4">Summary</p> *@
+                        <ul class="content has-text-light">
+                            <li class="list-group-item" style="text-align: center">
+                                Rain
+                            </li>
+                            <li class="list-group-item">Day / Yesterday<span style="float:right;">@latest.RainDay / @latest.RainYest mm</span></li>
+                            <li class="list-group-item">Month / Year<span style="float:right;">@latest.RainMonth / @latest.RainYear mm</span></li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
