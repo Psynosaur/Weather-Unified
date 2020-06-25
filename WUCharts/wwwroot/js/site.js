@@ -429,15 +429,15 @@ am4core.ready(function () {
     seriesTempDeW.tensionY = 1;
     seriesTempDeW.tensionX = 0.8;
 
-    var seriesTempIn = temp.series.push(new am4charts.LineSeries());
-    seriesTempIn.dataFields.valueY = "TempInCur";
-    seriesTempIn.dataFields.dateX = "ObsTime";
-    seriesTempIn.tooltipText = "Indoor {TempInCur} °C";
-    seriesTempIn.strokeWidth = 1;
-    seriesTempIn.stroke = am4core.color("#fcff4c");
-    seriesTempIn.tooltip.getFillFromObject = false;
-    seriesTempIn.tooltip.background.fill = am4core.color("#fcff4c");
-    seriesTempIn.tooltip.label.fill = am4core.color("#000");
+    // var seriesTempIn = temp.series.push(new am4charts.LineSeries());
+    // seriesTempIn.dataFields.valueY = "TempInCur";
+    // seriesTempIn.dataFields.dateX = "ObsTime";
+    // seriesTempIn.tooltipText = "Indoor {TempInCur} °C";
+    // seriesTempIn.strokeWidth = 1;
+    // seriesTempIn.stroke = am4core.color("#fcff4c");
+    // seriesTempIn.tooltip.getFillFromObject = false;
+    // seriesTempIn.tooltip.background.fill = am4core.color("#fcff4c");
+    // seriesTempIn.tooltip.label.fill = am4core.color("#000");
     // temp.scrollbarX = new am4core.Scrollbar();
     temp.cursor = new am4charts.XYCursor();
 

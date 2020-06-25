@@ -1,0 +1,26 @@
+﻿@using WURequest.Models
+@using System.Security.Permissions
+@model MongoDB.Bson.BsonDocument
+@{
+   
+}
+@section Scripts
+{    
+    <script type="text/javascript">
+        var raindata =[];
+        var winddata =[];
+    </script>
+}
+
+<div class="columns">
+    <div class="column">
+       @foreach (var bson in Model)
+       {
+           if (bson.Name == "currently")
+           {
+              var pew = bson.Value;
+               @pew
+           }
+       }
+    </div>
+</div>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Compression;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,9 +28,6 @@ namespace WUCharts
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHealthChecks();
-            // services.Configure<KestrelServerOptions>(
-            //     Configuration.GetSection("Kestrel"));
-            // services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options =>
             {
                 options.Providers.Add<BrotliCompressionProvider>();
@@ -46,18 +44,31 @@ namespace WUCharts
                             "application/json"
                         });
             });
+            services.Configure<BrotliCompressionProviderOptions>(options =>
+                {
+                    options.Level = CompressionLevel.Optimal;
+                }
+            );
+            services.Configure<GzipCompressionProviderOptions>(options =>
+                {
+                    options.Level = CompressionLevel.Optimal;
+                }
+            );
+            
             services.Configure<ObservationDatabaseSettings>(
                 Configuration.GetSection(nameof(ObservationDatabaseSettings)));
 
             services.AddSingleton<IObservationDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
             services.AddSingleton<ObservationsService>();
-            // services.Configure<CookiePolicyOptions>(options =>
-            // {
-            //     // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-            //     options.CheckConsentNeeded = context => true;
-            //     options.MinimumSameSitePolicy = SameSiteMode.None;
-            // });
+            
+            services.Configure<ForecastDatabaseSettings>(
+                Configuration.GetSection(nameof(ForecastDatabaseSettings)));
+            
+            services.AddSingleton<IForecastDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ForecastDatabaseSettings>>().Value);
+            services.AddSingleton<ForecastService>();
+            
             services
                 .AddControllersWithViews()
                 .AddRazorRuntimeCompilation();

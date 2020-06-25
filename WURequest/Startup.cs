@@ -27,8 +27,16 @@ namespace WURequest
             services.AddSingleton<IObservationDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
             services.AddSingleton<ObservationsService>();
+            
+            services.Configure<ForecastDatabaseSettings>(
+                Configuration.GetSection(nameof(ForecastDatabaseSettings)));
+
+            services.AddSingleton<IForecastDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ForecastDatabaseSettings>>().Value);
+            services.AddSingleton<ForecastService>();
 
             services.AddRazorPages();
+            services.AddHostedService<ForecastBackgroundService>();
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());

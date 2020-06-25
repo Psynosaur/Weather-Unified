@@ -12,12 +12,22 @@ namespace WUCharts.Controllers
     public class HomeController : Controller
     {
         private readonly ObservationsService _observationsService;
+        private readonly ForecastService _forecastService;
 
-        public HomeController(ObservationsService observationsService)
+
+        public HomeController(ObservationsService observationsService, ForecastService forecastService)
         {
             _observationsService = observationsService;
+            _forecastService = forecastService;
         }
-
+        [Route("/forecast")]
+        public IActionResult Forecast()
+        {
+            ViewData["Title"] = "Weather Forecast";
+            ViewData["Description"] = "About the author of the site";
+            var model = _forecastService.Latest().Result.FirstOrDefault();
+            return View(model);
+        }
         [Route("/")]
         public IActionResult Index()
 
