@@ -1,4 +1,5 @@
 ﻿@using Newtonsoft.Json
+@using NUglify.Helpers
 @using WURequest.Models
 @model List<WURequest.Models.Observations>
 
@@ -10,6 +11,7 @@
     // Sets nth record to use for plotting
     int nStep = 17;
     var graphPoints = Model.Where((x, i) => i % nStep == 0);
+    var rainPoints = Model.Where((x, i) => i % 6 == 0);
     // var graph2 = graph
     //     .Select(c =>
     //     {
@@ -18,13 +20,13 @@
     //         c.WindAvgSpeedCur *= 3.6;
     //         return c;
     //     });
-    var observationses = graphPoints.ToList();
-    var obj = observationses.Where(x => true).Select(o =>
+    var observations = graphPoints.ToList();
+    var obj = observations.Where(x => true).Select(o =>
         new
         {
             ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
             TempOutCur = Convert.ToDecimal(o.TempOutCur),
-            TempInCur = Convert.ToDecimal(o.TempInCur),
+            // TempInCur = Convert.ToDecimal(o.TempInCur),
             DewCur = Convert.ToDecimal(o.DewCur),
             Tmin = Convert.ToDecimal(o.Tmin),
             Tmax = Convert.ToDecimal(o.Tmax),
@@ -44,14 +46,14 @@
             UV = Convert.ToInt32(o.UV)
         }).ToList();
     var rainobj = Model.Where(obs => obs.RainRateCur > 0).Select(o =>
-        new RainObs
+        new 
         {
-            ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
-            WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
+            // ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
+            WindDirAvg10 = Convert.ToDecimal(o.WindDirCur),
             WindDirAvg10Eng = o.WindDirAvg10Eng,
             RainRateCur = Convert.ToDecimal(o.RainRateCur)
-        }).ToList();
-    var windobj = observationses.Where(obs => obs.WindSpeedCur > 0).Select(o =>
+        }).DistinctBy(obs => obs.WindDirAvg10).ToList();
+    var windobj = observations.Where(obs => obs.WindSpeedCur > 0).Select(o =>
         new
         {
             WindDirCur = Convert.ToDecimal(o.WindDirCur),
@@ -104,7 +106,9 @@
                 if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
                 var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
                 var std = '@sd';
+                var wind = '@windobj.Count';
                 console.log("Std Deviation Solar : " + std);
+                console.log("wind count : " + wind);
     </script>
     <script type="text/javascript">
             @if (cnt > 0)
@@ -145,11 +149,11 @@
         <div class="column is-1">
             @* Date: <input id="timepick" data-date-format="yyyy-mm-dd" value="@latest.ObsTime.ToLocalTime().ToString("yyyy-MM-dd")"> *@
             <input id="date" class="flatpickr flatpickr-input active" type="text" placeholder="@latest.ObsTime.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
-        @* </div> *@
-        @* <div class="column has-text-light is-3" style="text-align: center"> *@
-            
-        @* </div> *@
-        @* <div class="column has-text-light is-3" style="text-align: center"> *@
+            @* </div> *@
+            @* <div class="column has-text-light is-3" style="text-align: center"> *@
+
+            @* </div> *@
+            @* <div class="column has-text-light is-3" style="text-align: center"> *@
             <h3>@cloudyness</h3>
         </div>
     </div>
@@ -198,7 +202,7 @@ else
 {
     <div class="columns is-0-mobile is-centered">
         <div class="column is-third">
-             <input id="date" class="flatpickr flatpickr-input active" type="text" placeholder="@DateTime.Now.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
+            <input id="date" class="flatpickr flatpickr-input active" type="text" placeholder="@DateTime.Now.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
             @* Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@DateTime.Now.ToString("yyyy-MM-dd")"> *@
         </div>
     </div>

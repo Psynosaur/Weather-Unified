@@ -78,7 +78,7 @@ namespace WURequest.Controllers
                 throw;
             }
         }
-
+        
         [HttpGet]
         public async Task<ActionResult<string>> Wu(string id, string pat)
         {

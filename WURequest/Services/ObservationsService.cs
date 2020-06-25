@@ -162,10 +162,10 @@ namespace WURequest.Services
         public Observations Get(string id) =>
             _observation.Find(observation => observation.Id == id).FirstOrDefault();
 
-        public Observations Create(Observations observations)
+        public Observations Create(Observations observation)
         {
-            _observation.InsertOne(observations);
-            return observations;
+            _observation.InsertOne(observation);
+            return observation;
         }
 
         public void Update(string id, Observations observationsIn) =>

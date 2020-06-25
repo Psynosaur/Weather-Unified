@@ -16,8 +16,8 @@
     //         c.WindAvgSpeedCur *= 3.6;
     //         return c;
     //     });
-    var observationses = graph.ToList();
-    var obj = observationses.Where(x => true).Select(o =>
+    var observations = graph.ToList();
+    var obj = observations.Where(x => true).Select(o =>
         new
         {
             ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
@@ -41,15 +41,15 @@
             SolarRad = Convert.ToInt32(o.SolarRad),
             UV = Convert.ToInt32(o.UV)
         }).ToList();
-    var rainobj = Model.Where(obs => obs.RainRateCur > 0).Select(o =>
+    var rainobj = observations.Where(obs => obs.RainRateCur > 0).Select(o =>
         new RainObs
         {
-            ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
+            // ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
             WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
             WindDirAvg10Eng = o.WindDirAvg10Eng,
             RainRateCur = Convert.ToInt32(o.RainRateCur)
         }).ToList();
-    var windobj = observationses.Where(obs => obs.WindSpeedCur > 0).Select(o =>
+    var windobj = observations.Where(obs => obs.WindSpeedCur > 0).Select(o =>
         new
         {
             WindDirCur = Convert.ToDecimal(o.WindDirCur),
