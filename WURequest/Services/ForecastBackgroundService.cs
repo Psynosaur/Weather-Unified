@@ -4,9 +4,9 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using NCrontab;
+using WURequest.Models;
 
 namespace WURequest.Services
 {
@@ -14,21 +14,22 @@ namespace WURequest.Services
     public class ForecastBackgroundService : BackgroundService
     {
         private readonly ForecastService _forecastService;
+        private readonly IWuApiSettings _wuApiSettings;
         private readonly CrontabSchedule _schedule;
         private DateTime _nextRun;
 
         // private static string Schedule => "*/10 * * * * *"; // every 10 seconds
 
-        private static string Schedule => "* */60 * * * *"; // every 60 minutes
+        private static string Schedule => "0 * * * *"; // every 60 minutes
         
         public ForecastBackgroundService(
-            ForecastService forecastService)
+            ForecastService forecastService, IWuApiSettings wuApiSettings)
         {
-            _schedule = CrontabSchedule.Parse(Schedule,new CrontabSchedule.ParseOptions { IncludingSeconds = true });
+            _schedule = CrontabSchedule.Parse(Schedule,new CrontabSchedule.ParseOptions { IncludingSeconds = false });
             _nextRun = _schedule.GetNextOccurrence(DateTime.Now);
             _forecastService = forecastService;
+            _wuApiSettings = wuApiSettings;
         }
-
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             do
@@ -44,40 +45,39 @@ namespace WURequest.Services
             }
             while (!stoppingToken.IsCancellationRequested);
         }
-
         private async void Process()
         {
-            // Get token and gps from settings
-            await Forecast("8d259e27e2dddee03d282aa4720bb02c");
+            await Forecast();
         }
-
-        private async Task Forecast(string pat)
+        private async Task Forecast()
         {
             try
             {
-                const string units = "auto";
-                using (HttpClient client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Accept.Add(
-                        new MediaTypeWithQualityHeaderValue("application/json"));
+                //https://api.weather.com/v3/wx/forecast/daily/5day?geocode=-33.864643,18.659822&format=json&units=m&language=en-US&apiKey=d4748acffd2e4d8ab48acffd2e7d8abc
+                string url = string.Format(
+                    "https://api.weather.com/v3/wx/forecast/daily/5day?geocode={0},{1}&format={2}&units={3}&language={4}&apiKey={5}",
+                    _wuApiSettings.Lat,
+                    _wuApiSettings.Lon,
+                    _wuApiSettings.Format,
+                    _wuApiSettings.Units,
+                    _wuApiSettings.Language,
+                    _wuApiSettings.Pat
+                );
+                using HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    using (HttpResponseMessage response = await client.GetAsync(
-                        string.Format(
-                            "https://api.darksky.net/forecast/{0}/-33.864643,18.659822?units={1}",
-                            pat, units)))
-                    {
-                        try
-                        {
-                            response.EnsureSuccessStatusCode();
-                            string responseBody = await response.Content.ReadAsStringAsync();
-                            var document = BsonSerializer.Deserialize<BsonDocument>(responseBody);
-                            await _forecastService.Create(document);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.ToString());
-                        }
-                    }
+                using HttpResponseMessage response = await client.GetAsync(url);
+                try
+                {
+                    response.EnsureSuccessStatusCode();
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var document = BsonSerializer.Deserialize<Forecasts>(responseBody);
+                    await _forecastService.Create(document);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
                 }
             }
             catch (Exception e)

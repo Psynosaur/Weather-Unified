@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 using WURequest.Models;
 using WURequest.Services;
 
@@ -17,36 +19,36 @@ namespace WURequest.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Observations>> Get() =>
-            _observationsService.Latest();
+        public async Task<ActionResult<List<Observations>>> Get() =>
+            await _observationsService.Latest();
 
         [HttpGet("{id:length(24)}", Name = "GetObservation")]
-        public ActionResult<Observations> Get(string id)
+        public async Task<ActionResult<Observations>> Get(string id)
         {
-            var observation = _observationsService.Get(id);
+            var observation = await _observationsService.Get(id);
 
             if (observation == null)
             {
                 return NotFound();
             }
 
-            return observation;
+            return observation.FirstOrDefault();
         }
 
         [HttpPost]
-        public ActionResult<Observations> Create(Observations observations)
+        public async Task<ActionResult<Observations>> Create(Observations observations)
         {
-            _observationsService.Create(observations);
+            await _observationsService.Create(observations);
 
             return CreatedAtRoute("GetObservation", new { id = observations.Id }, observations);
         }
 
         [HttpPut("{id:length(24)}")]
-        public IActionResult Update(string id, Observations observationsIn)
+        public async Task<IActionResult> Update(string id, Observations observationsIn)
         {
-            var observation = _observationsService.Get(id);
+            var observation = await _observationsService.Get(id);
 
-            if (observation == null)
+            if (observation.FirstOrDefault() == null)
             {
                 return NotFound();
             }
@@ -57,16 +59,16 @@ namespace WURequest.Controllers
         }
 
         [HttpDelete("{id:length(24)}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            var observation = _observationsService.Get(id);
+            var observation =await _observationsService.Get(id);
 
-            if (observation == null)
+            if (observation.FirstOrDefault() == null)
             {
                 return NotFound();
             }
 
-            _observationsService.Remove(observation.Id);
+            _observationsService.Remove(observation.FirstOrDefault().Id);
 
             return NoContent();
         }

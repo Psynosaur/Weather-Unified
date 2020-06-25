@@ -34,6 +34,12 @@ namespace WURequest
             services.AddSingleton<IForecastDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ForecastDatabaseSettings>>().Value);
             services.AddSingleton<ForecastService>();
+            
+            services.Configure<WuApiSettings>(
+                Configuration.GetSection(nameof(WuApiSettings)));
+
+            services.AddSingleton<IWuApiSettings>(sp =>
+                sp.GetRequiredService<IOptions<WuApiSettings>>().Value);
 
             services.AddRazorPages();
             services.AddHostedService<ForecastBackgroundService>();

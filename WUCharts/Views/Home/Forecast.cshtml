@@ -1,26 +1,68 @@
-﻿@using WURequest.Models
+﻿@model WURequest.Models.Forecasts
 @using System.Security.Permissions
-@model MongoDB.Bson.BsonDocument
+@using MongoDB.Bson
+
 @{
-   
+    var bArray = new BsonArray();
+    var i = 0;
 }
+
 @section Scripts
-{    
-    <script type="text/javascript">
-        var raindata =[];
-        var winddata =[];
-    </script>
+{
+
 }
 
 <div class="columns">
-    <div class="column">
-       @foreach (var bson in Model)
-       {
-           if (bson.Name == "currently")
-           {
-              var pew = bson.Value;
-               @pew
-           }
-       }
-    </div>
+    @foreach (var day in Model.DayOfWeek)
+    {
+        <div class="column">
+            @day
+            <br/>
+            Summary : <br/>@Model.Narrative[i]
+            <br/>
+            Min : @Model.TemperatureMin[i]°C
+            <br/>
+            Max : @Model.TemperatureMax[i]°C
+            <br/>
+            @if (Model.Qpf[i] > 0)
+            {
+                <span>Expected Rainfall : @Model.Qpf[i]mm</span>
+            }
+            <br/>
+            Moon age : @Model.MoonPhaseDay[i] days
+            <br/>
+            Current phase : @Model.MoonPhase[i]
+            <br/>
+            @if (Model.MoonriseTimeLocal[i] != null){<span>Moonrise : @DateTime.Parse(Model.MoonriseTimeLocal[i]).ToString("HH:mm")</span>}
+            <br/>
+            @if (Model.MoonsetTimeLocal[i] != "")
+            {
+                <span>Moonset : @DateTime.Parse(Model.MoonsetTimeLocal[i]).ToString("HH:mm")</span>
+            }
+            <br/>
+            Sunrise : @DateTime.Parse(Model.SunriseTimeLocal[i]).ToString("HH:mm")
+            <br/>
+            Sunset : @DateTime.Parse(Model.SunsetTimeLocal[i]).ToString("HH:mm")
+            <br/>
+            <span class="subtitle">Day</span>
+            <br/>
+            Cloudcover : @Model.Daypart[0].CloudCover[i+i]%
+            <br/>
+            Chance of rain : @Model.Daypart[0].PrecipChance[i+i]%
+
+            <br/>
+            Summary : @Model.Daypart[0].Narrative[i+i]
+
+            <br/>
+            <span class="subtitle">Night</span>
+            <br/>
+            Cloudcover : @Model.Daypart[0].CloudCover[i+i+1]%
+            <br/>
+            Chance of rain : @Model.Daypart[0].PrecipChance[i+i+1]%
+            <br/>
+            Summary : @Model.Daypart[0].Narrative[i+i+1]
+        </div>
+        i += 1;
+    }
+
 </div>

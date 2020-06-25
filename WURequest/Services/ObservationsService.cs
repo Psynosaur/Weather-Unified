@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
 using WURequest.Models;
@@ -21,45 +22,28 @@ namespace WURequest.Services
             _observation = database.GetCollection<Observations>(settings.ObservationCollectionName);
         }
 
-        //db.Observations.find({ "DateTime" :{ "$gte" : "2019-07-21 13:00", "$lt" : "2019-07-21 13:10"}})
-        public List<WUObservations> LatestWu()
-        {
-            return null;
-        }
-
-        //Finds all the observations for a time frame(hourly,daily and weekly) based on DateTime object comparisons
-        public List<Observations> Hourly(int id)
+       //Finds all the observations for a time frame(hourly,daily and weekly) based on DateTime object comparisons
+        public async Task<List<Observations>> Hourly(int id)
         {
             var tm = DateTime.Now;
             var hm = new DateTime(tm.Year, tm.Month, tm.Day, id, 0, 0, DateTimeKind.Local);
-            var obsersvations = _observation.Find(
+            var obsersvations = await _observation.Find(
                 x => x.ObsTime > hm && x.ObsTime < hm.AddHours(1))
-                .SortBy(e => e.ObsTime).ToList();;
+                .SortBy(e => e.ObsTime).ToListAsync();;
             return obsersvations;
         }
-        // public List<ChartObs> HObs()
-        // {
-        //     var tm = DateTime.UtcNow;
-        //     var hm = new DateTime(tm.Year, tm.Month, tm.Day, tm.Hour, 0, 0, DateTimeKind.Utc);
-        //     var obsersvations = _observation.Find(
-        //         x => x.ObsTime > hm).ToList();
-        //     JArray json = JArray.Parse(obsersvations.ToString()); 
-        //     var crt = json.ToObject<List<ChartObs>>();
-        //     return crt;
-        // }
-
-        public List<Observations> Daily()
+        public async Task<List<Observations>> Daily()
         {
             var tm = DateTime.Now;
             var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
             // Offset for station timezone
             var pp = hm.AddHours(-2);
-            var obsersvations = _observation.Find(
+            var obsersvations = await _observation.Find(
                 x => x.ObsTime > pp)
-                .SortBy(e => e.ObsTime).ToList();
+                .SortBy(e => e.ObsTime).ToListAsync();
             return obsersvations;
         }
-        public List<Observations> Date(string date)
+        public async Task<List<Observations>> Date(string date)
         {
             DateTime tm = DateTime.ParseExact(date, "yyyy-MM-dd",
                 System.Globalization.CultureInfo.InvariantCulture);
@@ -67,20 +51,20 @@ namespace WURequest.Services
             // Offset for station timezone
             var dayStart = hm;
             var dayEnd = dayStart.AddDays(1);
-            var obsersvations = _observation.Find(
+            var obsersvations = await _observation.Find(
                     e => e.ObsTime > dayStart && e.ObsTime < dayEnd)
-                .SortBy(e => e.ObsTime).ToList();
+                .SortBy(e => e.ObsTime).ToListAsync();
             return obsersvations;
         }
 
-        public List<Observations> Weekly()
+        public async Task<List<Observations>> Weekly()
         {
             var tm = DateTime.UtcNow;
             var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
             var weekstart = hm.AddDays(-6);
-            var obsersvations = _observation.Find(
+            var obsersvations = await _observation.Find(
                 x => x.ObsTime > weekstart)
-                .SortBy(e => e.ObsTime).ToList();
+                .SortBy(e => e.ObsTime).ToListAsync();
             return obsersvations;
         }
 
@@ -142,30 +126,29 @@ namespace WURequest.Services
 
             return rainydays;
         }
-        public List<Observations> Monthly()
+        public async Task<List<Observations>> Monthly()
         {
             var tm = DateTime.UtcNow;
             var hm = new DateTime(tm.Year, tm.Month, 1, 0, 0, 0, DateTimeKind.Utc);
-            var obsersvations = _observation.Find(
+            var obsersvations = await _observation.Find(
                 x => x.ObsTime > hm)
-                .SortBy(e => e.ObsTime).ToList();
+                .SortBy(e => e.ObsTime).ToListAsync();
             return obsersvations;
         }
         
-        public List<Observations> Latest() =>
-            _observation
+        public async Task<List<Observations>> Latest() =>
+            await _observation
                 .Find(observation => true)
                 .Sort("{DateTime: -1}")
                 .Limit(1)
-                .ToList();
+                .ToListAsync();
 
-        public Observations Get(string id) =>
-            _observation.Find(observation => observation.Id == id).FirstOrDefault();
+        public async Task<IAsyncCursor<Observations>> Get(string id) =>
+            await _observation.FindAsync(observation => observation.Id == id);
 
-        public Observations Create(Observations observation)
+        public async Task Create(Observations observation)
         {
-            _observation.InsertOne(observation);
-            return observation;
+            await _observation.InsertOneAsync(observation);
         }
 
         public void Update(string id, Observations observationsIn) =>

@@ -24,7 +24,7 @@ namespace WUCharts.Controllers
         public IActionResult Forecast()
         {
             ViewData["Title"] = "Weather Forecast";
-            ViewData["Description"] = "About the author of the site";
+            ViewData["Description"] = "Six day weather forecast";
             var model = _forecastService.Latest().Result.FirstOrDefault();
             return View(model);
         }
@@ -39,10 +39,10 @@ namespace WUCharts.Controllers
         public void SitemapXml()
         {
             string host = Request.Scheme + "://" + Request.Host;
-            var syncIOFeature = HttpContext.Features.Get<IHttpBodyControlFeature>();
-            if (syncIOFeature != null)
+            var syncIoFeature = HttpContext.Features.Get<IHttpBodyControlFeature>();
+            if (syncIoFeature != null)
             {
-                syncIOFeature.AllowSynchronousIO = true;
+                syncIoFeature.AllowSynchronousIO = true;
             }
 
             Response.ContentType = "application/xml";
@@ -54,6 +54,10 @@ namespace WUCharts.Controllers
 
                 xml.WriteStartElement("url");
                 xml.WriteElementString("loc", host);
+                xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
+                xml.WriteEndElement();
+                xml.WriteStartElement("url");
+                xml.WriteElementString("loc", host + "/forecast");
                 xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
                 xml.WriteEndElement();
                 xml.WriteStartElement("url");
@@ -127,12 +131,12 @@ namespace WUCharts.Controllers
                 bool nulled = String.IsNullOrEmpty(id.ToString());
                 if (nulled) id = DateTime.Now.Hour;
                 int hour = id ?? 0;
-                var model = _observationsService.Hourly(hour);
+                var model = _observationsService.Hourly(hour).Result;
                 return View(model);
             }
             else
             {
-                var model = _observationsService.Hourly(0);
+                var model = _observationsService.Hourly(0).Result;
                 return View(model);
             }
         }
@@ -143,7 +147,7 @@ namespace WUCharts.Controllers
             ViewData["Title"] = "day";
             ViewData["Description"] = "Weather information for Durbanville South Africa, captured " +
                                       "using a Fine Offset WH2310 weather station and a meteobridge weather interface";
-            var model = _observationsService.Daily();
+            var model = _observationsService.Daily().Result;
             return View(model);
         }
 
@@ -156,7 +160,7 @@ namespace WUCharts.Controllers
             if (id == null) id = DateTime.Now.ToString("yyyy-MM-dd");
             if (DateTime.TryParse(id, out temp))
             {
-                var model = _observationsService.Date(id);
+                var model = _observationsService.Date(id).Result;
                 return View(model);
             }
             return RedirectToAction("Error");
@@ -175,7 +179,7 @@ namespace WUCharts.Controllers
         {
             ViewData["Title"] = "week";
             ViewData["Description"] = "Weather data for Durbanville Stellenberg South Africa - past week";
-            var model = _observationsService.Weekly();
+            var model = _observationsService.Weekly().Result;
             return View(model);
         }
 
@@ -184,7 +188,7 @@ namespace WUCharts.Controllers
         {
             ViewData["Title"] = "month";
             ViewData["Description"] = "Weather data for Durbanville Stellenberg South Africa - current month";
-            var model = _observationsService.Monthly();
+            var model = _observationsService.Monthly().Result;
             return View(model);
         }
     }

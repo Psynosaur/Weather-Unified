@@ -17,18 +17,20 @@ namespace WURequest.Controllers
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ObservationsService _observationsService;
+        private readonly IWuApiSettings _wuApiSettings;
         public WeatherController(
             ObservationsService observationsService,
-            IWebHostEnvironment hostingEnvironment)
+            IWebHostEnvironment hostingEnvironment, IWuApiSettings wuApiSettings)
         {
             _observationsService = observationsService;
             _hostingEnvironment = hostingEnvironment;
+            _wuApiSettings = wuApiSettings;
         }
 
         // Meteobridge Data getter
         // Parses string from Meteobridge HTTP Get
         [HttpGet]
-        public ActionResult<string> Mb(string data)
+        public async Task<ActionResult<string>> Mb(string data)
         {
             /*
              This is the Meteobridge TEST string copy from
@@ -67,7 +69,7 @@ namespace WURequest.Controllers
                 //Creates MongoDb entry JObject to Observations Model 
                 if (json.ContainsKey("DateTime") && json.ContainsKey("TempOutCur"))
                 {
-                    _observationsService.Create(json.ToObject<Observations>());
+                    await _observationsService.Create(json.ToObject<Observations>());
                     return "DATA OK";
                 }
                 return "DATA BAD";
@@ -80,14 +82,10 @@ namespace WURequest.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<string>> Wu(string id, string pat)
+        public async Task<ActionResult<string>> Wu()
         {
             try
             {
-                if (id == null || pat == null)
-                    return "StationId and or Personal access token is empty";
-                var format = "json";
-                var units = 'm';
                 string webRootPath = _hostingEnvironment.WebRootPath;
 
                 using (HttpClient client = new HttpClient())
@@ -98,7 +96,7 @@ namespace WURequest.Controllers
                     using (HttpResponseMessage response = await client.GetAsync(
                         string.Format(
                             "https://api.weather.com/v2/pws/observations/current?stationId={0}&format={1}&units={2}&apiKey={3}",
-                            id, format, units, pat)))
+                            _wuApiSettings.StationId, _wuApiSettings.Format, _wuApiSettings.Units, _wuApiSettings.Pat)))
                     {
                         try
                         {
