@@ -14,7 +14,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Durbanville Weather - @ViewData["Title"]</title>
-    <link rel="shortcut icon" href="~/favicon.ico" />
+    <link rel="shortcut icon" href="~/favicon.ico"/>
     <link rel="icon" href="data:,">
 
     <meta name="description" content="@ViewData["Description"]"/>
@@ -52,7 +52,7 @@
             <a class="navbar-item has-text-light" asp-area="" asp-controller="Home" asp-action="Forecast">Forecast</a>
             <a class="navbar-item has-text-light" asp-area="" asp-controller="Home" asp-action="Date">Historical</a>
             <a class="navbar-item has-text-light" asp-area="" asp-controller="Home" asp-action="About">About</a>
-            <a class="navbar-item has-text-light" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
+            @* <a class="navbar-item has-text-light" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a> *@
         </ul>
     </div>
 
@@ -69,18 +69,22 @@
 <environment exclude="Development">
     <script src="~/js/site.min.js" asp-append-version="true"></script>
 </environment>
-<div class="container is-fluid is-0-mobile">
-    @RenderBody()
-    
-    <footer>
-        <div class="content has-text-light has-background-dark has-text-centered">
-            <p>
-                @DateTime.Now.Year - WUCharts<br/>
-                <span class="copyright">Powered by @System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription</span>
-            </p>
+<section class="hero is-fullheight-with-navbar">
+    <div class="hero-body is-paddingless">
+        <div class="container is-fluid is-0-mobile">
+            @RenderBody()
+
+            <footer>
+                <div class="content has-text-light has-background-dark has-text-centered">
+                    <p>
+                        @DateTime.Now.Year - WUCharts<br/>
+                        <span class="copyright">Powered by @System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription</span>
+                    </p>
+                </div>
+            </footer>
         </div>
-    </footer>
-</div>
+    </div>
+</section>
 
 @RenderSection("Scripts", required: false)
 </body>

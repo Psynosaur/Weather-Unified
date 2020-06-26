@@ -12,55 +12,105 @@
 
 }
 
-<div class="columns">
+<br>
+<div class="columns is-0-mobile has-text-light">
     @foreach (var day in Model.DayOfWeek)
     {
+        // Day stats should not display when it has passed and data is 'null'
         <div class="column">
-            @day
-            <br/>
-            Summary : <br/>@Model.Narrative[i]
-            <br/>
-            Min : @Model.TemperatureMin[i]°C
-            <br/>
-            Max : @Model.TemperatureMax[i]°C
-            <br/>
-            @if (Model.Qpf[i] > 0)
-            {
-                <span>Expected Rainfall : @Model.Qpf[i]mm</span>
-            }
-            <br/>
-            Moon age : @Model.MoonPhaseDay[i] days
-            <br/>
-            Current phase : @Model.MoonPhase[i]
-            <br/>
-            @if (Model.MoonriseTimeLocal[i] != null){<span>Moonrise : @DateTime.Parse(Model.MoonriseTimeLocal[i]).ToString("HH:mm")</span>}
-            <br/>
-            @if (Model.MoonsetTimeLocal[i] != "")
-            {
-                <span>Moonset : @DateTime.Parse(Model.MoonsetTimeLocal[i]).ToString("HH:mm")</span>
-            }
-            <br/>
-            Sunrise : @DateTime.Parse(Model.SunriseTimeLocal[i]).ToString("HH:mm")
-            <br/>
-            Sunset : @DateTime.Parse(Model.SunsetTimeLocal[i]).ToString("HH:mm")
-            <br/>
-            <span class="subtitle">Day</span>
-            <br/>
-            Cloudcover : @Model.Daypart[0].CloudCover[i+i]%
-            <br/>
-            Chance of rain : @Model.Daypart[0].PrecipChance[i+i]%
+            <div class="box has-background-grey-darker has-text-light">
+                <h1>@day</h1>
+                <hr/>
+                @Model.Narrative[i]
+                <br/>
+                Min : @Model.TemperatureMin[i] °C
+                <br/>
+                Max :
+                @if (Model.TemperatureMax[i] == null)
+                {
+                    @Model.Daypart[0].TemperatureHeatIndex[1]
+                }
+                else
+                {
+                    @Model.TemperatureMax[i]
+                }
+                °C
+                @if (Model.Qpf[i] > 0)
+                {
+                    <br/>
+                    <span>Expected Rainfall : @Model.Qpf[i] mm</span>
+                }
+                <br/>
+                Moon age : @Model.MoonPhaseDay[i] days
+                <br/>
+                Current phase : @Model.MoonPhase[i]
 
-            <br/>
-            Summary : @Model.Daypart[0].Narrative[i+i]
+                @if (Model.MoonriseTimeLocal[i] != null)
+                {
+                    <br/>
+                    <span>Moonrise : @DateTime.Parse(Model.MoonriseTimeLocal[i]).ToString("HH:mm")</span>
+                }
 
-            <br/>
-            <span class="subtitle">Night</span>
-            <br/>
-            Cloudcover : @Model.Daypart[0].CloudCover[i+i+1]%
-            <br/>
-            Chance of rain : @Model.Daypart[0].PrecipChance[i+i+1]%
-            <br/>
-            Summary : @Model.Daypart[0].Narrative[i+i+1]
+                @if (Model.MoonsetTimeLocal[i] != "")
+                {
+                    <br/>
+                    <span>Moonset : @DateTime.Parse(Model.MoonsetTimeLocal[i]).ToString("HH:mm")</span>
+                }
+                <br/>
+                Sunrise : @DateTime.Parse(Model.SunriseTimeLocal[i]).ToString("HH:mm")
+                <br/>
+                Sunset : @DateTime.Parse(Model.SunsetTimeLocal[i]).ToString("HH:mm")
+
+
+                @if (Model.Daypart[0].CloudCover[i + i] > 0)
+                {
+                    <br/>
+                    <hr/>
+                    <h2 class="subtitle has-text-light" style="text-align: center!important">Day</h2>
+                    <span>
+                        Cloudcover : @Model.Daypart[0].CloudCover[i + i] %
+                    </span>
+                    <br/>
+                    <span>
+                        Chance of rain : @Model.Daypart[0].PrecipChance[i + i] %
+                    </span>
+                    @if (Model.Daypart[0].Qpf[i + i] > 0)
+                    {
+                        <br/>
+                        <span>Expected amount : @Model.Daypart[0].Qpf[i + i] mm</span>
+                    }
+                    <br/>
+                    <span>
+                        Humidity : @Model.Daypart[0].RelativeHumidity[i + i] %
+                    </span>
+                    <br/>
+                    <span>
+                        @Model.Daypart[0].Narrative[i + i]
+                    </span>
+                }
+
+
+                <br/>
+                <hr/>
+                <h2 class="subtitle has-text-light">Night</h2>
+
+                Cloudcover : @Model.Daypart[0].CloudCover[i + i + 1] %
+                <br/>
+                Chance of rain : @Model.Daypart[0].PrecipChance[i + i + 1] %
+                @if (Model.Daypart[0].Qpf[i + i + 1] > 0)
+                {
+                    <br/>
+                    <span>Expected amount : @Model.Daypart[0].Qpf[i + i + 1] mm</span>
+                }
+                <br/>
+                <span>
+                    Humidity : @Model.Daypart[0].RelativeHumidity[i + i + 1] %
+                </span>
+                <br/>
+                <span>
+                    @Model.Daypart[0].Narrative[i + i + 1]
+                </span>
+            </div>
         </div>
         i += 1;
     }

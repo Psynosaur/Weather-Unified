@@ -84,10 +84,10 @@ namespace WUCharts.Controllers
                 xml.WriteElementString("loc", host + "/about");
                 xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
                 xml.WriteEndElement();
-                xml.WriteStartElement("url");
-                xml.WriteElementString("loc", host + "/contact");
-                xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
-                xml.WriteEndElement();
+                // xml.WriteStartElement("url");
+                // xml.WriteElementString("loc", host + "/contact");
+                // xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
+                // xml.WriteEndElement();
 
 
                 xml.WriteEndElement();
@@ -102,13 +102,13 @@ namespace WUCharts.Controllers
             return View();
         }
 
-        [Route("/contact")]
-        public IActionResult Contact()
-        {
-            ViewData["Title"] = "Contact";
-            ViewData["Description"] = "Contact the author";
-            return View();
-        }
+        //[Route("/contact")]
+        // public IActionResult Contact()
+        // {
+        //     ViewData["Title"] = "Contact";
+        //     ViewData["Description"] = "Contact the author";
+        //     return View();
+        // }
 
         public IActionResult Privacy()
         {

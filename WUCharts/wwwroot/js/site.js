@@ -42,7 +42,7 @@ am4core.ready(function () {
     var temp = am4core.create("chartemp", am4charts.XYChart);
     temp.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
     var labelTemp = temp.chartContainer.createChild(am4core.Label);
-    labelTemp.text = "Outdoor & Indoor Temp";
+    labelTemp.text = "Outdoor Temp";
     labelTemp.align = "center";
     // temp.exporting.menu = new am4core.ExportMenu();
     // temp.exporting.menu.align = "left";

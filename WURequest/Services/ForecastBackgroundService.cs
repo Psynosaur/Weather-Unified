@@ -47,7 +47,7 @@ namespace WURequest.Services
         }
         private async void Process()
         {
-            await Forecast();
+            await Forecast().ConfigureAwait(false);
         }
         private async Task Forecast()
         {
