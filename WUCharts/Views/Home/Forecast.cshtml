@@ -3,113 +3,240 @@
 @using MongoDB.Bson
 
 @{
-    var bArray = new BsonArray();
     var i = 0;
 }
 
 @section Scripts
 {
-
+    <script>
+        var hrs = 3;
+    </script>
 }
 
-<br>
+<style>
+    .image-container{
+         display: flex;
+      justify-content: center;
+    }
+    .moon{
+        /* 
+            Uncomment the transforms for 
+            northern hemisphere it flips the moon
+        */
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        height:40%;
+        width:40%;
+        display: block;
+          margin-left: auto;
+          margin-right: auto;
+    }
+    .image-container img {
+        height:30%;
+         width:30%;
+    }
+    #narrative {
+        line-height: 1.5em;
+        height: 4.5em;       /* height is 2x line-height, so two lines will display */
+        overflow: hidden;  /* prevents extra lines from being visible */
+        text-align: center;
+    }
+    #moontext {
+            line-height: 1.5em;
+            height: 1.5em;       /* height is 2x line-height, so two lines will display */
+            overflow: hidden;  /* prevents extra lines from being visible */
+            text-align: center;
+        }
+        #RiseAndSet{
+            text-align: center;
+            /*padding: unset;*/
+            font-weight: bold;
+        }
+       hr{
+            margin: 0.75rem 0;
+       } 
+       
+</style>
+@* <br> *@
+@* <h2> last updated  @DateTime.Parse(Model.ValidTimeLocal[0]).AddHours(-1)</h2> *@
+<br/>
 <div class="columns is-0-mobile has-text-light">
+
     @foreach (var day in Model.DayOfWeek)
     {
-        // Day stats should not display when it has passed and data is 'null'
-        <div class="column">
+        // Daytime stats should not display when it has passed(after 3pm) and data is 'null'
+        <div class="column" id="weatherbox">
             <div class="box has-background-grey-darker has-text-light">
                 <h1>@day</h1>
+                <div class="columns is-mobile">
+                    <div class="column" id="RiseAndSet">
+                        @if (Model.MoonriseTimeLocal[i] != null)
+                        {
+                            <span>Sunrise : @DateTime.Parse(Model.SunriseTimeLocal[i]).ToString("HH:mm")</span>
+                        }
+                    </div>
+                    <div class="column" id="RiseAndSet">
+                        @if (Model.MoonsetTimeLocal[i] != "")
+                        {
+                            <span>Sunset : @DateTime.Parse(Model.SunsetTimeLocal[i]).ToString("HH:mm")</span>
+                        }
+                    </div>
+                </div>
                 <hr/>
-                @Model.Narrative[i]
-                <br/>
-                Min : @Model.TemperatureMin[i] °C
-                <br/>
-                Max :
-                @if (Model.TemperatureMax[i] == null)
-                {
-                    @Model.Daypart[0].TemperatureHeatIndex[1]
-                }
-                else
-                {
-                    @Model.TemperatureMax[i]
-                }
-                °C
-                @if (Model.Qpf[i] > 0)
-                {
-                    <br/>
-                    <span>Expected Rainfall : @Model.Qpf[i] mm</span>
-                }
-                <br/>
-                Moon age : @Model.MoonPhaseDay[i] days
-                <br/>
-                Current phase : @Model.MoonPhase[i]
 
-                @if (Model.MoonriseTimeLocal[i] != null)
-                {
-                    <br/>
-                    <span>Moonrise : @DateTime.Parse(Model.MoonriseTimeLocal[i]).ToString("HH:mm")</span>
-                }
+                <div id="narrative">
+                    @Model.Narrative[i]
+                </div>
+                @*                 Min : @Model.TemperatureMin[i] °C *@
+                @*                 <br/> *@
+                @*                 Max : *@
+                @*                 @if (Model.TemperatureMax[i] == null) *@
+                @*                 { *@
+                @*                     @Model.Daypart[0].TemperatureHeatIndex[1] *@
+                @*                 } *@
+                @*                 else *@
+                @*                 { *@
+                @*                     @Model.TemperatureMax[i] *@
+                @*                 } *@
+                @*                 °C *@
+                @*                 @if (Model.Qpf[i] > 0) *@
+                @*                 { *@
+                @*                     <br/> *@
+                @*                     <span>Expected Rainfall : @Model.Qpf[i] mm</span> *@
+                @*                 } *@
+                <div class="moon" style="text-align: center">
+                    @if (Model.MoonPhaseDay[i] == 15)
+                    {
+                        <img src="img/moon/wi-moon-alt-14.svg" alt=""/>
+                    }
+                    else
+                    {
+                        <img src="img/moon/wi-moon-alt-@(Model.MoonPhaseDay[i]).svg" alt=""/>
+                    }
+                    @*                     @if (Model.MoonPhaseDay[i] == 16) *@
+                    @*                     { *@
+                    @*                         <img style="-webkit-transform: scaleX(-1);transform: scaleX(-1);" src="img/moon/wi-moon-alt-13.svg" alt=""/> *@
+                    @*                     } *@
 
-                @if (Model.MoonsetTimeLocal[i] != "")
-                {
-                    <br/>
-                    <span>Moonset : @DateTime.Parse(Model.MoonsetTimeLocal[i]).ToString("HH:mm")</span>
-                }
-                <br/>
-                Sunrise : @DateTime.Parse(Model.SunriseTimeLocal[i]).ToString("HH:mm")
-                <br/>
-                Sunset : @DateTime.Parse(Model.SunsetTimeLocal[i]).ToString("HH:mm")
-
-
+                </div>
+                <div id="moontext">
+                    @Model.MoonPhase[i] <strong class="has-text-light">@Model.MoonPhaseDay[i]</strong>
+                    @if (!(Model.MoonPhaseDay[i] > 1))
+                    {
+                        <span>day old </span>
+                    }
+                    else
+                    {
+                        <span>days old </span>
+                    }
+                </div>
+                <div class="columns is-mobile">
+                    <div class="column is-half" id="RiseAndSet">
+                        @if (Model.MoonriseTimeLocal[i] != null)
+                        {
+                            <span>Rise : @DateTime.Parse(Model.MoonriseTimeLocal[i]).ToString("HH:mm")</span>
+                        }
+                    </div>
+                    <div class="column is-half" id="RiseAndSet">
+                        @if (Model.MoonsetTimeLocal[i] != "")
+                        {
+                            <span>Set : @DateTime.Parse(Model.MoonsetTimeLocal[i]).ToString("HH:mm")</span>
+                        }
+                    </div>
+                </div>
+                @* Day - conditional since after 3pm we don't get any values for the day forecast anymore*@
                 @if (Model.Daypart[0].CloudCover[i + i] > 0)
                 {
-                    <br/>
                     <hr/>
                     <h2 class="subtitle has-text-light" style="text-align: center!important">Day</h2>
-                    <span>
-                        Cloudcover : @Model.Daypart[0].CloudCover[i + i] %
-                    </span>
+                    <div class="image-container">
+                        <img src="img/Weather Icons - 200x200_SVGs/SVGs/@(Model.Daypart[0].IconCode[i + i]).svg" alt=""/>
+                    </div>
                     <br/>
-                    <span>
-                        Chance of rain : @Model.Daypart[0].PrecipChance[i + i] %
-                    </span>
-                    @if (Model.Daypart[0].Qpf[i + i] > 0)
-                    {
-                        <br/>
-                        <span>Expected amount : @Model.Daypart[0].Qpf[i + i] mm</span>
-                    }
-                    <br/>
-                    <span>
-                        Humidity : @Model.Daypart[0].RelativeHumidity[i + i] %
-                    </span>
-                    <br/>
-                    <span>
+                    <div id="narrative">
                         @Model.Daypart[0].Narrative[i + i]
-                    </span>
+                    </div>
+                    <br/>
+                    <div class="columns is-mobile">
+                        <div class="column is-half">
+                            <span>
+                                Temp : @Model.Daypart[0].Temperature[i + i] °C
+                            </span>
+                            <br/>
+                            <span>
+                                Cloudcover : @Model.Daypart[0].CloudCover[i + i] %
+                            </span>
+                            <br/>
+                            <span>
+                                Humidity : @Model.Daypart[0].RelativeHumidity[i + i] %
+                            </span>
+                            <br/>
+
+                        </div>
+                        <div class="column is-half">
+                            <span>
+                                Heat Index : @Model.Daypart[0].TemperatureHeatIndex[i + i] °C
+                            </span>
+                            <br/>
+                            <span>
+                                Precip. @Model.Daypart[0].PrecipChance[i + i] %
+                            </span>
+                            <br/>
+                            @if (Model.Daypart[0].Qpf[i + i] > 0)
+                            {
+                                <span>Total : @Model.Daypart[0].Qpf[i + i] mm</span>
+                            }
+
+
+                        </div>
+                    </div>
                 }
 
-
-                <br/>
+                @* Night *@
                 <hr/>
                 <h2 class="subtitle has-text-light">Night</h2>
+                <div class="image-container">
+                    <img src="img/Weather Icons - 200x200_SVGs/SVGs/@(Model.Daypart[0].IconCode[i + i + 1]).svg" alt=""/>
 
-                Cloudcover : @Model.Daypart[0].CloudCover[i + i + 1] %
+                </div>
                 <br/>
-                Chance of rain : @Model.Daypart[0].PrecipChance[i + i + 1] %
-                @if (Model.Daypart[0].Qpf[i + i + 1] > 0)
-                {
-                    <br/>
-                    <span>Expected amount : @Model.Daypart[0].Qpf[i + i + 1] mm</span>
-                }
-                <br/>
-                <span>
-                    Humidity : @Model.Daypart[0].RelativeHumidity[i + i + 1] %
-                </span>
-                <br/>
-                <span>
+                <div id="narrative">
                     @Model.Daypart[0].Narrative[i + i + 1]
-                </span>
+                </div>
+                <br/>
+                <div class="columns is-mobile">
+                    <div class="column is-half">
+                        <span>
+                            Temp : @Model.Daypart[0].Temperature[i + i + 1] °C
+                        </span>
+                        <br/>
+                        <span>
+                            Cloudcover : @Model.Daypart[0].CloudCover[i + i + 1] %
+                        </span>
+                        <br/>
+                        <span>
+                            Humidity : @Model.Daypart[0].RelativeHumidity[i + i + 1] %
+                        </span>
+                        <br/>
+
+                    </div>
+                    <div class="column is-half">
+                        <span>
+                            Heat Index : @Model.Daypart[0].TemperatureHeatIndex[i + i + 1] °C
+                        </span>
+                        <br/>
+                        <span>
+                            Precip. @Model.Daypart[0].PrecipChance[i + i + 1] %
+                        </span>
+                        <br/>
+                        @if (Model.Daypart[0].Qpf[i + i + 1] > 0)
+                        {
+                            <span>Total : @Model.Daypart[0].Qpf[i + i + 1] mm</span>
+                        }
+
+
+                    </div>
+                </div>
             </div>
         </div>
         i += 1;

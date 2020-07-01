@@ -41,7 +41,7 @@
             SolarRad = Convert.ToInt32(o.SolarRad),
             UV = Convert.ToInt32(o.UV)
         }).ToList();
-    var rainobj = observations.Where(obs => obs.RainRateCur > 0).Select(o =>
+    var rainobj = Model.Where(obs => obs.RainRateCur > 0).Select(o =>
         new RainObs
         {
             // ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
@@ -60,11 +60,6 @@
         }).ToList();
     // int nStepRain = 100;
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);
-    var lastestHour = "";
-    if (latest != null)
-    {
-        lastestHour = latest.ObsTime.ToLocalTime().ToString("HH:mm");
-    }
 }
 
 @section Scripts
@@ -75,13 +70,15 @@
         var raining = @rainobj.Count >0;
         if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
         var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
-        // var lh = "@lastestHour";
-       @if (cnt > 0){
-            start = latest.ObsTime.ToLocalTime().ToString("HH:mm");
-        }
-        else{
-            start = DateTime.Now.ToString("HH:mm");
-        }
+        
+       
+
+    @if (latest != null)
+    {
+        start = cnt > 0 ? latest.ObsTime.ToLocalTime().ToString("HH:mm") : DateTime.Now.ToString("HH:mm");
+    }
+
+
        
         flatpickr("#time", {
                    enableTime: true,
@@ -101,10 +98,7 @@
         });
                         
     </script>
-    @* <script src="~/js/timepicker.min.js"></script> *@
 }
-
-
 @if (latest != null)
 {
     <h1>

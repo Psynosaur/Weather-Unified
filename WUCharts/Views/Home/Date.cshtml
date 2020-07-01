@@ -52,7 +52,7 @@
             WindDirAvg10 = Convert.ToDecimal(o.WindDirCur),
             WindDirAvg10Eng = o.WindDirAvg10Eng,
             RainRateCur = Convert.ToDecimal(o.RainRateCur)
-        }).DistinctBy(obs => obs.WindDirAvg10).ToList();
+        }).ToList();
     var windobj = observations.Where(obs => obs.WindSpeedCur > 0).Select(o =>
         new
         {
