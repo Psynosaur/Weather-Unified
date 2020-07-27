@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using MongoDB.Bson.Serialization;
 using NCrontab;
 using WURequest.Models;
@@ -16,6 +17,7 @@ namespace WURequest.Services
         private readonly ForecastService _forecastService;
         private readonly IWuApiSettings _wuApiSettings;
         private readonly CrontabSchedule _schedule;
+        private readonly ILogger _logger;
         private DateTime _nextRun;
 
         // private static string Schedule => "*/10 * * * * *"; // every 10 seconds
@@ -23,31 +25,50 @@ namespace WURequest.Services
         private static string Schedule => "0 * * * *"; // every 60 minutes
         
         public ForecastBackgroundService(
-            ForecastService forecastService, IWuApiSettings wuApiSettings)
+            ForecastService forecastService, IWuApiSettings wuApiSettings, ILoggerFactory logFactory)
         {
             _schedule = CrontabSchedule.Parse(Schedule,new CrontabSchedule.ParseOptions { IncludingSeconds = false });
             _nextRun = _schedule.GetNextOccurrence(DateTime.Now);
             _forecastService = forecastService;
             _wuApiSettings = wuApiSettings;
+            _logger = logFactory.CreateLogger<ForecastBackgroundService>();
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            do
+            try
             {
-                var now = DateTime.Now;
-                var nextrun = _schedule.GetNextOccurrence(now);
-                if (now > _nextRun)
+                do
                 {
-                    Process();
-                    _nextRun = _schedule.GetNextOccurrence(DateTime.Now);
+                    var now = DateTime.Now;
+                    var nextrun = _schedule.GetNextOccurrence(now);
+                    if (now > _nextRun)
+                    {
+                        Process();
+                        _nextRun = _schedule.GetNextOccurrence(DateTime.Now);
+                    }
+                    await Task.Delay(5000, stoppingToken); //5 seconds delay
                 }
-                await Task.Delay(5000, stoppingToken); //5 seconds delay
+                while (!stoppingToken.IsCancellationRequested);
             }
-            while (!stoppingToken.IsCancellationRequested);
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.ToString());
+                throw;
+            }
+            
         }
         private async void Process()
         {
-            await Forecast().ConfigureAwait(false);
+            try
+            {
+                await Forecast().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.ToString());
+                throw;
+            }
+            
         }
         private async Task Forecast()
         {
@@ -75,14 +96,15 @@ namespace WURequest.Services
                     var document = BsonSerializer.Deserialize<Forecasts>(responseBody);
                     await _forecastService.Create(document);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Console.WriteLine(e.ToString());
+                    _logger.LogInformation(ex.ToString());
+                    throw;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.ToString());
+                _logger.LogInformation(ex.ToString());
                 throw;
             }
         }

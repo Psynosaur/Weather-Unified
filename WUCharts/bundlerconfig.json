@@ -3,6 +3,7 @@
     "outputFileName": "wwwroot/css/site.min.css",
     "inputFiles": [
       "wwwroot/lib/assets/bulma.min.css",
+      "wwwroot/lib/assets/bulma-tooltip.min.css",
       "wwwroot/lib/assets/flatpickr.css",      
       "wwwroot/css/site.css"
     ]

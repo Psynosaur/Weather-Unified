@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using WURequest.Models;
 using WURequest.Services;
@@ -18,51 +19,28 @@ namespace WURequest.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ObservationsService _observationsService;
         private readonly IWuApiSettings _wuApiSettings;
+        private readonly ILogger _logger;
         public WeatherController(
             ObservationsService observationsService,
-            IWebHostEnvironment hostingEnvironment, IWuApiSettings wuApiSettings)
+            IWebHostEnvironment hostingEnvironment, 
+            IWuApiSettings wuApiSettings,
+            ILoggerFactory logFactory)
         {
             _observationsService = observationsService;
             _hostingEnvironment = hostingEnvironment;
             _wuApiSettings = wuApiSettings;
+            _logger = logFactory.CreateLogger<WeatherController>();
         }
 
-        // Meteobridge Data getter
-        // Parses string from Meteobridge HTTP Get
+        /*
+            Meteobridge Data getter
+            - This is where Meteobridge sends the weather data to
+            - Parses string from Meteobridge HTTP Get
+            - It stores the result in the mongodb
+        */
         [HttpGet]
         public async Task<ActionResult<string>> Mb(string data)
         {
-            /*
-             This is the Meteobridge TEST string copy from
-             <<<<<<<There all the way to the last "}" then paste into HTTP GET input in meteobridge
-             https://localhost:5001/api/weather/Mb?data=
-             {
-                %22DateTime%22:%2019-07-20T13:04:21.000%2B00:00%22,
-                %22TempOutCur%22:17.4,
-                %22Tmin%22:9.4,
-                %22Tmax%22:19.4,
-                %22HumOutCur%22:95.0,
-                %22PressCur%22:1020.4,
-                %22DewCur%22:14.6,
-                %22HeatIdxCur%22:15.4,
-                %22WindChillCur%22:15.4,
-                %22TempInCur%22:18.4,
-                %22HumInCur%22:73.0,
-                %22WindSpeedCur%22:5.6,
-                %22WindAvgSpeedCur%22:4.6,
-                %22WindDirCur%22:322.0,
-                %22WindDirCurEng%22:%22NW%22,
-                %22WindGust10%22:9.0,
-                %22WindDirAvg10%22:335.0,
-                %22WindDirAvg10Eng%22:%22NNW%22,
-                %22RainRateCur%22:0.0,
-                %22RainDay%22:3.9,
-                %22RainYest%22:0.0,
-                %22RainMonth%22:54.0,
-                %22RainYear%22:219.0,
-                %22UV%22:0.0,
-                %22SolarRad%22:0.0} 
-             */
             try
             {
                 JObject json = JObject.Parse(data);
@@ -76,11 +54,11 @@ namespace WURequest.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogInformation(ex.ToString());
                 throw;
             }
         }
-        
+        // Decide what to do here?
         [HttpGet]
         public async Task<ActionResult<string>> Wu()
         {
@@ -111,18 +89,17 @@ namespace WURequest.Controllers
                             string some = jObj["observations"][0].ToString();
                             return some;
                         }
-                        catch (Exception e)
+                        catch (Exception ex)
                         {
-                            Console.WriteLine(e.ToString());
+                            _logger.LogInformation(ex.ToString());
+                            throw;
                         }
-
-                        return "NO DATA";
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.ToString());
+                _logger.LogInformation(ex.ToString());
                 throw;
             }
         }

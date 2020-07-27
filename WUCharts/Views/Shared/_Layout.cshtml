@@ -21,6 +21,7 @@
     <meta name="title" content="Durbanville Weather - @ViewData["Title"]"/>
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/assets/bulma.min.css">
+        <link rel="stylesheet" href="~/lib/assets/bulma-tooltip.min.css">
         <link rel="stylesheet" href="~/lib/assets/flatpickr.css">
         <link rel="stylesheet" href="~/css/site.css"/>
     </environment>
@@ -52,6 +53,7 @@
             <a class="navbar-item has-text-light" asp-area="" asp-controller="Home" asp-action="Forecast">Forecast</a>
             <a class="navbar-item has-text-light" asp-area="" asp-controller="Home" asp-action="Date">Historical</a>
             <a class="navbar-item has-text-light" asp-area="" asp-controller="Home" asp-action="About">About</a>
+            <a class="navbar-item has-text-light" asp-area="" asp-controller="Home" asp-action="Experimental">Experimental</a>
             @* <a class="navbar-item has-text-light" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a> *@
         </ul>
     </div>
