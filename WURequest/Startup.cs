@@ -35,6 +35,13 @@ namespace WURequest
                 sp.GetRequiredService<IOptions<ForecastDatabaseSettings>>().Value);
             services.AddSingleton<ForecastService>();
             
+            services.Configure<ArduinoDatabaseSettings>(
+                Configuration.GetSection(nameof(ArduinoDatabaseSettings)));
+
+            services.AddSingleton<IArduinoDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ArduinoDatabaseSettings>>().Value);
+            services.AddSingleton<ArduinoService>();
+            
             services.Configure<WuApiSettings>(
                 Configuration.GetSection(nameof(WuApiSettings)));
 
@@ -43,6 +50,7 @@ namespace WURequest
 
             services.AddRazorPages();
             services.AddHostedService<ForecastBackgroundService>();
+            services.AddHostedService<ArduinoBackgroundService>();
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());

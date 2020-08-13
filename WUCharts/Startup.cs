@@ -30,9 +30,8 @@ namespace WUCharts
             services.AddHealthChecks();
             services.AddResponseCompression(options =>
             {
-                // options.Providers.Add<BrotliCompressionProvider>();
-                options.Providers.Add<GzipCompressionProvider>();
-                options.MimeTypes = 
+                options.EnableForHttps = true;
+                options.MimeTypes =
                     ResponseCompressionDefaults.MimeTypes.Concat(
                         new[]
                         {
@@ -43,36 +42,41 @@ namespace WUCharts
                             "text/json",
                             "application/json"
                         });
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
             });
-            // services.Configure<BrotliCompressionProviderOptions>(options =>
-            //     {
-            //         options.Level = CompressionLevel.Fastest;
-            //     }
-            // );
-            services.Configure<GzipCompressionProviderOptions>(options =>
+            services.Configure<BrotliCompressionProviderOptions>(options =>
                 {
-                    options.Level = CompressionLevel.Optimal;
+                    options.Level = CompressionLevel.Fastest;
                 }
             );
-            
+            services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Fastest; }
+            );
+
             services.Configure<ObservationDatabaseSettings>(
                 Configuration.GetSection(nameof(ObservationDatabaseSettings)));
 
             services.AddSingleton<IObservationDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
             services.AddSingleton<ObservationsService>();
-            
+
             services.Configure<ForecastDatabaseSettings>(
                 Configuration.GetSection(nameof(ForecastDatabaseSettings)));
-            
+
             services.AddSingleton<IForecastDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ForecastDatabaseSettings>>().Value);
             services.AddSingleton<ForecastService>();
-            
+
+            services.Configure<ArduinoDatabaseSettings>(
+                Configuration.GetSection(nameof(ArduinoDatabaseSettings)));
+
+            services.AddSingleton<IArduinoDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ArduinoDatabaseSettings>>().Value);
+            services.AddSingleton<ArduinoService>();
             services
                 .AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
-           
+
             services.AddRazorPages().AddRazorPagesOptions(options =>
             {
                 options.Conventions.AddPageRoute("/robotstxt", "/Robots.Txt");
@@ -92,12 +96,13 @@ namespace WUCharts
                 app.UseExceptionHandler("/error");
                 app.UseHsts();
             }
-            app.Use(async (context,next) =>
+
+            app.Use(async (context, next) =>
             {
                 var url = context.Request.Path.Value;
-                
+
                 // Does the url contain "home" or "Home"
-                if (url.IndexOf("/home/",StringComparison.OrdinalIgnoreCase) >= 0)
+                if (url.IndexOf("/home/", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     var suburl = url.Substring(url.IndexOf("/home/", StringComparison.OrdinalIgnoreCase) + 6);
                     // rewrite and continue processing
@@ -115,7 +120,7 @@ namespace WUCharts
             });
             app.UseRobotsTxt(builder =>
                 builder
-                    .AddSection(section => 
+                    .AddSection(section =>
                         section
                             .AddComment("Allow All")
                             .AddUserAgent("*")

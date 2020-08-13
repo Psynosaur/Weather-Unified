@@ -52,9 +52,9 @@ am4core.ready(function () {
         // Create TminMax chart instance
         var tminmax = am4core.create("chartminmax", am4charts.XYChart);
         tminmax.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        var labelTemp = tminmax.chartContainer.createChild(am4core.Label);
-        labelTemp.text = "Outdoor Temp Min/Max";
-        labelTemp.align = "center";
+        var labelTminmax = tminmax.chartContainer.createChild(am4core.Label);
+        labelTminmax.text = "Outdoor Temp Min/Max";
+        labelTminmax.align = "center";
 
         // Create humidity chart instance
         var hum = am4core.create("charthum", am4charts.XYChart);
@@ -894,5 +894,690 @@ am4core.ready(function () {
             humRose.legend = new am4charts.Legend();
             humRose.cursor = new am4charts.RadarCursor();
         }
+    }
+    if (h === 3){
+        var datas = objdata;
+        // BMx280, MLX90614 - Ambient Tempratures
+        var amb = am4core.create("chartamb", am4charts.XYChart);
+        amb.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labelamb = amb.chartContainer.createChild(am4core.Label);
+        labelamb.text = "Ambient temperatures";
+        labelamb.align = "center";
+                      
+        // MLX90614 - IR sky temp(object temp)
+        var sky = am4core.create("chartir", am4charts.XYChart);
+        sky.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labelsky = sky.chartContainer.createChild(am4core.Label);
+        labelsky.text = "Sky temperature";
+        labelsky.align = "center";
+        
+        // BMx280 - absolute pressure
+        var Pabs = am4core.create("chartpabs", am4charts.XYChart);
+        Pabs.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labelPabs = Pabs.chartContainer.createChild(am4core.Label);
+        labelPabs.text = "Pressure absolute and relative";
+        labelPabs.align = "center";
+        
+        // // BMP280 - relative pressure
+        // var Prel = am4core.create("chartprel", am4charts.XYChart);
+        // Prel.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        // var labelPrel = Prel.chartContainer.createChild(am4core.Label);
+        // labelPrel.text = "Pressure relative";
+        // labelPrel.align = "center";
+        
+        //DHT - Sensors - Humidity
+        var dhthum = am4core.create("charthum", am4charts.XYChart);
+        dhthum.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labelhum = dhthum.chartContainer.createChild(am4core.Label);
+        labelhum.text = "DHT humidities";
+        labelhum.align = "center";
+
+        //CSS811 - Sensor - CO2 and TVOC
+        var dhtTemp = am4core.create("chartco2", am4charts.XYChart);
+        dhtTemp.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labelDHTTemp = dhtTemp.chartContainer.createChild(am4core.Label);
+        labelDHTTemp.text = "Air Quality";
+        labelDHTTemp.align = "center";
+
+        //DS18B20 - Sensor - Ground Temperature
+        var gndtemp = am4core.create("chartgndTemp", am4charts.XYChart);
+        gndtemp.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labelgndtemp = gndtemp.chartContainer.createChild(am4core.Label);
+        labelgndtemp.text = "Ground Temp";
+        labelgndtemp.align = "center";
+        
+        //Capacitive Moisture - Sensor - RH of ground
+        var gndmoist = am4core.create("chartgndMoist", am4charts.XYChart);
+        gndmoist.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labelgndMoist = gndmoist.chartContainer.createChild(am4core.Label);
+        labelgndMoist.text = "Ground Moisture";
+        labelgndMoist.align = "center";
+        
+        //Cloud Cover
+        var cloud = am4core.create("chartgnd", am4charts.XYChart);
+        cloud.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labelcloudcover = cloud.chartContainer.createChild(am4core.Label);
+        labelcloudcover.text = "Cloud Cover";
+        labelcloudcover.align = "center";
+
+        //Cloud Cover
+        var lightning = am4core.create("chartlightning", am4charts.XYChart);
+        lightning.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labellightning = lightning.chartContainer.createChild(am4core.Label);
+        labellightning.text = "Lightning strikes";
+        labellightning.align = "center";
+        
+        //MLX and dew point
+        var mlxdew = am4core.create("chartmlx", am4charts.XYChart);
+        mlxdew.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labelmlxdew = mlxdew.chartContainer.createChild(am4core.Label);
+        labelmlxdew.text = "MLX ambient and Dew Point";
+        labelmlxdew.align = "center";
+        
+        amb.data = datas;
+        sky.data = datas;
+        Pabs.data = datas;
+        // Prel.data = datas;
+        dhthum.data = datas;
+        dhtTemp.data = datas;
+        cloud.data = datas;
+        gndtemp.data = datas;
+        gndmoist.data = datas;
+        lightning.data = datas;
+        mlxdew.data = datas;
+        
+               
+        // Create temp axes
+        var categoryAxisAmb = amb.xAxes.push(new am4charts.DateAxis());
+        categoryAxisAmb.renderer.grid.template.location = 0;
+        categoryAxisAmb.renderer.minGridDistance = 60;
+        categoryAxisAmb.baseInterval = {
+            "timeUnit": "minute"
+        };
+        switch (h) {
+            case 1:
+                categoryAxisAmb.baseInterval = {
+                    "timeUnit": "minute"
+                };
+                categoryAxisAmb.dateFormats.setKey("minute", "HH:mm");
+                break;
+            case 2:
+                categoryAxisAmb.baseInterval = {
+                    "timeUnit": "minute",
+                    "count": 30
+                };
+                categoryAxisAmb.dateFormats.setKey("minute", "dd-MM HH:mm");
+                break;
+            default:
+                categoryAxisAmb.baseInterval = {
+                    "timeUnit": "second",
+                    "count": 15
+                };
+                categoryAxisAmb.dateFormats.setKey("second", "HH:mm");
+        }
+        var categoryAxisSky = sky.xAxes.push(new am4charts.DateAxis());
+        categoryAxisSky.renderer.grid.template.location = 0;
+        categoryAxisSky.renderer.minGridDistance = 60;
+        categoryAxisSky.baseInterval = {
+            "timeUnit": "minute"
+        };
+        switch (h) {
+            case 1:
+                categoryAxisSky.baseInterval = {
+                    "timeUnit": "minute"
+                };
+                categoryAxisSky.dateFormats.setKey("minute", "HH:mm");
+                break;
+            case 2:
+                categoryAxisSky.baseInterval = {
+                    "timeUnit": "minute",
+                    "count": 30
+                };
+                categoryAxisSky.dateFormats.setKey("minute", "dd-MM HH:mm");
+                break;
+            default:
+                categoryAxisSky.baseInterval = {
+                    "timeUnit": "second",
+                    "count": 15
+                };
+                categoryAxisSky.dateFormats.setKey("second", "HH:mm");
+        }
+        var categoryAxisPabs = Pabs.xAxes.push(new am4charts.DateAxis());
+        categoryAxisPabs.renderer.grid.template.location = 0;
+        categoryAxisPabs.renderer.minGridDistance = 60;
+        categoryAxisPabs.baseInterval = {
+            "timeUnit": "minute"
+        };
+        switch (h) {
+            case 1:
+                categoryAxisPabs.baseInterval = {
+                    "timeUnit": "minute"
+                };
+                categoryAxisPabs.dateFormats.setKey("minute", "HH:mm");
+                break;
+            case 2:
+                categoryAxisPabs.baseInterval = {
+                    "timeUnit": "minute",
+                    "count": 30
+                };
+                categoryAxisPabs.dateFormats.setKey("minute", "dd-MM HH:mm");
+                break;
+            default:
+                categoryAxisPabs.baseInterval = {
+                    "timeUnit": "second",
+                    "count": 15
+                };
+                categoryAxisPabs.dateFormats.setKey("second", "HH:mm");
+        }
+        // var categoryAxisPrel = Prel.xAxes.push(new am4charts.DateAxis());
+        // categoryAxisPrel.renderer.grid.template.location = 0;
+        // categoryAxisPrel.renderer.minGridDistance = 60;
+        // categoryAxisPrel.baseInterval = {
+        //     "timeUnit": "minute"
+        // };
+        // switch (h) {
+        //     case 1:
+        //         categoryAxisPrel.baseInterval = {
+        //             "timeUnit": "minute"
+        //         };
+        //         categoryAxisPrel.dateFormats.setKey("minute", "HH:mm");
+        //         break;
+        //     case 2:
+        //         categoryAxisPrel.baseInterval = {
+        //             "timeUnit": "minute",
+        //             "count": 30
+        //         };
+        //         categoryAxisPrel.dateFormats.setKey("minute", "dd-MM HH:mm");
+        //         break;
+        //     default:
+        //         categoryAxisPrel.baseInterval = {
+        //             "timeUnit": "second",
+        //             "count": 15
+        //         };
+        //         categoryAxisPrel.dateFormats.setKey("second", "HH:mm");
+        // }
+        // Create DHT - Humidity axes
+        var categoryAxisDhtHum = dhthum.xAxes.push(new am4charts.DateAxis());
+        categoryAxisDhtHum.renderer.grid.template.location = 0;
+        categoryAxisDhtHum.renderer.minGridDistance = 60;
+        categoryAxisDhtHum.baseInterval = {
+            "timeUnit": "minute"
+        };
+        switch (h) {
+            case 1:
+                categoryAxisDhtHum.baseInterval = {
+                    "timeUnit": "minute"
+                };
+                categoryAxisDhtHum.dateFormats.setKey("minute", "HH:mm");
+                break;
+            case 2:
+                categoryAxisDhtHum.baseInterval = {
+                    "timeUnit": "minute",
+                    "count": 30
+                };
+                categoryAxisDhtHum.dateFormats.setKey("minute", "dd-MM HH:mm");
+                break;
+            default:
+                categoryAxisDhtHum.baseInterval = {
+                    "timeUnit": "second",
+                    "count": 15
+                };
+                categoryAxisDhtHum.dateFormats.setKey("second", "HH:mm");
+        }
+
+        // Create DHT - Temp axes
+        var categoryAxisDhtTemp = dhtTemp.xAxes.push(new am4charts.DateAxis());
+        categoryAxisDhtTemp.renderer.grid.template.location = 0;
+        categoryAxisDhtTemp.renderer.minGridDistance = 60;
+        categoryAxisDhtTemp.baseInterval = {
+            "timeUnit": "minute"
+        };
+        switch (h) {
+            case 1:
+                categoryAxisDhtTemp.baseInterval = {
+                    "timeUnit": "minute"
+                };
+                categoryAxisDhtTemp.dateFormats.setKey("minute", "HH:mm");
+                break;
+            case 2:
+                categoryAxisDhtTemp.baseInterval = {
+                    "timeUnit": "minute",
+                    "count": 30
+                };
+                categoryAxisDhtTemp.dateFormats.setKey("minute", "dd-MM HH:mm");
+                break;
+            default:
+                categoryAxisDhtTemp.baseInterval = {
+                    "timeUnit": "second",
+                    "count": 15
+                };
+                categoryAxisDhtTemp.dateFormats.setKey("second", "HH:mm");
+        }
+
+        // Cloud Cover
+        var categoryCloudCover = cloud.xAxes.push(new am4charts.DateAxis());
+        categoryCloudCover.renderer.grid.template.location = 0;
+        categoryCloudCover.renderer.minGridDistance = 60;
+        categoryCloudCover.baseInterval = {
+            "timeUnit": "minute"
+        };
+        switch (h) {
+            case 1:
+                categoryCloudCover.baseInterval = {
+                    "timeUnit": "minute"
+                };
+                categoryCloudCover.dateFormats.setKey("minute", "HH:mm");
+                break;
+            case 2:
+                categoryCloudCover.baseInterval = {
+                    "timeUnit": "minute",
+                    "count": 30
+                };
+                categoryCloudCover.dateFormats.setKey("minute", "dd-MM HH:mm");
+                break;
+            default:
+                categoryCloudCover.baseInterval = {
+                    "timeUnit": "second",
+                    "count": 15
+                };
+                categoryCloudCover.dateFormats.setKey("second", "HH:mm");
+        }
+        // Create DS18B20 - Ground Temprature
+        var categoryAxisgndtemp = gndtemp.xAxes.push(new am4charts.DateAxis());
+        categoryAxisgndtemp.renderer.grid.template.location = 0;
+        categoryAxisgndtemp.renderer.minGridDistance = 60;
+        categoryAxisgndtemp.baseInterval = {
+            "timeUnit": "minute"
+        };
+        switch (h) {
+            case 1:
+                categoryAxisgndtemp.baseInterval = {
+                    "timeUnit": "minute"
+                };
+                categoryAxisgndtemp.dateFormats.setKey("minute", "HH:mm");
+                break;
+            case 2:
+                categoryAxisgndtemp.baseInterval = {
+                    "timeUnit": "minute",
+                    "count": 30
+                };
+                categoryAxisgndtemp.dateFormats.setKey("minute", "dd-MM HH:mm");
+                break;
+            default:
+                categoryAxisgndtemp.baseInterval = {
+                    "timeUnit": "second",
+                    "count": 15
+                };
+                categoryAxisgndtemp.dateFormats.setKey("second", "HH:mm");
+        }
+        // Create Ground moisture axis
+        var categoryAxisgndmoist = gndmoist.xAxes.push(new am4charts.DateAxis());
+        categoryAxisgndmoist.renderer.grid.template.location = 0;
+        categoryAxisgndmoist.renderer.minGridDistance = 60;
+        categoryAxisgndmoist.baseInterval = {
+            "timeUnit": "minute"
+        };
+        switch (h) {
+            case 1:
+                categoryAxisgndmoist.baseInterval = {
+                    "timeUnit": "minute"
+                };
+                categoryAxisgndmoist.dateFormats.setKey("minute", "HH:mm");
+                break;
+            case 2:
+                categoryAxisgndmoist.baseInterval = {
+                    "timeUnit": "minute",
+                    "count": 30
+                };
+                categoryAxisgndmoist.dateFormats.setKey("minute", "dd-MM HH:mm");
+                break;
+            default:
+                categoryAxisgndmoist.baseInterval = {
+                    "timeUnit": "second",
+                    "count": 15
+                };
+                categoryAxisgndmoist.dateFormats.setKey("second", "HH:mm");
+        }
+        
+        // Create lightninge axis
+        var categoryAxislightning = lightning.xAxes.push(new am4charts.DateAxis());
+        categoryAxislightning.renderer.grid.template.location = 0;
+        categoryAxislightning.renderer.minGridDistance = 60;
+        categoryAxislightning.baseInterval = {
+            "timeUnit": "minute"
+        };
+        switch (h) {
+            case 1:
+                categoryAxislightning.baseInterval = {
+                    "timeUnit": "minute"
+                };
+                categoryAxislightning.dateFormats.setKey("minute", "HH:mm");
+                break;
+            case 2:
+                categoryAxislightning.baseInterval = {
+                    "timeUnit": "minute",
+                    "count": 30
+                };
+                categoryAxislightning.dateFormats.setKey("minute", "dd-MM HH:mm");
+                break;
+            default:
+                categoryAxislightning.baseInterval = {
+                    "timeUnit": "second",
+                    "count": 15
+                };
+                categoryAxislightning.dateFormats.setKey("second", "HH:mm");
+        }
+        // Create lightninge axis
+        var categoryAxismlxdew = mlxdew.xAxes.push(new am4charts.DateAxis());
+        categoryAxismlxdew.renderer.grid.template.location = 0;
+        categoryAxismlxdew.renderer.minGridDistance = 60;
+        categoryAxismlxdew.baseInterval = {
+            "timeUnit": "minute"
+        };
+        switch (h) {
+            case 1:
+                categoryAxismlxdew.baseInterval = {
+                    "timeUnit": "minute"
+                };
+                categoryAxismlxdew.dateFormats.setKey("minute", "HH:mm");
+                break;
+            case 2:
+                categoryAxismlxdew.baseInterval = {
+                    "timeUnit": "minute",
+                    "count": 30
+                };
+                categoryAxismlxdew.dateFormats.setKey("minute", "dd-MM HH:mm");
+                break;
+            default:
+                categoryAxismlxdew.baseInterval = {
+                    "timeUnit": "second",
+                    "count": 15
+                };
+                categoryAxismlxdew.dateFormats.setKey("second", "HH:mm");
+        }
+        
+        var valueAxisAmb = amb.yAxes.push(new am4charts.ValueAxis());
+        var valueAxisSky = sky.yAxes.push(new am4charts.ValueAxis());
+        var valueAxisPabs = Pabs.yAxes.push(new am4charts.ValueAxis());
+        // var valueAxisPrel = Prel.yAxes.push(new am4charts.ValueAxis());
+        var valueAxisDhtHum = dhthum.yAxes.push(new am4charts.ValueAxis());
+        var valueAxisDhtTemp = dhtTemp.yAxes.push(new am4charts.ValueAxis());
+        var valueAxiscloudtemp = cloud.yAxes.push(new am4charts.ValueAxis());
+        valueAxiscloudtemp.min = 0;
+        valueAxiscloudtemp.max = 100;
+        var valueAxisgndtemp = gndtemp.yAxes.push(new am4charts.ValueAxis());
+        valueAxisgndtemp.min = 0;
+        // valueAxisgndtemp.max = 30;
+        var valueAxisgndmoist = gndmoist.yAxes.push(new am4charts.ValueAxis());
+        valueAxisgndmoist.min = 0;
+        valueAxisgndmoist.max = 100;
+        var valueAxislightning = lightning.yAxes.push(new am4charts.ValueAxis());
+        valueAxislightning.min = 0;
+        var valueAxismlxdew = mlxdew.yAxes.push(new am4charts.ValueAxis());
+
+
+        // Create temp series
+        var seriesBMPTemp = amb.series.push(new am4charts.LineSeries());
+        seriesBMPTemp.dataFields.valueY = "bmp280temp";
+        seriesBMPTemp.dataFields.dateX = "ObsTime";
+        seriesBMPTemp.tooltipText = "BME280 {bmp280temp} °C";
+        seriesBMPTemp.strokeWidth = 1;
+        seriesBMPTemp.stroke = am4core.color("#ffb545");
+        seriesBMPTemp.tooltip.getFillFromObject = false;
+        seriesBMPTemp.tooltip.background.fill = am4core.color("#ffb545");
+        seriesBMPTemp.tooltip.label.fill = am4core.color("#000");
+        
+        // var seriesDHT22 = amb.series.push(new am4charts.LineSeries());
+        // seriesDHT22.dataFields.valueY = "dht1temp";
+        // seriesDHT22.dataFields.dateX = "ObsTime";
+        // seriesDHT22.tooltipText = "DHT22 {dht1temp} °C";
+        // seriesDHT22.strokeWidth = 1;
+        // seriesDHT22.stroke = am4core.color("#c21128");
+        // seriesDHT22.tooltip.getFillFromObject = false;
+        // seriesDHT22.tooltip.background.fill = am4core.color("#c21128");
+        // seriesDHT22.tooltip.label.fill = am4core.color("#000");
+
+        // var seriesTempAvg = amb.series.push(new am4charts.LineSeries());
+        // seriesTempAvg.dataFields.valueY = "avgtemp";
+        // seriesTempAvg.dataFields.dateX = "ObsTime";
+        // seriesTempAvg.tooltipText = "Average Temp {avgtemp} °C";
+        // seriesTempAvg.strokeWidth = 1;
+        // seriesTempAvg.stroke = am4core.color("#9eb6b0");
+        // seriesTempAvg.tooltip.getFillFromObject = false;
+        // seriesTempAvg.tooltip.background.fill = am4core.color("#9eb6b0");
+        // seriesTempAvg.tooltip.label.fill = am4core.color("#000");
+        
+        var seriesdew = mlxdew.series.push(new am4charts.LineSeries());
+        seriesdew.dataFields.valueY = "dewpoint";
+        seriesdew.dataFields.dateX = "ObsTime";
+        seriesdew.tooltipText = "Dewpoint {dewpoint} °C";
+        seriesdew.strokeWidth = 1;
+        seriesdew.stroke = am4core.color("#ffffff");
+        seriesdew.tooltip.getFillFromObject = false;
+        seriesdew.tooltip.background.fill = am4core.color("#ffffff");
+        seriesdew.tooltip.label.fill = am4core.color("#000");
+        
+        var seriesMLXTemp = mlxdew.series.push(new am4charts.LineSeries());
+        seriesMLXTemp.dataFields.valueY = "mlxambtemp";
+        seriesMLXTemp.dataFields.dateX = "ObsTime";
+        seriesMLXTemp.tooltipText = "MLX ambient {mlxambtemp} °C";
+        seriesMLXTemp.strokeWidth = 1;
+        seriesMLXTemp.stroke = am4core.color("#1955ec");
+        seriesMLXTemp.tooltip.getFillFromObject = false;
+        seriesMLXTemp.tooltip.background.fill = am4core.color("#1955ec");
+        seriesMLXTemp.tooltip.label.fill = am4core.color("#ffffff");
+        
+        
+        
+        // seriesBMPTemp.heatRules.push({
+        //     "target": seriesBMPTemp.lines.template,
+        //     "property": "stroke",
+        //     "min": am4core.color("#F5DBCB"),
+        //     "max": am4core.color("#ED7B84"),
+        //     "dataField": "valueY"
+        // });
+        // seriesBMPTemp.tensionY = 1;
+        // seriesBMPTemp.tensionX = 0.8;
+        // var seriesTempDeW = amb.series.push(new am4charts.LineSeries());
+        // seriesTempDeW.dataFields.valueY = "DewCur";
+        // seriesTempDeW.dataFields.dateX = "ObsTime";
+        // seriesTempDeW.tooltipText = "Dew Point {DewCur} °C";
+        // seriesTempDeW.strokeWidth = 1;
+        // seriesTempDeW.stroke = am4core.color("#87f7ff");
+        // seriesTempDeW.tooltip.getFillFromObject = false;
+        // seriesTempDeW.tooltip.background.fill = am4core.color("#87f7ff");
+        // seriesTempDeW.tooltip.label.fill = am4core.color("#000");
+        // seriesTempDeW.tensionY = 1;
+        // seriesTempDeW.tensionX = 0.8;
+
+        // var seriesTempIn = temp.series.push(new am4charts.LineSeries());
+        // seriesTempIn.dataFields.valueY = "TempInCur";
+        // seriesTempIn.dataFields.dateX = "ObsTime";
+        // seriesTempIn.tooltipText = "Indoor {TempInCur} °C";
+        // seriesTempIn.strokeWidth = 1;
+        // seriesTempIn.stroke = am4core.color("#fcff4c");
+        // seriesTempIn.tooltip.getFillFromObject = false;
+        // seriesTempIn.tooltip.background.fill = am4core.color("#fcff4c");
+        // seriesTempIn.tooltip.label.fill = am4core.color("#000");
+        // temp.scrollbarX = new am4core.Scrollbar();
+        //sky
+        var seriesMLXSkyTemp = sky.series.push(new am4charts.LineSeries());
+        seriesMLXSkyTemp.dataFields.valueY = "mlxskytemp";
+        seriesMLXSkyTemp.dataFields.dateX = "ObsTime";
+        seriesMLXSkyTemp.tooltipText = "MLX sky {mlxskytemp} °C";
+        seriesMLXSkyTemp.strokeWidth = 1;
+        seriesMLXSkyTemp.stroke = am4core.color("#1b9dfa");
+        seriesMLXSkyTemp.tooltip.getFillFromObject = false;
+        seriesMLXSkyTemp.tooltip.background.fill = am4core.color("#1b9dfa");
+        seriesMLXSkyTemp.tooltip.label.fill = am4core.color("#000");
+        
+        var seriesAbsPressure = Pabs.series.push(new am4charts.LineSeries());
+        seriesAbsPressure.dataFields.valueY = "bmp280abspressure";
+        seriesAbsPressure.dataFields.dateX = "ObsTime";
+        seriesAbsPressure.tooltipText = "Absolute {bmp280abspressure} Pa";
+        seriesAbsPressure.strokeWidth = 1;
+        seriesAbsPressure.stroke = am4core.color("#1bfa39");
+        seriesAbsPressure.tooltip.getFillFromObject = false;
+        seriesAbsPressure.tooltip.background.fill = am4core.color("#1bfa39");
+        seriesAbsPressure.tooltip.label.fill = am4core.color("#000");
+
+        var seriesRelPressure = Pabs.series.push(new am4charts.LineSeries());
+        seriesRelPressure.dataFields.valueY = "bmp280relpressure";
+        seriesRelPressure.dataFields.dateX = "ObsTime";
+        seriesRelPressure.tooltipText = "Relative {bmp280relpressure} Pa";
+        seriesRelPressure.strokeWidth = 1;
+        seriesRelPressure.stroke = am4core.color("#1bfaa1");
+        seriesRelPressure.tooltip.getFillFromObject = false;
+        seriesRelPressure.tooltip.background.fill = am4core.color("#1bfaa1");
+        seriesRelPressure.tooltip.label.fill = am4core.color("#000");
+
+        // var seriesdht1 = dhthum.series.push(new am4charts.LineSeries());
+        // seriesdht1.dataFields.valueY = "dht1hum";
+        // seriesdht1.dataFields.dateX = "ObsTime";
+        // seriesdht1.tooltipText = "DHT22 {dht1hum} %";
+        // seriesdht1.strokeWidth = 1;
+        // seriesdht1.stroke = am4core.color("#97c9fc");
+        // seriesdht1.tooltip.getFillFromObject = false;
+        // seriesdht1.tooltip.background.fill = am4core.color("#97c9fc");
+        // seriesdht1.tooltip.label.fill = am4core.color("#000");
+
+        var seriesdht2 = dhthum.series.push(new am4charts.LineSeries());
+        seriesdht2.dataFields.valueY = "bmp280humidity";
+        seriesdht2.dataFields.dateX = "ObsTime";
+        seriesdht2.tooltipText = "BME280 {bmp280humidity} %";
+        seriesdht2.strokeWidth = 1;
+        seriesdht2.stroke = am4core.color("#97c9fc");
+        seriesdht2.tooltip.getFillFromObject = false;
+        seriesdht2.tooltip.background.fill = am4core.color("#97c9fc");
+        seriesdht2.tooltip.label.fill = am4core.color("#000");
+
+        // var seriesdht = dhthum.series.push(new am4charts.LineSeries());
+        // seriesdht.dataFields.valueY = "avghum";
+        // seriesdht.dataFields.dateX = "ObsTime";
+        // seriesdht.tooltipText = "Average {avghum} %";
+        // seriesdht.strokeWidth = 1;
+        // seriesdht.stroke = am4core.color("#1bfafa");
+        // seriesdht.tooltip.getFillFromObject = false;
+        // seriesdht.tooltip.background.fill = am4core.color("#1bfafa");
+        // seriesdht.tooltip.label.fill = am4core.color("#000");
+
+        var seriesDHT1Temp = dhtTemp.series.push(new am4charts.LineSeries());
+        seriesDHT1Temp.dataFields.valueY = "co2";
+        seriesDHT1Temp.dataFields.dateX = "ObsTime";
+        seriesDHT1Temp.tooltipText = "CO2 {co2}";
+        seriesDHT1Temp.strokeWidth = 1;
+        seriesDHT1Temp.stroke = am4core.color("#ff4555");
+        seriesDHT1Temp.tooltip.getFillFromObject = false;
+        seriesDHT1Temp.tooltip.background.fill = am4core.color("#ff4555");
+        seriesDHT1Temp.tooltip.label.fill = am4core.color("#000");
+        
+        var seriesDHT2Temp = dhtTemp.series.push(new am4charts.LineSeries());
+        seriesDHT2Temp.dataFields.valueY = "tvoc";
+        seriesDHT2Temp.dataFields.dateX = "ObsTime";
+        seriesDHT2Temp.tooltipText = "TVOC {tvoc}";
+        seriesDHT2Temp.strokeWidth = 1;
+        seriesDHT2Temp.stroke = am4core.color("#ff0000");
+        seriesDHT2Temp.tooltip.getFillFromObject = false;
+        seriesDHT2Temp.tooltip.background.fill = am4core.color("#ff0000");
+        seriesDHT2Temp.tooltip.label.fill = am4core.color("#000");
+
+        // var seriesgndtemp = gndtemp.series.push(new am4charts.LineSeries());
+        // seriesgndtemp.dataFields.valueY = "difference";
+        // seriesgndtemp.dataFields.dateX = "ObsTime";
+        // seriesgndtemp.tooltipText = "DewSky {difference} °C";
+        // seriesgndtemp.strokeWidth = 1;
+        // seriesgndtemp.stroke = am4core.color("#00fff8");
+        // seriesgndtemp.tooltip.getFillFromObject = false;
+        // seriesgndtemp.tooltip.background.fill = am4core.color("#00fff8");
+        // seriesgndtemp.tooltip.label.fill = am4core.color("#ffffff");
+
+        // var seriesgndtempdew = gndtemp.series.push(new am4charts.LineSeries());
+        // seriesgndtempdew.dataFields.valueY = "ambientcloudheight";
+        // seriesgndtempdew.dataFields.dateX = "ObsTime";
+        // seriesgndtempdew.tooltipText = "amb height {ambientcloudheight}m";
+        // seriesgndtempdew.strokeWidth = 1;
+        // seriesgndtempdew.stroke = am4core.color("#b5deda");
+        // seriesgndtempdew.tooltip.getFillFromObject = false;
+        // seriesgndtempdew.tooltip.background.fill = am4core.color("#b5deda");
+        // seriesgndtempdew.tooltip.label.fill = am4core.color("#ffffff");
+        //
+        // var seriesgndcoverage = gndtemp.series.push(new am4charts.LineSeries());
+        // seriesgndcoverage.dataFields.valueY = "cloudheight";
+        // seriesgndcoverage.dataFields.dateX = "ObsTime";
+        // seriesgndcoverage.tooltipText = "cloud height {cloudheight}m";
+        // seriesgndcoverage.strokeWidth = 1;
+        // seriesgndcoverage.stroke = am4core.color("#b5deda");
+        // seriesgndcoverage.tooltip.getFillFromObject = false;
+        // seriesgndcoverage.tooltip.background.fill = am4core.color("#b5deda");
+        // seriesgndcoverage.tooltip.label.fill = am4core.color("#ffffff");
+        
+        var seriescloudcover = cloud.series.push(new am4charts.LineSeries());
+        seriescloudcover.dataFields.valueY = "coverage";
+        seriescloudcover.dataFields.dateX = "ObsTime";
+        seriescloudcover.tooltipText = "Cloudcover {coverage}% / Diff {diff}°C";
+        seriescloudcover.strokeWidth = 1;
+        seriescloudcover.stroke = am4core.color("#b5deda");
+        seriescloudcover.tooltip.getFillFromObject = false;
+        seriescloudcover.tooltip.background.fill = am4core.color("#b5deda");
+        seriescloudcover.tooltip.label.fill = am4core.color("#ffffff");
+        
+        var seriesgndtemp = gndtemp.series.push(new am4charts.LineSeries());
+        seriesgndtemp.dataFields.valueY = "groundtemp";
+        seriesgndtemp.dataFields.dateX = "ObsTime";
+        seriesgndtemp.tooltipText = "Ground Temp {groundtemp}°C";
+        seriesgndtemp.strokeWidth = 1;
+        seriesgndtemp.stroke = am4core.color("#a7491c");
+        seriesgndtemp.tooltip.getFillFromObject = false;
+        seriesgndtemp.tooltip.background.fill = am4core.color("#a7491c");
+        seriesgndtemp.tooltip.label.fill = am4core.color("#ffffff");
+        
+        var seriesgndmoist = gndmoist.series.push(new am4charts.LineSeries());
+        seriesgndmoist.dataFields.valueY = "groundmoisture";
+        seriesgndmoist.dataFields.dateX = "ObsTime";
+        seriesgndmoist.tooltipText = "Ground moisture {groundmoisture}%";
+        seriesgndmoist.strokeWidth = 1;
+        seriesgndmoist.stroke = am4core.color("#0bb4ea");
+        seriesgndmoist.tooltip.getFillFromObject = false;
+        seriesgndmoist.tooltip.background.fill = am4core.color("#0bb4ea");
+        seriesgndmoist.tooltip.label.fill = am4core.color("#ffffff");
+
+        var serieslightning = lightning.series.push(new am4charts.LineSeries());
+        serieslightning.dataFields.valueY = "lidistance";
+        serieslightning.dataFields.dateX = "ObsTime";
+        serieslightning.tooltipText = "Lightning distance {lidistance} km";
+        serieslightning.strokeWidth = 1;
+        serieslightning.stroke = am4core.color("#ffffff");
+        serieslightning.tooltip.getFillFromObject = false;
+        serieslightning.tooltip.background.fill = am4core.color("#ffffff");
+        serieslightning.tooltip.label.fill = am4core.color("#000000");
+        // serieslightning.connect = false;
+        // var bullet3 = serieslightning.bullets.push(new am4core.Circle());
+        // bullet3.radius = 1;
+
+        var serieslightningE = lightning.series.push(new am4charts.LineSeries());
+        serieslightningE.dataFields.valueY = "lienergy";
+        serieslightningE.dataFields.dateX = "ObsTime";
+        serieslightningE.tooltipText = "Lightning energy {lienergy}";
+        serieslightningE.strokeWidth = 1;
+        serieslightningE.stroke = am4core.color("#ffffff");
+        serieslightningE.tooltip.getFillFromObject = false;
+        serieslightningE.tooltip.background.fill = am4core.color("#ffffff");
+        serieslightningE.tooltip.label.fill = am4core.color("#000000");
+        // serieslightningE.connect = false;
+        // var bullet4 = serieslightningE.bullets.push(new am4core.Circle());
+        // bullet4.radius = 1;
+
+        amb.cursor = new am4charts.XYCursor();
+        sky.cursor = new am4charts.XYCursor();
+        Pabs.cursor = new am4charts.XYCursor();
+        // Prel.cursor = new am4charts.XYCursor();
+        dhthum.cursor = new am4charts.XYCursor();
+        dhtTemp.cursor = new am4charts.XYCursor();
+        cloud.cursor = new am4charts.XYCursor();
+        gndtemp.cursor = new am4charts.XYCursor();
+        gndmoist.cursor = new am4charts.XYCursor();
+        lightning.cursor = new am4charts.XYCursor();
+        mlxdew.cursor = new am4charts.XYCursor();
+
     }
 });

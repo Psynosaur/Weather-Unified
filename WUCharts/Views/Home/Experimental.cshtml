@@ -1,0 +1,333 @@
+﻿@using Newtonsoft.Json
+@using Microsoft.CodeAnalysis.CSharp.Syntax
+@model List<WURequest.Models.ArduinoObservation>
+
+
+@{
+    var cnt = Model.Select(x => true).Count();
+    var start = "";
+    // Sets nth record to use for plotting
+    int nStep = 9;
+    var graphPoints = Model.Where((x, i) => i % nStep == 0);
+
+    /* NOTES - Cloud coverage calculations 
+     *  - Clear sky temp is approximately -19°C at night when there is no sunlight
+     *  - About -6°C during a sunny day with average moisture
+     *  So we need to establish a difference between a non cloudy sky and the current ambient temp
+     *  It seems to be safe to assume that when the difference from sky temp and ambient is larger than 26°C there are
+     *  no clouds in the sky, so when we have a hot day and the clear sky is measured hotter at -6°C, we do not erroneously
+     *  register this as cloud cover, only when the difference is smaller than 26°C we use the calculation below...
+     * 
+     * >>>>MORE TESTING REQUIRED!!<<<<
+     *
+     *  Logic behind cloud coverage calc :
+     * 
+     *     clearsky Temp = -19°C
+     * 
+     *     malr
+     *     >>>> moist adiabatic lapse rate is approximately 1.5°C/1000ft or 304,8m <<<<
+     *     >>>> https://en.wikipedia.org/wiki/Lapse_rate <<<<
+     *     
+     *     - assuming when it is 100% cloudy the current height of the lowest cloud is 1000ft / 304,8m
+     *     - we can then assume that the cloud base temperature would be our current ambient/ground temperature minus(-) 1.5°C
+     *     - So we subtract this 1.5°C from our range calculation
+     *
+     *     >>>> How many units of change in °C is there between the current air/ground (eg:15°C) and the clear sky (-19°C) <<<<
+     *     range = clearsky Temp + ground/ambient temp - malr 
+     *
+     *     >>>> expressed as a percentage of the range <<<<
+     *     cloud cover = Absolute(clearsky Temp) + mlxobjectTemp(current) 
+     *                     /
+     *                   range * 100
+     */
+    var clearsky = -19;
+    var malr = 1.5;
+    var clearskydiff = 26; // only consider it cloudy when the skytemp rises from clearsky temp to within 26°C from the ambient temperature
+    var observations = graphPoints.ToList();
+    var obj = observations.Where(x => true).Select(o =>
+        new
+        {
+            ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
+            bmp280temp = Convert.ToDecimal(o.bmp280temp),
+            bmp280abspressure = Convert.ToDecimal(o.bmp280abspressure / 100),
+            bmp280relpressure = Convert.ToDecimal(o.bmp280relpressure / 100),
+            bmp280humidity = Convert.ToDecimal(o.bmp280humidity),
+            mlxambtemp = Convert.ToDecimal(o.mlxambtemp),
+            mlxskytemp = Convert.ToDecimal(o.mlxskytemp),
+            dht1temp = Convert.ToDecimal(o.dht1temp),
+            dht1hum = Convert.ToDecimal(o.dht1hum),
+            avgtemp = Convert.ToDecimal(o.avgtemp),
+            avghum = Convert.ToDecimal(o.avghum),
+            dewpoint = Convert.ToDecimal(o.dewpoint),
+            co2 = Convert.ToDecimal(o.co2),
+            tvoc = Convert.ToDecimal(o.tvoc),
+            lienergy = Convert.ToDecimal(o.lienergy),
+            lidistance = Convert.ToDecimal(o.lidistance),
+            groundtemp = Convert.ToDecimal(o.groundtemp),
+            groundmoisture = Convert.ToDecimal(o.groundmoisture),
+            coverage = Math.Round(
+                Convert.ToDecimal(
+                    // if we measure lower temps than a clear sky temperature, we cap it at 0% 
+                    (Math.Abs(clearsky) + o.mlxskytemp) / (Math.Abs(clearsky) + o.avgtemp - malr) * 100 < 0 ? 0
+                        // if for some reason we measure higher temps than complete cloud cover, we cap at 100%
+                        : (Math.Abs(clearsky) + o.mlxskytemp) / (Math.Abs(clearsky) + o.avgtemp - malr) * 100 > 100 ? 100
+                            // only consider it cloudy when the skytemp rises from clearsky temp to within 26°C from the ambient temperature
+                            : o.avgtemp - o.mlxskytemp > clearskydiff ? 0 // if the difference is big there is no clouds
+                                : (Math.Abs(clearsky) + o.mlxskytemp) / (Math.Abs(clearsky) + o.avgtemp - malr) * 100)),
+            ambientcloudheight = Convert.ToDecimal(Math.Abs(o.avgtemp - o.dewpoint) / 1.98 * 1000 / 3.2808),
+            cloudheight = Convert.ToDecimal(Math.Abs(o.mlxskytemp - o.dewpoint) / 1.98 * 1000 / 3.2808),
+            diff = Convert.ToDecimal(o.avgtemp - o.mlxskytemp)
+        }).ToList();
+    var latest = Model.LastOrDefault();
+    var stats = obj.LastOrDefault();
+    var presRel = Convert.ToDecimal(latest?.bmp280relpressure / 100);
+    var presAbs = Convert.ToDecimal(latest?.bmp280abspressure / 100);
+
+
+
+    DateTime startdate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+    var irMin = obj.Select(x => x.diff).Min();
+    var irMinTime = obj.Where(k => k.diff == irMin).Select(x => x.ObsTime);
+    var imint = startdate.AddMilliseconds(irMinTime.FirstOrDefault()).ToLocalTime().ToString("HH:mm:ss");
+    var irMax = obj.Select(x => x.diff).Max();
+    var irMaxTime = obj.Where(k => k.diff == irMax).Select(x => x.ObsTime);
+    var imaxt = startdate.AddMilliseconds(irMaxTime.FirstOrDefault()).ToLocalTime().ToString("HH:mm:ss");
+    var irCur = obj.Select(x => x.diff).LastOrDefault();
+    var irAvg = obj.Select(x => x.diff).Average();
+    var cloudshour = obj.Skip(Math.Max(0, obj.Count - 225));
+    var skyTempMax = Model.Select(c => c.mlxskytemp).Max();
+    var skyTempMin = Model.Select(c => c.mlxskytemp).Min();
+    var skymax = Convert.ToInt64((Model.Where(o => o.mlxskytemp == skyTempMax)
+        .Select(ob => ob.ObsTime).FirstOrDefault() 
+                                  - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
+    var skymin = Convert.ToInt64((Model.Where(o => o.mlxskytemp == skyTempMin)
+        .Select(ob => ob.ObsTime).FirstOrDefault() 
+                                  - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
+    var skymaxTime =  startdate.AddMilliseconds(skymax).ToLocalTime().ToString("HH:mm:ss");
+    var skyminTime =  startdate.AddMilliseconds(skymin).ToLocalTime().ToString("HH:mm:ss");
+    var cn = cloudshour.Select(o => o.coverage).Average();
+    string cloudphrase;
+    if (cn >= 25 && cn < 50)
+    {
+        cloudphrase = "Party Cloudy";
+    }
+    else if (cn >= 50 && cn < 75)
+    {
+        cloudphrase = "Very Cloudy";
+    }
+    else if (cn >= 75)
+    {
+        cloudphrase = "Overcast";
+    }
+    else if (cn < 25 && cn > 10)
+    {
+        cloudphrase = "Pathcy Clouds";
+    }
+    else
+    {
+        cloudphrase = "Clear Sky";
+    }
+}
+
+@section Scripts
+{
+    <script type="text/javascript">
+                var hrs = 3;
+                var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
+                
+    </script>
+    <script type="text/javascript">
+            @if (cnt > 0)
+            {
+                start = Model.LastOrDefault()?.ObsTime.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                start = DateTime.Now.ToString("yyyy-MM-dd");
+            }
+             flatpickr("#date", {
+                                           
+                   // enableTime: true,
+                   minDate: "2020-07-31",
+                   maxDate: "@DateTime.Now.ToString("yyyy-MM-dd")",
+                   dateFormat: "Y-m-d",
+                   onChange: function(selectedDates, dateStr, instance){
+                                 window.location = '/experimental/' + dateStr;
+                             },
+                    startDate: "@start",
+                    defaultDate: "@start"
+             });
+    </script>
+
+}
+
+
+@if (latest != null)
+{
+    <h1>Experimental</h1>
+    <h2>@Model.LastOrDefault()?.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy HH:mm:ss")</h2>
+    <div class="columns has-text-light is-centered is-0-mobile">
+        <div class="column has-text-centered">
+            <input id="date" class="flatpickr flatpickr-input active" type="text" placeholder="@Model.LastOrDefault()?.ObsTime.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
+        </div>
+    </div>
+    <div class="columns is-0-mobile">
+        <div class="column is-2" id="first">
+            <div class="card has-text-light">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="subtitle has-text-light is-4">Current Conditions</p>
+                            <ul class="list-group list-group-flush">
+                                <p class="subtitle has-text-light is-4">Temps</p>
+                                <li class="list-group-item">BME280<span style="float:right;">@latest.bmp280temp &#176C</span></li>
+                                <li class="list-group-item">DHT22<span style="float:right;">@latest.dht1temp &#176C</span></li>
+                                <li class="list-group-item">
+                                    Average
+                                    <span style="float:right;">
+                                        <strong class="has-text-light">@latest.avgtemp &#176C</strong>
+                                    </span>
+                                </li>
+                                <li class="list-group-item has-tooltip-arrow" data-tooltip="MLX IR sensor ambient, this will always be above dewpoint">MLX Ambient<span style="float:right;">@latest.mlxambtemp &#176C</span></li>
+                                <li class="list-group-item">
+                                    Dew Point
+                                    <span style="float:right;">
+                                        <strong class="has-text-light">@latest.dewpoint &#176C</strong>
+                                    </span>
+                                </li>
+                                <p class="subtitle has-text-light is-4">Humidity</p>
+                                <li class="list-group-item">BME280<span style="float:right;">@latest.bmp280humidity%</span></li>
+                                <li class="list-group-item">DHT22<span style="float:right;">@latest.dht1hum%</span></li>
+                                <li class="list-group-item">
+                                    Average
+                                    <span style="float:right;">
+                                        <strong class="has-text-light">@latest.avghum%</strong>
+                                    </span>
+                                </li>
+                                <p class="subtitle has-text-light is-4">Sky</p>
+                                <li class="list-group-item">Current<span style="float:right;">@latest.mlxskytemp &#176C</span></li>
+                                <li class="list-group-item">Min<span style="float:right;">@skyTempMin.ToString("0.00") &#176C at @skyminTime</span></li>
+                                <li class="list-group-item">Max<span style="float:right;">@skyTempMax.ToString("0.00") &#176C at @skymaxTime</span></li>
+
+                                <li class="list-group-item">Cloudcover<span style="float:right;">@stats?.coverage%</span></li>
+                                <p class="subtitle has-text-light is-4">Last hour</p>
+                                <li class="list-group-item">
+                                    @cloudphrase<span style="float:right;">@cn.ToString("0.00")%</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <br/>
+            <div class="card has-text-light">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="subtitle has-text-light is-4">Ambient vs MLX skytemp</p>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    Current
+                                    <span style="float:right;">
+                                        <strong class="has-text-light">@irCur.ToString("0.00")°C</strong>
+                                    </span>
+                                </li>
+                                <li class="list-group-item">
+                                    Average
+                                    <span style="float:right;">
+                                        <strong class="has-text-light">@irAvg.ToString("0.00")°C</strong>
+                                    </span>
+                                </li>
+                                <li class="list-group-item">
+                                    Min
+                                    <span style="float:right;">
+                                        @irMin.ToString("0.00")°C
+                                        at @imint
+                                    </span>
+                                </li>
+                                <li class="list-group-item">
+                                    Max
+                                    <span style="float:right;">
+                                        @irMax.ToString("0.00")°C
+                                        at @imaxt
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+        @if (cnt > 0)
+        {
+            <div class="column is-8" id="middle">
+
+                <div class="columns">
+                    <div class="column is-half" id="chartamb" style="height:300px;"></div>
+                    <div class="column is-half" id="chartgnd" style="height:300px;"></div>
+                </div>
+                <div class="columns">
+                    <div class="column is-half" id="chartpabs" style="height:300px;"></div>
+                    <div class="column is-half" id="chartir" style="height:300px;"></div>
+                </div>
+
+                <div class="columns">
+                    <div class="column is-half" id="chartco2" style="height:300px;"></div>
+                    <div class="column is-half" id="charthum" style="height:300px;"></div>
+                </div>
+                <div class="columns">
+                    <div class="column is-half" id="chartgndTemp" style="height:300px;"></div>
+                    <div class="column is-half" id="chartgndMoist" style="height:300px;"></div>
+                </div>
+                <div class="columns">
+                    <div class="column is-half" id="chartlightning" style="height:300px;"></div>
+                    <div class="column is-half" id="chartmlx" style="height:300px;"></div>
+                </div>
+            </div>
+        }
+        <div class="column is-2" id="first">
+            <div class="card has-text-light">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="subtitle has-text-light is-4">Environmental</p>
+                            <ul class="list-group list-group-flush">
+                                <p class="subtitle has-text-light is-4">BME280 Pressure</p>
+                                <li class="list-group-item">Relative<span style="float:right;">@presRel hPa</span></li>
+                                <li class="list-group-item">Absolute<span style="float:right;">@presAbs hPa</span></li>
+                                <p class="subtitle has-text-light is-4 has-tooltip-arrow" data-tooltip="Measurements made with VOC and CO2 sensor">Air Quality</p>
+                                <li class="list-group-item">eCO2<span style="float:right;">@latest.co2</span></li>
+                                <li class="list-group-item">TVOC<span style="float:right;">@latest.tvoc</span></li>
+                                <p class="subtitle has-text-light is-4 has-tooltip-arrow" data-tooltip="Ground statistics, capacitive moisture and DS18B20 sensors">Ground</p>
+                                <li class="list-group-item">Temp<span style="float:right;">@latest.groundtemp &#176C</span></li>
+                                <li class="list-group-item">Moisture<span style="float:right;">@latest.groundmoisture%</span></li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row" style="text-align: center">
+        <div class="col-lg">
+            @cnt total records
+        </div>
+    </div>
+}
+else
+{
+    <div class="columns is-0-mobile is-centered">
+        <div class="column has-text-centered">
+            <input id="date" class="flatpickr flatpickr-input active" type="text" placeholder="@DateTime.Now.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
+            @* Date: <input class="datepicker" data-date-format="yyyy-mm-dd" value="@DateTime.Now.ToString("yyyy-MM-dd")"> *@
+        </div>
+    </div>
+    @await Html.PartialAsync("_error")
+}

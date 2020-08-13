@@ -2,6 +2,10 @@
     padding-bottom: 20px;
     background-color: #30303d;
     color: #fff;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
 }
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */

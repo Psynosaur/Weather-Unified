@@ -13,12 +13,17 @@ namespace WUCharts.Controllers
     {
         private readonly ObservationsService _observationsService;
         private readonly ForecastService _forecastService;
+        private readonly ArduinoService _arduinoService;
 
 
-        public HomeController(ObservationsService observationsService, ForecastService forecastService)
+        public HomeController(
+            ObservationsService observationsService, 
+            ForecastService forecastService,
+            ArduinoService arduinoService)
         {
             _observationsService = observationsService;
             _forecastService = forecastService;
+            _arduinoService = arduinoService;
         }
         [Route("/forecast")]
         public IActionResult Forecast()
@@ -161,6 +166,20 @@ namespace WUCharts.Controllers
             if (DateTime.TryParse(id, out temp))
             {
                 var model = _observationsService.Date(id).Result;
+                return View(model);
+            }
+            return RedirectToAction("Error");
+        }
+        [Route("/experimental/{id?}")]
+        public IActionResult Experimental(string id = null)
+        {
+            ViewData["Title"] = "Experimental";
+            ViewData["Description"] = "Experimental weather observations ";
+            DateTime temp;
+            if (id == null) id = DateTime.Now.ToString("yyyy-MM-dd");
+            if (DateTime.TryParse(id, out temp))
+            {
+                var model = _arduinoService.Date(id).Result;
                 return View(model);
             }
             return RedirectToAction("Error");
