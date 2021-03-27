@@ -35,6 +35,12 @@ namespace WURequest.Models
         public double lidistance { get; set; } = 0.0;
         public double groundtemp { get; set; } = 0.0;
         public double groundmoisture { get; set; } = 0.0;
+        public string Note { get; set; } = "";
+        public double bmp280temp_2 { get; set; }
+        public double bmp280abspressure_2 { get; set; }
+        public double bmp280relpressure_2 { get; set; }
+        public double bmp280humidity_2 { get; set; }
+        public double coverage { get; set; }
     }
     
     

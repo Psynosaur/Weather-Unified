@@ -915,7 +915,7 @@ am4core.ready(function () {
         var Pabs = am4core.create("chartpabs", am4charts.XYChart);
         Pabs.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
         var labelPabs = Pabs.chartContainer.createChild(am4core.Label);
-        labelPabs.text = "Pressure absolute and relative";
+        labelPabs.text = "Pressure Relative";
         labelPabs.align = "center";
         
         // // BMP280 - relative pressure
@@ -926,16 +926,16 @@ am4core.ready(function () {
         // labelPrel.align = "center";
         
         //DHT - Sensors - Humidity
-        var dhthum = am4core.create("charthum", am4charts.XYChart);
-        dhthum.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        var labelhum = dhthum.chartContainer.createChild(am4core.Label);
-        labelhum.text = "DHT humidities";
+        var bmehum = am4core.create("charthum", am4charts.XYChart);
+        bmehum.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labelhum = bmehum.chartContainer.createChild(am4core.Label);
+        labelhum.text = "Humidity";
         labelhum.align = "center";
 
         //CSS811 - Sensor - CO2 and TVOC
-        var dhtTemp = am4core.create("chartco2", am4charts.XYChart);
-        dhtTemp.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        var labelDHTTemp = dhtTemp.chartContainer.createChild(am4core.Label);
+        var chartco2 = am4core.create("chartco2", am4charts.XYChart);
+        chartco2.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
+        var labelDHTTemp = chartco2.chartContainer.createChild(am4core.Label);
         labelDHTTemp.text = "Air Quality";
         labelDHTTemp.align = "center";
 
@@ -978,8 +978,8 @@ am4core.ready(function () {
         sky.data = datas;
         Pabs.data = datas;
         // Prel.data = datas;
-        dhthum.data = datas;
-        dhtTemp.data = datas;
+        bmehum.data = datas;
+        chartco2.data = datas;
         cloud.data = datas;
         gndtemp.data = datas;
         gndmoist.data = datas;
@@ -1097,7 +1097,7 @@ am4core.ready(function () {
         //         categoryAxisPrel.dateFormats.setKey("second", "HH:mm");
         // }
         // Create DHT - Humidity axes
-        var categoryAxisDhtHum = dhthum.xAxes.push(new am4charts.DateAxis());
+        var categoryAxisDhtHum = bmehum.xAxes.push(new am4charts.DateAxis());
         categoryAxisDhtHum.renderer.grid.template.location = 0;
         categoryAxisDhtHum.renderer.minGridDistance = 60;
         categoryAxisDhtHum.baseInterval = {
@@ -1126,32 +1126,32 @@ am4core.ready(function () {
         }
 
         // Create DHT - Temp axes
-        var categoryAxisDhtTemp = dhtTemp.xAxes.push(new am4charts.DateAxis());
-        categoryAxisDhtTemp.renderer.grid.template.location = 0;
-        categoryAxisDhtTemp.renderer.minGridDistance = 60;
-        categoryAxisDhtTemp.baseInterval = {
+        var categoryAxisCCS811 = chartco2.xAxes.push(new am4charts.DateAxis());
+        categoryAxisCCS811.renderer.grid.template.location = 0;
+        categoryAxisCCS811.renderer.minGridDistance = 60;
+        categoryAxisCCS811.baseInterval = {
             "timeUnit": "minute"
         };
         switch (h) {
             case 1:
-                categoryAxisDhtTemp.baseInterval = {
+                categoryAxisCCS811.baseInterval = {
                     "timeUnit": "minute"
                 };
-                categoryAxisDhtTemp.dateFormats.setKey("minute", "HH:mm");
+                categoryAxisCCS811.dateFormats.setKey("minute", "HH:mm");
                 break;
             case 2:
-                categoryAxisDhtTemp.baseInterval = {
+                categoryAxisCCS811.baseInterval = {
                     "timeUnit": "minute",
                     "count": 30
                 };
-                categoryAxisDhtTemp.dateFormats.setKey("minute", "dd-MM HH:mm");
+                categoryAxisCCS811.dateFormats.setKey("minute", "dd-MM HH:mm");
                 break;
             default:
-                categoryAxisDhtTemp.baseInterval = {
+                categoryAxisCCS811.baseInterval = {
                     "timeUnit": "second",
                     "count": 15
                 };
-                categoryAxisDhtTemp.dateFormats.setKey("second", "HH:mm");
+                categoryAxisCCS811.dateFormats.setKey("second", "HH:mm");
         }
 
         // Cloud Cover
@@ -1300,8 +1300,8 @@ am4core.ready(function () {
         var valueAxisSky = sky.yAxes.push(new am4charts.ValueAxis());
         var valueAxisPabs = Pabs.yAxes.push(new am4charts.ValueAxis());
         // var valueAxisPrel = Prel.yAxes.push(new am4charts.ValueAxis());
-        var valueAxisDhtHum = dhthum.yAxes.push(new am4charts.ValueAxis());
-        var valueAxisDhtTemp = dhtTemp.yAxes.push(new am4charts.ValueAxis());
+        var valueAxisDhtHum = bmehum.yAxes.push(new am4charts.ValueAxis());
+        var valueAxisCCS811 = chartco2.yAxes.push(new am4charts.ValueAxis());
         var valueAxiscloudtemp = cloud.yAxes.push(new am4charts.ValueAxis());
         valueAxiscloudtemp.min = 0;
         valueAxiscloudtemp.max = 100;
@@ -1320,12 +1320,23 @@ am4core.ready(function () {
         var seriesBMPTemp = amb.series.push(new am4charts.LineSeries());
         seriesBMPTemp.dataFields.valueY = "bmp280temp";
         seriesBMPTemp.dataFields.dateX = "ObsTime";
-        seriesBMPTemp.tooltipText = "BME280 {bmp280temp} °C";
+        seriesBMPTemp.tooltipText = "BME280_1 {bmp280temp} °C";
         seriesBMPTemp.strokeWidth = 1;
         seriesBMPTemp.stroke = am4core.color("#ffb545");
         seriesBMPTemp.tooltip.getFillFromObject = false;
         seriesBMPTemp.tooltip.background.fill = am4core.color("#ffb545");
         seriesBMPTemp.tooltip.label.fill = am4core.color("#000");
+        
+        // Create temp series
+        var seriesBMPTemp_2 = amb.series.push(new am4charts.LineSeries());
+        seriesBMPTemp_2.dataFields.valueY = "bmp280temp_2";
+        seriesBMPTemp_2.dataFields.dateX = "ObsTime";
+        seriesBMPTemp_2.tooltipText = "BME280_2 {bmp280temp_2} °C";
+        seriesBMPTemp_2.strokeWidth = 1;
+        seriesBMPTemp_2.stroke = am4core.color("#ff6c09");
+        seriesBMPTemp_2.tooltip.getFillFromObject = false;
+        seriesBMPTemp_2.tooltip.background.fill = am4core.color("#ff6c09");
+        seriesBMPTemp_2.tooltip.label.fill = am4core.color("#000");
         
         // var seriesDHT22 = amb.series.push(new am4charts.LineSeries());
         // seriesDHT22.dataFields.valueY = "dht1temp";
@@ -1411,15 +1422,15 @@ am4core.ready(function () {
         seriesMLXSkyTemp.tooltip.background.fill = am4core.color("#1b9dfa");
         seriesMLXSkyTemp.tooltip.label.fill = am4core.color("#000");
         
-        var seriesAbsPressure = Pabs.series.push(new am4charts.LineSeries());
-        seriesAbsPressure.dataFields.valueY = "bmp280abspressure";
-        seriesAbsPressure.dataFields.dateX = "ObsTime";
-        seriesAbsPressure.tooltipText = "Absolute {bmp280abspressure} Pa";
-        seriesAbsPressure.strokeWidth = 1;
-        seriesAbsPressure.stroke = am4core.color("#1bfa39");
-        seriesAbsPressure.tooltip.getFillFromObject = false;
-        seriesAbsPressure.tooltip.background.fill = am4core.color("#1bfa39");
-        seriesAbsPressure.tooltip.label.fill = am4core.color("#000");
+        // var seriesAbsPressure = Pabs.series.push(new am4charts.LineSeries());
+        // seriesAbsPressure.dataFields.valueY = "bmp280abspressure";
+        // seriesAbsPressure.dataFields.dateX = "ObsTime";
+        // seriesAbsPressure.tooltipText = "Absolute {bmp280abspressure} Pa";
+        // seriesAbsPressure.strokeWidth = 1;
+        // seriesAbsPressure.stroke = am4core.color("#1bfa39");
+        // seriesAbsPressure.tooltip.getFillFromObject = false;
+        // seriesAbsPressure.tooltip.background.fill = am4core.color("#1bfa39");
+        // seriesAbsPressure.tooltip.label.fill = am4core.color("#000");
 
         var seriesRelPressure = Pabs.series.push(new am4charts.LineSeries());
         seriesRelPressure.dataFields.valueY = "bmp280relpressure";
@@ -1431,6 +1442,16 @@ am4core.ready(function () {
         seriesRelPressure.tooltip.background.fill = am4core.color("#1bfaa1");
         seriesRelPressure.tooltip.label.fill = am4core.color("#000");
 
+        var seriesRelPressure_2 = Pabs.series.push(new am4charts.LineSeries());
+        seriesRelPressure_2.dataFields.valueY = "bmp280relpressure_2";
+        seriesRelPressure_2.dataFields.dateX = "ObsTime";
+        seriesRelPressure_2.tooltipText = "Relative {bmp280relpressure_2} Pa";
+        seriesRelPressure_2.strokeWidth = 1;
+        seriesRelPressure_2.stroke = am4core.color("#0faa24");
+        seriesRelPressure_2.tooltip.getFillFromObject = false;
+        seriesRelPressure_2.tooltip.background.fill = am4core.color("#0faa24");
+        seriesRelPressure_2.tooltip.label.fill = am4core.color("#000");
+
         // var seriesdht1 = dhthum.series.push(new am4charts.LineSeries());
         // seriesdht1.dataFields.valueY = "dht1hum";
         // seriesdht1.dataFields.dateX = "ObsTime";
@@ -1441,27 +1462,37 @@ am4core.ready(function () {
         // seriesdht1.tooltip.background.fill = am4core.color("#97c9fc");
         // seriesdht1.tooltip.label.fill = am4core.color("#000");
 
-        var seriesdht2 = dhthum.series.push(new am4charts.LineSeries());
-        seriesdht2.dataFields.valueY = "bmp280humidity";
-        seriesdht2.dataFields.dateX = "ObsTime";
-        seriesdht2.tooltipText = "BME280 {bmp280humidity} %";
-        seriesdht2.strokeWidth = 1;
-        seriesdht2.stroke = am4core.color("#97c9fc");
-        seriesdht2.tooltip.getFillFromObject = false;
-        seriesdht2.tooltip.background.fill = am4core.color("#97c9fc");
-        seriesdht2.tooltip.label.fill = am4core.color("#000");
+        var seriesbmehum_1 = bmehum.series.push(new am4charts.LineSeries());
+        seriesbmehum_1.dataFields.valueY = "bmp280humidity";
+        seriesbmehum_1.dataFields.dateX = "ObsTime";
+        seriesbmehum_1.tooltipText = "BME280_1 {bmp280humidity} %";
+        seriesbmehum_1.strokeWidth = 1;
+        seriesbmehum_1.stroke = am4core.color("#97c9fc");
+        seriesbmehum_1.tooltip.getFillFromObject = false;
+        seriesbmehum_1.tooltip.background.fill = am4core.color("#97c9fc");
+        seriesbmehum_1.tooltip.label.fill = am4core.color("#000");
 
-        // var seriesdht = dhthum.series.push(new am4charts.LineSeries());
-        // seriesdht.dataFields.valueY = "avghum";
-        // seriesdht.dataFields.dateX = "ObsTime";
-        // seriesdht.tooltipText = "Average {avghum} %";
-        // seriesdht.strokeWidth = 1;
-        // seriesdht.stroke = am4core.color("#1bfafa");
-        // seriesdht.tooltip.getFillFromObject = false;
-        // seriesdht.tooltip.background.fill = am4core.color("#1bfafa");
-        // seriesdht.tooltip.label.fill = am4core.color("#000");
+        var seriesbmehum_2 = bmehum.series.push(new am4charts.LineSeries());
+        seriesbmehum_2.dataFields.valueY = "bmp280humidity_2";
+        seriesbmehum_2.dataFields.dateX = "ObsTime";
+        seriesbmehum_2.tooltipText = "BME280_2 {bmp280humidity_2} %";
+        seriesbmehum_2.strokeWidth = 1;
+        seriesbmehum_2.stroke = am4core.color("#498bff");
+        seriesbmehum_2.tooltip.getFillFromObject = false;
+        seriesbmehum_2.tooltip.background.fill = am4core.color("#498bff");
+        seriesbmehum_2.tooltip.label.fill = am4core.color("#000");
 
-        var seriesDHT1Temp = dhtTemp.series.push(new am4charts.LineSeries());
+        var seriesavghum = bmehum.series.push(new am4charts.LineSeries());
+        seriesavghum.dataFields.valueY = "avghum";
+        seriesavghum.dataFields.dateX = "ObsTime";
+        seriesavghum.tooltipText = "Average {avghum} %";
+        seriesavghum.strokeWidth = 1;
+        seriesavghum.stroke = am4core.color("#1bfafa");
+        seriesavghum.tooltip.getFillFromObject = false;
+        seriesavghum.tooltip.background.fill = am4core.color("#1bfafa");
+        seriesavghum.tooltip.label.fill = am4core.color("#000");
+
+        var seriesDHT1Temp = chartco2.series.push(new am4charts.LineSeries());
         seriesDHT1Temp.dataFields.valueY = "co2";
         seriesDHT1Temp.dataFields.dateX = "ObsTime";
         seriesDHT1Temp.tooltipText = "CO2 {co2}";
@@ -1471,7 +1502,7 @@ am4core.ready(function () {
         seriesDHT1Temp.tooltip.background.fill = am4core.color("#ff4555");
         seriesDHT1Temp.tooltip.label.fill = am4core.color("#000");
         
-        var seriesDHT2Temp = dhtTemp.series.push(new am4charts.LineSeries());
+        var seriesDHT2Temp = chartco2.series.push(new am4charts.LineSeries());
         seriesDHT2Temp.dataFields.valueY = "tvoc";
         seriesDHT2Temp.dataFields.dateX = "ObsTime";
         seriesDHT2Temp.tooltipText = "TVOC {tvoc}";
@@ -1511,15 +1542,25 @@ am4core.ready(function () {
         // seriesgndcoverage.tooltip.background.fill = am4core.color("#b5deda");
         // seriesgndcoverage.tooltip.label.fill = am4core.color("#ffffff");
         
-        var seriescloudcover = cloud.series.push(new am4charts.LineSeries());
-        seriescloudcover.dataFields.valueY = "coverage";
-        seriescloudcover.dataFields.dateX = "ObsTime";
-        seriescloudcover.tooltipText = "Cloudcover {coverage}% / Diff {diff}°C";
-        seriescloudcover.strokeWidth = 1;
-        seriescloudcover.stroke = am4core.color("#b5deda");
-        seriescloudcover.tooltip.getFillFromObject = false;
-        seriescloudcover.tooltip.background.fill = am4core.color("#b5deda");
-        seriescloudcover.tooltip.label.fill = am4core.color("#ffffff");
+        // var seriescloudcover = cloud.series.push(new am4charts.LineSeries());
+        // seriescloudcover.dataFields.valueY = "coverage";
+        // seriescloudcover.dataFields.dateX = "ObsTime";
+        // seriescloudcover.tooltipText = "Cloudcover {coverage}% / Diff {diff}°C";
+        // seriescloudcover.strokeWidth = 1;
+        // seriescloudcover.stroke = am4core.color("#b5deda");
+        // seriescloudcover.tooltip.getFillFromObject = false;
+        // seriescloudcover.tooltip.background.fill = am4core.color("#b5deda");
+        // seriescloudcover.tooltip.label.fill = am4core.color("#ffffff");
+
+        var seriescc = cloud.series.push(new am4charts.LineSeries());
+        seriescc.dataFields.valueY = "cc";
+        seriescc.dataFields.dateX = "ObsTime";
+        seriescc.tooltipText = "Cloudcover {cc}% / Diff {diff}°C";
+        seriescc.strokeWidth = 1;
+        seriescc.stroke = am4core.color("#47b7e2");
+        seriescc.tooltip.getFillFromObject = false;
+        seriescc.tooltip.background.fill = am4core.color("#47b7e2");
+        seriescc.tooltip.label.fill = am4core.color("#ffffff");
         
         var seriesgndtemp = gndtemp.series.push(new am4charts.LineSeries());
         seriesgndtemp.dataFields.valueY = "groundtemp";
@@ -1571,8 +1612,8 @@ am4core.ready(function () {
         sky.cursor = new am4charts.XYCursor();
         Pabs.cursor = new am4charts.XYCursor();
         // Prel.cursor = new am4charts.XYCursor();
-        dhthum.cursor = new am4charts.XYCursor();
-        dhtTemp.cursor = new am4charts.XYCursor();
+        bmehum.cursor = new am4charts.XYCursor();
+        chartco2.cursor = new am4charts.XYCursor();
         cloud.cursor = new am4charts.XYCursor();
         gndtemp.cursor = new am4charts.XYCursor();
         gndmoist.cursor = new am4charts.XYCursor();

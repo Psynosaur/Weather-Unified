@@ -184,6 +184,20 @@ namespace WUCharts.Controllers
             }
             return RedirectToAction("Error");
         }
+        [Route("/expweek/{id?}")]
+        public IActionResult ExpWeek(string id = null)
+        {
+            ViewData["Title"] = "Experimental";
+            ViewData["Description"] = "Experimental weather observations ";
+            DateTime temp;
+            if (id == null) id = DateTime.Now.ToString("yyyy-MM-dd");
+            if (DateTime.TryParse(id, out temp))
+            {
+                var model = _arduinoService.Weekly().Result;
+                return View(model);
+            }
+            return RedirectToAction("Error");
+        }
         [Route("/rain")]
         public IActionResult Rain(string start, string end)
         {

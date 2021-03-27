@@ -55,6 +55,24 @@ namespace WURequest.Services
                 throw;
             }
         }
+        public async Task<List<ArduinoObservation>> Weekly()
+        {
+            try
+            {
+                var tm = DateTime.UtcNow;
+                var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
+                var weekstart = hm.AddDays(-6);
+                var obsersvations = await _arduino.Find(
+                        x => x.ObsTime > weekstart)
+                    .SortBy(e => e.ObsTime).ToListAsync();
+                return obsersvations;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.ToString());
+                throw;
+            }
+        }
 
         public async Task Create(ArduinoObservation ad)
         {

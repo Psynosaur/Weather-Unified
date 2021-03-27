@@ -43,7 +43,7 @@
      */
     var clearsky = -18;
     var malr = 1.5;
-    var clearskydiff = 23; // only consider it cloudy when the skytemp rises from clearsky temp to within 23°C from the ambient temperature
+    var clearskydiff = 23; // only consider it cloudy when the skytemp rises from clearsky temp to within 26°C from the ambient temperature
     var observations = graphPoints.ToList();
     var obj = observations.Where(x => true).Select(o =>
         new
@@ -57,10 +57,6 @@
             mlxskytemp = Convert.ToDecimal(o.mlxskytemp),
             dht1temp = Convert.ToDecimal(o.dht1temp),
             dht1hum = Convert.ToDecimal(o.dht1hum),
-            bmp280temp_2 = Convert.ToDecimal(o.bmp280temp_2),
-            bmp280abspressure_2 = Convert.ToDecimal(o.bmp280abspressure_2 / 100),
-            bmp280relpressure_2 = Convert.ToDecimal(o.bmp280relpressure_2 / 100),
-            bmp280humidity_2 = Convert.ToDecimal(o.bmp280humidity_2),
             avgtemp = Convert.ToDecimal(o.avgtemp),
             avghum = Convert.ToDecimal(o.avghum),
             dewpoint = Convert.ToDecimal(o.dewpoint),
@@ -81,8 +77,7 @@
                                 : (Math.Abs(clearsky) + o.mlxskytemp) / (Math.Abs(clearsky) + o.avgtemp - malr) * 100)),
             ambientcloudheight = Convert.ToDecimal(Math.Abs(o.avgtemp - o.dewpoint) / 1.98 * 1000 / 3.2808),
             cloudheight = Convert.ToDecimal(Math.Abs(o.mlxskytemp - o.dewpoint) / 1.98 * 1000 / 3.2808),
-            diff = Convert.ToDecimal(o.avgtemp - o.mlxskytemp),
-            cc = o.coverage
+            diff = Convert.ToDecimal(o.avgtemp - o.mlxskytemp)
         }).ToList();
     var latest = Model.LastOrDefault();
     var stats = obj.LastOrDefault();
@@ -101,7 +96,7 @@
     var imaxt = startdate.AddMilliseconds(irMaxTime.FirstOrDefault()).ToLocalTime().ToString("HH:mm:ss");
     var irCur = obj.Select(x => x.diff).LastOrDefault();
     var irAvg = obj.Select(x => x.diff).Average();
-    var cloudshour = obj.Skip(Math.Max(0, obj.Count - 45));
+    var cloudshour = obj.Skip(Math.Max(0, obj.Count - 225));
     var skyTempMax = Model.Select(c => c.mlxskytemp).Max();
     var skyTempMin = Model.Select(c => c.mlxskytemp).Min();
     var skymax = Convert.ToInt64((Model.Where(o => o.mlxskytemp == skyTempMax)
@@ -187,8 +182,8 @@
                             <p class="subtitle has-text-light is-4">Current Conditions</p>
                             <ul class="list-group list-group-flush">
                                 <p class="subtitle has-text-light is-4">Temps</p>
-                                <li class="list-group-item">BME280_1<span style="float:right;">@latest.bmp280temp &#176C</span></li>
-                                <li class="list-group-item">BME280_2<span style="float:right;">@latest.bmp280temp_2 &#176C</span></li>
+                                <li class="list-group-item">BME280<span style="float:right;">@latest.bmp280temp &#176C</span></li>
+                                <li class="list-group-item">DHT22<span style="float:right;">@latest.dht1temp &#176C</span></li>
                                 <li class="list-group-item">
                                     Average
                                     <span style="float:right;">
@@ -203,8 +198,8 @@
                                     </span>
                                 </li>
                                 <p class="subtitle has-text-light is-4">Humidity</p>
-                                <li class="list-group-item">BME280_1<span style="float:right;">@latest.bmp280humidity%</span></li>
-                                <li class="list-group-item">BME280_2<span style="float:right;">@latest.bmp280humidity_2%</span></li>
+                                <li class="list-group-item">BME280<span style="float:right;">@latest.bmp280humidity%</span></li>
+                                <li class="list-group-item">DHT22<span style="float:right;">@latest.dht1hum%</span></li>
                                 <li class="list-group-item">
                                     Average
                                     <span style="float:right;">
