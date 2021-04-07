@@ -13,8 +13,10 @@ namespace WURequest.Models
         [BsonElement("_id")]
         public ObjectId ObjectId { get; set; }
         
-        [BsonElement("dayOfWeek")] 
-        public List<string> DayOfWeek { get; set; }
+        [BsonElement("calendarDayTemperatureMax")] public List<long?> calendarDayTemperatureMax { get; set; }
+        
+        [BsonElement("calendarDayTemperatureMin")] public List<long?> calendarDayTemperatureMin { get; set; }
+        [BsonElement("dayOfWeek")] public List<string> DayOfWeek { get; set; }
 
         [BsonElement("expirationTimeUtc")] public List<long?> ExpirationTimeUtc { get; set; }
 

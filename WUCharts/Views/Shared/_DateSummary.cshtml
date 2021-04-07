@@ -65,15 +65,13 @@
                         <li class="list-group-item">Year<span style="float:right;">@latest.RainYear mm</span></li>
                         @if (duration.Seconds > 0)
                         {
-                            <li class="list-group-item" style="text-align: center">
-                                <strong>Sunlight</strong>
-                            </li>
-                            <li class="list-group-item">Sunrise<span style="float:right;">@sunrise.ToLocalTime().ToString("HH:mm")</span></li>
+                            <p class="title has-text-light is-4">Sunlight</p>
+                            <li class="list-group-item">Rise<span style="float:right;">@sunrise.ToLocalTime().ToString("HH:mm")</span></li>
                             @if (isSet)
                             {
-                                <li class="list-group-item">Sunset<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>
+                                <li class="list-group-item">Set<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>
                             }
-                            <li class="list-group-item">Daytime<span style="float:right;">@duration.ToString("g")</span></li>
+                            <li class="list-group-item">Total hours<span style="float:right;">@duration.ToString("g")</span></li>
                             <li class="list-group-item">Max Solar Elevation<span style="float:right;">@finalEle°</span></li>
                         }
                     </ul>

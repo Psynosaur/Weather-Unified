@@ -27,20 +27,25 @@
 }
 
 .card .col-lg-4 .col-sm-3, .card {
-    background-color: #343A40;
+    background-color: #363636;
     height: fit-content;
+    border-radius: 6px;
 }
 
 #second .list-group-item, #first .list-group-item, .list-group-item, .card {
-    background-color: #343A40;
+    background-color: #363636;
 }
 
-.containerx h3, h2, h1 ,p {
+.containerx h3, h3, h2, h1 ,p {
     text-align: center;
 }
 h1 {
     font-size: xx-large;
 }
+.flatpickr-input{
+    text-align: center;
+}
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 900px) {
     /* Hide captions */
@@ -91,6 +96,11 @@ h1 {
 /*}*/
 footer  {
    padding: 1.5rem 0.7rem 1rem!important;
+}
+
+#date{
+    text-align: center;
+    margin: auto 10px;
 }
 /*.subtitle {*/
 /*    color: #2380a0 !important;*/

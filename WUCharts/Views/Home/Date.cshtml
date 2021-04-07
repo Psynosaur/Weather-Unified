@@ -143,8 +143,8 @@
 
 @if (latest != null)
 {
-    <h1>Historical weather<br/>Stellenberg Durbanville</h1>
-    <h2>@latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy")</h2>
+    <h1>Stellenberg Durbanville</h1>
+    <h2 class="has-text-light is-centered">@latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy")</h2>
     <div class="columns has-text-light is-centered">
         <div class="column is-1">
             @* Date: <input id="timepick" data-date-format="yyyy-mm-dd" value="@latest.ObsTime.ToLocalTime().ToString("yyyy-MM-dd")"> *@

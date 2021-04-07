@@ -78,18 +78,18 @@
                         <li class="list-group-item">Direction Avg<span style="float:right;">@latest.WindDirAvg10&#176 / @latest.WindDirAvg10Eng</span></li>
                         <li class="list-group-item">Chill<span style="float:right;">@latest.WindChillCur &#176C</span></li>
                         <p class="subtitle has-text-light is-4">Speed</p>
-                        <li class="list-group-item">Current<span style="float:right;">@latest.WindSpeedCur m/s / @(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
-                        <li class="list-group-item">Average<span style="float:right;">@latest.WindAvgSpeedCur m/s / @(windObj.currWAvg > 0 ? windObj.currWAvg.ToString("0.00") : "0") km/h</span></li>
-                        <li class="list-group-item">Gust<span style="float:right;">@latest.WindGust10 m/s / @(windObj.currGust > 0 ? windObj.currGust.ToString("0.00") : "0") km/h</span></li>
+                        <li class="list-group-item">Current<span style="float:right;">@(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
+                        <li class="list-group-item">Average<span style="float:right;">@(windObj.currWAvg > 0 ? windObj.currWAvg.ToString("0.00") : "0") km/h</span></li>
+                        <li class="list-group-item">Gust<span style="float:right;">@(windObj.currGust > 0 ? windObj.currGust.ToString("0.00") : "0") km/h</span></li>
                         @if (duration.Seconds > 0 && cnt < 5050 && cnt > 210)
                         {
                             <p class="subtitle has-text-light is-4">Sunlight</p>
-                            <li class="list-group-item">Sunrise<span style="float:right;">@sunrise.ToLocalTime().ToString("HH:mm")</span></li>
+                            <li class="list-group-item">Rise<span style="float:right;">@sunrise.ToLocalTime().ToString("HH:mm")</span></li>
                             @if (isSet)
                             {
-                                <li class="list-group-item">Sunset<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>
+                                <li class="list-group-item">Set<span style="float:right;">@sunset.ToLocalTime().ToString("HH:mm")</span></li>
                             }
-                            <li class="list-group-item">Daytime<span style="float:right;">@duration.ToString("g")</span></li>
+                            <li class="list-group-item">Total hours<span style="float:right;">@duration.ToString("g")</span></li>
                             <li class="list-group-item">Max Solar Elevation<span style="float:right;">@finalEle°</span></li>
                         }
                     </ul>

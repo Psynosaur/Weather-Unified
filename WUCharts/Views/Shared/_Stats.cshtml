@@ -5,18 +5,18 @@
     var latest = Model.Last();
 
     var statsObj = new List<KeyValuePair<string, string>>();
-    statsObj.Add(new KeyValuePair<string, string>("Temperature Min", Model.Select(x => x.TempOutCur).ToList().Min().ToString("0.#") + " °C"));
-    statsObj.Add(new KeyValuePair<string, string>("Temperature Avg", Model.Select(x => x.TempOutCur).ToList().Average().ToString("0.#") + " °C"));
-    statsObj.Add(new KeyValuePair<string, string>("Temperature Max", Model.Select(x => x.TempOutCur).ToList().Max().ToString("0.#") + " °C"));
-    statsObj.Add(new KeyValuePair<string, string>("Humidity Min", Model.Select(x => x.HumOutCur).ToList().Min().ToString("0.#") + " %"));
-    statsObj.Add(new KeyValuePair<string, string>("Humidity Avg", Model.Select(x => x.HumOutCur).ToList().Average().ToString("0.#") + " %"));
-    statsObj.Add(new KeyValuePair<string, string>("Humidity Max", Model.Select(x => x.HumOutCur).ToList().Max().ToString("0.#") + " %"));
-    statsObj.Add(new KeyValuePair<string, string>("Dewpoint Min", Model.Select(x => x.DewCur).ToList().Min().ToString("0.#") + " °C"));
-    statsObj.Add(new KeyValuePair<string, string>("Dewpoint Avg", Model.Select(x => x.DewCur).ToList().Average().ToString("0.#") + " °C"));
-    statsObj.Add(new KeyValuePair<string, string>("Dewpoint Max", Model.Select(x => x.DewCur).ToList().Max().ToString("0.#") + " °C"));
+    statsObj.Add(new KeyValuePair<string, string>("Temp Min", Model.Select(x => x.TempOutCur).ToList().Min().ToString("0.#") + " °C"));
+    statsObj.Add(new KeyValuePair<string, string>("Temp Avg", Model.Select(x => x.TempOutCur).ToList().Average().ToString("0.#") + " °C"));
+    statsObj.Add(new KeyValuePair<string, string>("Temp Max", Model.Select(x => x.TempOutCur).ToList().Max().ToString("0.#") + " °C"));
+    statsObj.Add(new KeyValuePair<string, string>("R.H. Min", Model.Select(x => x.HumOutCur).ToList().Min().ToString("0.#") + " %"));
+    statsObj.Add(new KeyValuePair<string, string>("R.H. Avg", Model.Select(x => x.HumOutCur).ToList().Average().ToString("0.#") + " %"));
+    statsObj.Add(new KeyValuePair<string, string>("R.H. Max", Model.Select(x => x.HumOutCur).ToList().Max().ToString("0.#") + " %"));
+    statsObj.Add(new KeyValuePair<string, string>("Dew Min", Model.Select(x => x.DewCur).ToList().Min().ToString("0.#") + " °C"));
+    statsObj.Add(new KeyValuePair<string, string>("Dew Avg", Model.Select(x => x.DewCur).ToList().Average().ToString("0.#") + " °C"));
+    statsObj.Add(new KeyValuePair<string, string>("Dew Max", Model.Select(x => x.DewCur).ToList().Max().ToString("0.#") + " °C"));
     statsObj.Add(new KeyValuePair<string, string>("Wind Max", (Model.Select(x => x.WindGust10).ToList().Max() * 3.6).ToString("0.#") + " km/h"));
     statsObj.Add(new KeyValuePair<string, string>("Wind Avg", (Model.Select(x => x.WindSpeedCur).ToList().Average() * 3.6).ToString("0.#") + " km/h"));
-    statsObj.Add(new KeyValuePair<string, string>("WindDir Avg", Model.Select(x => x.WindDirCur).ToList().Average().ToString("0.#") + " °"));
+    statsObj.Add(new KeyValuePair<string, string>("WindDir Avg", Model.Select(x => x.WindDirCur).ToList().Average().ToString("0.#") + "°"));
     statsObj.Add(new KeyValuePair<string, string>("Rain Avg", Model.Select(x => x.RainDay).ToList().Average().ToString("0.#") + " mm"));
     statsObj.Add(new KeyValuePair<string, string>("RainRate Max", Model.Select(x => x.RainRateCur).ToList().Max().ToString("0.#") + " mm/h"));
     statsObj.Add(latest.SolarRad > 0 ? new KeyValuePair<string, string>("Solar Avg", Model.Where(x => x.SolarRad > 0).Select(x => x.SolarRad).Average().ToString("0.#") + " W/m²") : new KeyValuePair<string, string>("Solar Avg", 0 + " W/m²"));
