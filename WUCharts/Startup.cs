@@ -129,6 +129,7 @@ namespace WUCharts
                     //         .Disallow("/")
                     // )
                     .AddSitemap("https://cptsats.co.za/sitemap.xml")
+                    .AddSitemap("https://weatheru.co.za/sitemap.xml")
             );
             app.UseResponseCompression();
             app.UseCors(options => options.AllowAnyOrigin());

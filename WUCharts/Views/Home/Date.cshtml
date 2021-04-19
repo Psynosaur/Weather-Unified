@@ -1,17 +1,15 @@
 ﻿@using Newtonsoft.Json
-@using NUglify.Helpers
-@using WURequest.Models
 @model List<WURequest.Models.Observations>
 
 
 @{
     var cnt = Model.Select(x => true).Count();
     var latest = Model.LastOrDefault();
-    var start = "";
+    string start;
     // Sets nth record to use for plotting
-    int nStep = 17;
+    const int nStep = 17;
     var graphPoints = Model.Where((x, i) => i % nStep == 0);
-    var rainPoints = Model.Where((x, i) => i % 6 == 0);
+    // var rainPoints = Model.Where((x, i) => i % 6 == 0);
     // var graph2 = graph
     //     .Select(c =>
     //     {
@@ -36,9 +34,11 @@
             WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6),
             WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
             WindDirCur = Convert.ToInt32(o.WindDirCur),
+            // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
             WindDirCurEng = o.WindDirCurEng,
             WindGust10 = Convert.ToDecimal(o.WindGust10 * 3.6),
             WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
+            // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
             WindDirAvg10Eng = o.WindDirAvg10Eng,
             RainRateCur = Convert.ToDecimal(o.RainRateCur),
             RainDay = Convert.ToDecimal(o.RainDay),
@@ -50,6 +50,7 @@
         {
             // ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
             WindDirAvg10 = Convert.ToDecimal(o.WindDirCur),
+            // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
             WindDirAvg10Eng = o.WindDirAvg10Eng,
             RainRateCur = Convert.ToDecimal(o.RainRateCur)
         }).ToList();
@@ -57,11 +58,13 @@
         new
         {
             WindDirCur = Convert.ToDecimal(o.WindDirCur),
+            // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
             WindDirCurEng = o.WindDirCurEng,
             WindGust10 = Convert.ToDecimal(o.WindGust10 * 3.6),
             WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
             WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6)
         }).ToList();
+    
     double sd = 0.0;
     string cloudyness = "";
 
@@ -113,7 +116,7 @@
     <script type="text/javascript">
             @if (cnt > 0)
             {
-                start = latest.ObsTime.ToString("yyyy-MM-dd");
+                start = latest?.ObsTime.ToString("yyyy-MM-dd");
             }
             else
             {
@@ -208,97 +211,3 @@ else
     </div>
     @await Html.PartialAsync("_error")
 }
-
-
-@* <style> *@
-@* *@
-@* #chartdiv { *@
-@*   width: 100%; *@
-@*   height: 500px; *@
-@* } *@
-@* *@
-@* </style> *@
-@* <script> *@
-@* am4core.ready(function() { *@
-@* *@
-@* // Themes begin *@
-@* *@
-@* // Themes end *@
-@* *@
-@* /* Create chart instance */ *@
-@* var chart = am4core.create("chartdiv", am4charts.RadarChart); *@
-@* *@
-@* /* Add data */ *@
-@* // chart.data = [ { *@
-@* //   "direction": "N", *@
-@* //   "value": 8 *@
-@* // }, { *@
-@* //      "direction": "NNE", *@
-@* //      "value": 8 *@
-@* //    },{ *@
-@* //   "direction": "NE", *@
-@* //   "value": 9 *@
-@* // },{ *@
-@* //     "direction": "ENE", *@
-@* //     "value": 8 *@
-@* //   }, { *@
-@* //   "direction": "E", *@
-@* //   "value": 4.5 *@
-@* // },{ *@
-@* //     "direction": "ESE", *@
-@* //     "value": 8 *@
-@* //   }, { *@
-@* //   "direction": "SE", *@
-@* //   "value": 3.5 *@
-@* // },{ *@
-@* //     "direction": "SSE", *@
-@* //     "value": 8 *@
-@* //   }, { *@
-@* //   "direction": "S", *@
-@* //   "value": 9.2 *@
-@* // },{ *@
-@* //     "direction": "SSW", *@
-@* //     "value": 8 *@
-@* //   }, { *@
-@* //   "direction": "SW", *@
-@* //   "value": 8.4 *@
-@* // },{ *@
-@* //     "direction": "WSW", *@
-@* //     "value": 8 *@
-@* //   }, { *@
-@* //   "direction": "W", *@
-@* //   "value": 11.1 *@
-@* // },{ *@
-@* //     "direction": "WNW", *@
-@* //     "value": 8 *@
-@* //   }, { *@
-@* //   "direction": "NW", *@
-@* //   "value": 10 *@
-@* // },{ *@
-@* //     "direction": "NNW", *@
-@* //     "value": 8 *@
-@* //   }, ]; *@
-@* *@
-@* chart.data = modeldata; *@
-@* *@
-@* /* Create axes */ *@
-@* var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis()); *@
-@* categoryAxis.dataFields.category = "WindDirCurEng"; *@
-@* *@
-@* var valueAxis = chart.yAxes.push(new am4charts.ValueAxis()); *@
-@* //valueAxis.renderer.gridType = "polygons"; *@
-@* *@
-@* /* Create and configure series */ *@
-@* var series = chart.series.push(new am4charts.RadarSeries()); *@
-@* series.dataFields.valueY = "WindSpeedCur"; *@
-@* series.dataFields.categoryX = "WindDirCurEng"; *@
-@* series.name = "Wind direction"; *@
-@* series.data = modeldata; *@
-@* series.strokeWidth = 3; *@
-@* series.fillOpacity = 0.2; *@
-@* *@
-@* }); // end am4core.ready() *@
-@* </script> *@
-@* *@
-@* <!-- HTML --> *@
-@* <div id="chartdiv"></div> *@
