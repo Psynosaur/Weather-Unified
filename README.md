@@ -8,8 +8,8 @@ you can have a nice dashboard for your weather station, either hosted locally
 on your local area network or over the internet.
   
 ### How
-- This will be hosted on using ASP.Net Core 3.1.5 so it can be hosted anywhere
-	- WURequest is the API for getting the data into the mongodb database 
+- This will be hosted using .Net Core 3.1.5 / 5 so it can be hosted anywhere
+	- WURequest is the API for getting the data from a [Meteobridge](https://www.meteobridge.com/) device into the mongodb database 
 	- WUCharts will draw the charts and use the API to get it's information
 	
 - It will be as simple as unzipping a zip file to a directory and installing mongoDB
@@ -18,6 +18,9 @@ on your local area network or over the internet.
     
 - Setup the reverse proxy app and configure your API settings
 
+### Forecasts
+
+You can get weather forecasts to if you are a weather underground contributor
  
 ### Meteobridge setup 
 
