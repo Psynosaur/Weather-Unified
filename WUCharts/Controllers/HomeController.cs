@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using WUCharts.Models;
+using WURequest.Models;
 using WURequest.Services;
 
 namespace WUCharts.Controllers
@@ -39,7 +41,7 @@ namespace WUCharts.Controllers
         public void SitemapXml()
         {
             string host = Request.Scheme + "://" + Request.Host;
-            var syncIoFeature = HttpContext.Features.Get<IHttpBodyControlFeature>();
+            IHttpBodyControlFeature syncIoFeature = HttpContext.Features.Get<IHttpBodyControlFeature>();
             if (syncIoFeature != null)
             {
                 syncIoFeature.AllowSynchronousIO = true;
@@ -47,51 +49,49 @@ namespace WUCharts.Controllers
 
             Response.ContentType = "application/xml";
             var lastUpdated = DateTime.Now;
-            using (var xml = XmlWriter.Create(Response.Body, new XmlWriterSettings {Indent = true}))
-            {
-                xml.WriteStartDocument();
-                xml.WriteStartElement("urlset", "http://www.sitemaps.org/schemas/sitemap/0.9");
+            using var xml = XmlWriter.Create(Response.Body, new XmlWriterSettings {Indent = true});
+            xml.WriteStartDocument();
+            xml.WriteStartElement("urlset", "http://www.sitemaps.org/schemas/sitemap/0.9");
 
-                xml.WriteStartElement("url");
-                xml.WriteElementString("loc", host);
-                xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
-                xml.WriteEndElement();
-                xml.WriteStartElement("url");
-                xml.WriteElementString("loc", host + "/forecast");
-                xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
-                xml.WriteEndElement();
-                xml.WriteStartElement("url");
-                xml.WriteElementString("loc", host + "/hour");
-                xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
-                xml.WriteEndElement();
-                xml.WriteStartElement("url");
-                xml.WriteElementString("loc", host + "/day");
-                xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
-                xml.WriteEndElement();
-                xml.WriteStartElement("url");
-                xml.WriteElementString("loc", host + "/week");
-                xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
-                xml.WriteEndElement();
-                xml.WriteStartElement("url");
-                xml.WriteElementString("loc", host + "/month");
-                xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
-                xml.WriteEndElement();
-                xml.WriteStartElement("url");
-                xml.WriteElementString("loc", host + "/date");
-                xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
-                xml.WriteEndElement();
-                xml.WriteStartElement("url");
-                xml.WriteElementString("loc", host + "/about");
-                xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
-                xml.WriteEndElement();
-                // xml.WriteStartElement("url");
-                // xml.WriteElementString("loc", host + "/contact");
-                // xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
-                // xml.WriteEndElement();
+            xml.WriteStartElement("url");
+            xml.WriteElementString("loc", host);
+            xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
+            xml.WriteEndElement();
+            xml.WriteStartElement("url");
+            xml.WriteElementString("loc", host + "/forecast");
+            xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
+            xml.WriteEndElement();
+            xml.WriteStartElement("url");
+            xml.WriteElementString("loc", host + "/hour");
+            xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
+            xml.WriteEndElement();
+            xml.WriteStartElement("url");
+            xml.WriteElementString("loc", host + "/day");
+            xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
+            xml.WriteEndElement();
+            xml.WriteStartElement("url");
+            xml.WriteElementString("loc", host + "/week");
+            xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
+            xml.WriteEndElement();
+            xml.WriteStartElement("url");
+            xml.WriteElementString("loc", host + "/month");
+            xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
+            xml.WriteEndElement();
+            xml.WriteStartElement("url");
+            xml.WriteElementString("loc", host + "/date");
+            xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
+            xml.WriteEndElement();
+            xml.WriteStartElement("url");
+            xml.WriteElementString("loc", host + "/about");
+            xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
+            xml.WriteEndElement();
+            // xml.WriteStartElement("url");
+            // xml.WriteElementString("loc", host + "/contact");
+            // xml.WriteElementString("lastmod", lastUpdated.ToString("yyyy-MM-dd"));
+            // xml.WriteEndElement();
 
 
-                xml.WriteEndElement();
-            }
+            xml.WriteEndElement();
         }
 
         [Route("/about")]
@@ -124,19 +124,19 @@ namespace WUCharts.Controllers
         [Route("/hour/{id?}")]
         public IActionResult Hour(int? id = null)
         {
-            ViewData["Title"] = "hour";
+            ViewData["Title"] = "Hour";
             ViewData["Description"] = "Live Hourly weather data for the day";
             if (id <= 24 && id >= 0 || id == null)
             {
                 bool nulled = String.IsNullOrEmpty(id.ToString());
                 if (nulled) id = DateTime.Now.Hour;
                 int hour = id ?? 0;
-                var model = _observationsService.Hourly(hour).Result;
+                List<Observations> model = _observationsService.Hourly(hour).Result;
                 return View(model);
             }
             else
             {
-                var model = _observationsService.Hourly(0).Result;
+                List<Observations> model = _observationsService.Hourly(0).Result;
                 return View(model);
             }
         }
@@ -144,23 +144,22 @@ namespace WUCharts.Controllers
         [Route("/day")]
         public IActionResult Day()
         {
-            ViewData["Title"] = "day";
+            ViewData["Title"] = "Day";
             ViewData["Description"] = "Weather information for Durbanville South Africa, captured " +
                                       "using a Fine Offset WH2310 weather station and a meteobridge weather interface";
-            var model = _observationsService.Daily().Result;
+            List<Observations> model = _observationsService.Daily().Result;
             return View(model);
         }
 
         [Route("/date/{id?}")]
         public IActionResult Date(string id = null)
         {
-            ViewData["Title"] = "past";
+            ViewData["Title"] = "Past";
             ViewData["Description"] = "Historical weather data for Durbanville South Africa";
-            DateTime temp;
             if (id == null) id = DateTime.Now.ToString("yyyy-MM-dd");
-            if (DateTime.TryParse(id, out temp))
+            if (DateTime.TryParse(id, out _))
             {
-                var model = _observationsService.Date(id).Result;
+                List<Observations> model = _observationsService.Date(id).Result;
                 return View(model);
             }
             return RedirectToAction("Error");
@@ -170,25 +169,25 @@ namespace WUCharts.Controllers
         {
             ViewData["Title"] = "Rain"; 
             ViewData["Description"] = "Rain data for Durbanville Stellenberg - South Africa";
-            var model = _observationsService.Rain(start, end);
+            List<List<RainObs>> model = _observationsService.Rain(start, end);
             return View(model);
         }
 
         [Route("/week")]
         public IActionResult Week()
         {
-            ViewData["Title"] = "week";
+            ViewData["Title"] = "Week";
             ViewData["Description"] = "Weather data for Durbanville Stellenberg South Africa - past week";
-            var model = _observationsService.Weekly().Result;
+            List<Observations> model = _observationsService.Weekly().Result;
             return View(model);
         }
 
         [Route("/month")]
         public IActionResult Month()
         {
-            ViewData["Title"] = "month";
+            ViewData["Title"] = "Month";
             ViewData["Description"] = "Weather data for Durbanville Stellenberg South Africa - current month";
-            var model = _observationsService.Monthly().Result;
+            List<Observations> model = _observationsService.Monthly().Result;
             return View(model);
         }
     }

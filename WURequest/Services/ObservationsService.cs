@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
-using Newtonsoft.Json.Linq;
 using WURequest.Models;
 
 namespace WURequest.Services
@@ -31,10 +28,10 @@ namespace WURequest.Services
             {
                 var tm = DateTime.Now;
                 var hm = new DateTime(tm.Year, tm.Month, tm.Day, id, 0, 0, DateTimeKind.Local);
-                var obsersvations = await _observation.Find(
+                var observations = await _observation.Find(
                         x => x.ObsTime > hm && x.ObsTime < hm.AddHours(1))
                     .SortBy(e => e.ObsTime).ToListAsync();
-                return obsersvations;
+                return observations;
             }
             catch (Exception ex)
             {
@@ -51,10 +48,10 @@ namespace WURequest.Services
                 var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
                 // Offset for station timezone
                 var pp = hm.AddHours(-2);
-                var obsersvations = await _observation.Find(
+                var observations = await _observation.Find(
                         x => x.ObsTime > pp)
                     .SortBy(e => e.ObsTime).ToListAsync();
-                return obsersvations;
+                return observations;
             }
             catch (Exception ex)
             {
@@ -67,16 +64,16 @@ namespace WURequest.Services
         {
             try
             {
-                DateTime tm = DateTime.ParseExact(date, "yyyy-MM-dd",
+                var tm = DateTime.ParseExact(date, "yyyy-MM-dd",
                     System.Globalization.CultureInfo.InvariantCulture);
                 var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Local);
                 // Offset for station timezone
                 var dayStart = hm;
                 var dayEnd = dayStart.AddDays(1);
-                var obsersvations = await _observation.Find(
+                var observations = await _observation.Find(
                         e => e.ObsTime > dayStart && e.ObsTime < dayEnd)
                     .SortBy(e => e.ObsTime).ToListAsync();
-                return obsersvations;
+                return observations;
             }
             catch (Exception ex)
             {
@@ -92,10 +89,10 @@ namespace WURequest.Services
                 var tm = DateTime.UtcNow;
                 var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
                 var weekstart = hm.AddDays(-6);
-                var obsersvations = await _observation.Find(
+                var observations = await _observation.Find(
                         x => x.ObsTime > weekstart)
                     .SortBy(e => e.ObsTime).ToListAsync();
-                return obsersvations;
+                return observations;
             }
             catch (Exception ex)
             {
@@ -176,10 +173,10 @@ namespace WURequest.Services
             {
                 var tm = DateTime.UtcNow;
                 var hm = new DateTime(tm.Year, tm.Month, 1, 0, 0, 0, DateTimeKind.Utc);
-                var obsersvations = await _observation.Find(
+                var observations = await _observation.Find(
                         x => x.ObsTime > hm)
                     .SortBy(e => e.ObsTime).ToListAsync();
-                return obsersvations;
+                return observations;
             }
             catch (Exception ex)
             {
@@ -192,20 +189,20 @@ namespace WURequest.Services
         {
             try
             {
-                List<Observations> obs;
-                obs = await _observation
+                List<Observations> observations;
+                observations = await _observation
                     .Find(os => true)
                     .Sort("{DateTime: -1}")
                     .Limit(1).ToListAsync();
-                if (obs.Count == 0)
+                if (observations.Count == 0)
                 {
                     await Create(new Observations
                     {
                         ObsTime = DateTime.UtcNow,
                     });
-                    obs = await Latest();
+                    observations = await Latest();
                 }
-                return obs;
+                return observations;
             }
             catch (Exception ex)
             {
@@ -243,10 +240,8 @@ namespace WURequest.Services
         public void Update(string id, Observations observationsIn) =>
             _observation.ReplaceOne(observation => observation.Id == id, observationsIn);
 
-        public void Remove(Observations observationsIn) =>
-            _observation.DeleteOne(observation => observation.Id == observationsIn.Id);
-
         public void Remove(string id) =>
             _observation.DeleteOne(observation => observation.Id == id);
     }
+
 }
