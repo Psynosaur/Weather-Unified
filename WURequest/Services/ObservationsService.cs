@@ -171,10 +171,10 @@ namespace WURequest.Services
         {
             try
             {
-                var tm = DateTime.UtcNow;
-                var hm = new DateTime(tm.Year, tm.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+                var utcNow = DateTime.UtcNow;
+                var thirtydaysago = utcNow.AddDays(-30);
                 var observations = await _observation.Find(
-                        x => x.ObsTime > hm)
+                        x => x.ObsTime > thirtydaysago)
                     .SortBy(e => e.ObsTime).ToListAsync();
                 return observations;
             }
@@ -203,6 +203,22 @@ namespace WURequest.Services
                     observations = await Latest();
                 }
                 return observations;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.ToString());
+                throw;
+            }
+        }
+        public long Count()
+        {
+            try
+            {
+                
+                var cnt =  _observation
+                    .CountDocuments(os => true);
+                
+                return cnt;
             }
             catch (Exception ex)
             {

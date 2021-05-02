@@ -154,8 +154,8 @@ namespace WUCharts.Controllers
         [Route("/date/{id?}")]
         public IActionResult Date(string id = null)
         {
-            ViewData["Title"] = "Past";
-            ViewData["Description"] = "Historical weather data for Durbanville South Africa";
+            ViewData["Title"] = $"Past {_observationsService.Count()} records";
+            ViewData["Description"] = $"Historical weather data for Durbanville South Africa - {_observationsService.Count()} records strong";
             if (id == null) id = DateTime.Now.ToString("yyyy-MM-dd");
             if (DateTime.TryParse(id, out _))
             {
