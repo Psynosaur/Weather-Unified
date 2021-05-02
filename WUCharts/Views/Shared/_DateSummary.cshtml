@@ -75,13 +75,20 @@
                             <li class="list-group-item">Max Solar Elevation<span style="float:right;">@finalEle°</span></li>
                         }
                     </ul>
-                    <div class="media">
-                        <div class="media-content">
-                            <p class="subtitle has-text-light is-4 has-tooltip-arrow" data-tooltip="Summary of wind intensity and its direction">Wind Rose</p>
-                            <ul class="list-group list-group-flush" id="windrose">
-                            </ul>
+                    @if (Model.Any(obs => obs.WindSpeedCur > 0))
+                    {
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="subtitle has-text-light is-4 has-tooltip-arrow" data-tooltip="Summary of wind intensity and its direction">Wind Rose</p>
+                                <ul class="list-group list-group-flush" id="windrose">
+                                </ul>
+                            </div>
                         </div>
-                    </div>
+                    }
+                    else
+                    {
+                        <div id="windrose" hidden></div>
+                    }
 
                 </div>
             </div>

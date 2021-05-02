@@ -49,7 +49,7 @@
         new 
         {
             // ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
-            WindDirAvg10 = Convert.ToDecimal(o.WindDirCur),
+            WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
             // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
             WindDirAvg10Eng = o.WindDirAvg10Eng,
             RainRateCur = Convert.ToDecimal(o.RainRateCur)
@@ -64,6 +64,7 @@
             WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
             WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6)
         }).ToList();
+    
     
     double sd = 0.0;
     string cloudyness = "";
