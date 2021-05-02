@@ -27,11 +27,13 @@ You can get weather forecasts to if you are a weather underground contributor
 
 #### String to copy to meteobridge HTTP GET Request input field.
 
-![Alt text](https://github.com/Psynosaur/Weather-Unified/blob/master/mb.png "events")
-
 `https://xxx.xxx.xxx.xxx` would be the IP address of your server where this application is hosted
 
 `https://xxx.xxx.xxx.xxx/api/weather/Mb?data={%22DateTime%22:%22[YYYY]-[MM]-[DD]T[hh]:[mm]:[ss].000%2B02:00%22,%22TempOutCur%22:[th0temp-act],%22Tmin%22:[th0temp-min2],%22Tmax%22:[th0temp-max2],%22HumOutCur%22:[th0hum-act],%22PressCur%22: [thb0seapress-act],%22DewCur%22: [th0dew-act],%22HeatIdxCur%22: [th0heatindex-act],%22WindChillCur%22: [wind0chill-act],%22TempInCur%22:[thb0temp-act],%22HumInCur%22:[thb0hum-act],%22WindSpeedCur%22:[wind0wind-act],%22WindAvgSpeedCur%22: [wind0avgwind-act],%22WindDirCur%22:[wind0dir-act],%22WindDirCurEng%22:%22[wind0dir-act=endir]%22,%22WindGust10%22:[wind0wind-max10],%22WindDirAvg10%22:[wind0dir-avg10],%22WindDirAvg10Eng%22:%22[wind0dir-avg10=endir]%22,%22RainRateCur%22:[rain0rate-act],%22RainDay%22:[rain0total-daysum],%22RainYest%22:[rain0total-ydaysum=],%22RainMonth%22: [rain0total-monthsum],%22RainYear%22:[rain0total-yearsum],%22UV%22:[uv0index-act],%22SolarRad%22:[sol0rad-act]}`
+
+### On the Services Events page
+
+![Alt text](https://github.com/Psynosaur/Weather-Unified/blob/master/mb.png "events")
 
 #### Please be aware of the time zone in the above string
 
