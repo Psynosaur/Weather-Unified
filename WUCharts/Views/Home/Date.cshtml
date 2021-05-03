@@ -146,18 +146,28 @@
 
 
 @if (latest != null)
-{
-    <h1>Stellenberg Durbanville</h1>
-    <h2 class="has-text-light is-centered">@latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy")</h2>
-    <div class="columns has-text-light is-centered">
-        <div class="column is-1">
-            @* Date: <input id="timepick" data-date-format="yyyy-mm-dd" value="@latest.ObsTime.ToLocalTime().ToString("yyyy-MM-dd")"> *@
+{ 
+@*     <h1>Stellenberg Durbanville</h1> *@
+@*     <h2 class="has-text-light is-centered">@latest.ObsTime.ToLocalTime().ToString("ddd  dd MMM yyyy")</h2> *@
+@*     <div class="columns has-text-light is-centered"> *@
+@*         <div class="column is-1"> *@
+@*             $1$ Date: <input id="timepick" data-date-format="yyyy-mm-dd" value="@latest.ObsTime.ToLocalTime().ToString("yyyy-MM-dd")"> #1# *@
+@*             <input id="date" class="flatpickr flatpickr-input active" type="text" placeholder="@latest.ObsTime.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction"> *@
+@*             $1$ </div> #1# *@
+@*             $1$ <div class="column has-text-light is-3" style="text-align: center"> #1# *@
+@* *@
+@*             $1$ </div> #1# *@
+@*             $1$ <div class="column has-text-light is-3" style="text-align: center"> #1# *@
+@*             <h3>@cloudyness</h3> *@
+@*         </div> *@
+@*     </div> *@
+     <h1> 
+        Stellenberg Durbanville
+    </h1>
+    <div class="columns has-text-light">
+        <div class="column has-text-light" style="text-align: center">
+            @latest.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")<br/>
             <input id="date" class="flatpickr flatpickr-input active" type="text" placeholder="@latest.ObsTime.ToString("yyyy-MM-dd")" data-id="multipleCustomConjunction">
-            @* </div> *@
-            @* <div class="column has-text-light is-3" style="text-align: center"> *@
-
-            @* </div> *@
-            @* <div class="column has-text-light is-3" style="text-align: center"> *@
             <h3>@cloudyness</h3>
         </div>
     </div>
