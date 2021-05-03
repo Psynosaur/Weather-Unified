@@ -46,3 +46,6 @@ This string was built using information from [here](https://www.meteobridge.com/
 ### Live Data page
 
 ![Alt text](https://github.com/Psynosaur/Weather-Unified/blob/master/mbDataOk.png "Live Updates")
+
+
+Check to see if HTTP Upload : Says **Data OK**

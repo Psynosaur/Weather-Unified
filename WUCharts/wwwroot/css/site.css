@@ -98,9 +98,8 @@ footer  {
    padding: 1.5rem 0.7rem 1rem!important;
 }
 
-#date{
-    text-align: center;
-    margin: auto 10px;
+#date, #time{
+    border-radius: 4px;
 }
 /*.subtitle {*/
 /*    color: #2380a0 !important;*/
