@@ -14,50 +14,6 @@
     </script>
 }
 
-<style>
-    .image-container{
-         display: flex;
-      justify-content: center;
-    }
-    .moon{
-        /* 
-            Uncomment the transforms for 
-            northern hemisphere it flips the moon
-        */
-        -webkit-transform: scaleX(-1);
-        transform: scaleX(-1);
-        height:40%;
-        width:40%;
-        display: block;
-          margin-left: auto;
-          margin-right: auto;
-    }
-    .image-container img {
-        height:30%;
-         width:30%;
-    }
-    #narrative {
-        line-height: 1.5em;
-        height: 6em;       /* height is 2x line-height, so two lines will display */
-        overflow: hidden;  /* prevents extra lines from being visible */
-        text-align: center;
-    }
-    #moontext {
-            line-height: 1.5em;
-            height: 1.5em;       /* height is 2x line-height, so two lines will display */
-            overflow: hidden;  /* prevents extra lines from being visible */
-            text-align: center;
-        }
-        #RiseAndSet{
-            text-align: center;
-            /*padding: unset;*/
-            font-weight: bold;
-        }
-       hr{
-            margin: 0.75rem 0;
-       } 
-       
-</style>
 @* <br> *@
 @* <h2> last updated  @DateTime.Parse(Model.ValidTimeLocal[0]).AddHours(-1)</h2> *@
 <br/>

@@ -54,7 +54,8 @@ namespace WUCharts
                     options.Level = CompressionLevel.Optimal;
                 }
             );
-            
+            services.Configure<AppSettings>
+                (Configuration.GetSection("AppSettings"));
             services.Configure<ObservationDatabaseSettings>(
                 Configuration.GetSection(nameof(ObservationDatabaseSettings)));
 

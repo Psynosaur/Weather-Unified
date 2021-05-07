@@ -1,5 +1,7 @@
-@model List<WURequest.Models.Observations>
-
+@using WURequest.Models
+@model List<Observations>
+@using Microsoft.Extensions.Options
+@inject IOptions<AppSettings> _appSettings
 @{
     var latest = Model.Last();
     var cnt = Model.Select(x => true).Count();
@@ -27,8 +29,8 @@
     double halfdisk = 0.26667;
     //var atmosRefrac = (0.83333);//0.34' for Refraction plus 0.16' for Half Disk (Alternate calculation)
     // https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml -> get mag declination
-    double magDeclinaion = 23.2;
-    double lat = 33.864577;
+    double magDeclinaion = _appSettings.Value.MagneticDeclination;
+    double lat = Math.Abs(_appSettings.Value.Lat);
     var declin = (magDeclinaion * Math.PI / 180);
     var numday = latest.ObsTime.DayOfYear;
     var elevat = declin * Math.Sin(Math.PI * 2 / 365 * (284 + numday)) / (Math.PI * 2) * 360 - (90 - lat);

@@ -401,9 +401,9 @@ am4core.ready(function () {
 
         // Create temp series
         var seriesTemp = temp.series.push(new am4charts.LineSeries());
-        seriesTemp.dataFields.valueY = "TempOutCur";
-        seriesTemp.dataFields.dateX = "ObsTime";
-        seriesTemp.tooltipText = "Outdoor {TempOutCur} °C";
+        seriesTemp.dataFields.valueY = "to";
+        seriesTemp.dataFields.dateX = "ot";
+        seriesTemp.tooltipText = "Outdoor {to} °C";
         seriesTemp.strokeWidth = 1;
         seriesTemp.stroke = am4core.color("#ff8145");
         seriesTemp.tooltip.getFillFromObject = false;
@@ -419,9 +419,9 @@ am4core.ready(function () {
         seriesTemp.tensionY = 1;
         seriesTemp.tensionX = 0.8;
         var seriesTempDeW = temp.series.push(new am4charts.LineSeries());
-        seriesTempDeW.dataFields.valueY = "DewCur";
-        seriesTempDeW.dataFields.dateX = "ObsTime";
-        seriesTempDeW.tooltipText = "Dew Point {DewCur} °C";
+        seriesTempDeW.dataFields.valueY = "dc";
+        seriesTempDeW.dataFields.dateX = "ot";
+        seriesTempDeW.tooltipText = "Dew Point {dc} °C";
         seriesTempDeW.strokeWidth = 1;
         seriesTempDeW.stroke = am4core.color("#87f7ff");
         seriesTempDeW.tooltip.getFillFromObject = false;
@@ -432,7 +432,7 @@ am4core.ready(function () {
 
         // var seriesTempIn = temp.series.push(new am4charts.LineSeries());
         // seriesTempIn.dataFields.valueY = "TempInCur";
-        // seriesTempIn.dataFields.dateX = "ObsTime";
+        // seriesTempIn.dataFields.dateX = "ot";
         // seriesTempIn.tooltipText = "Indoor {TempInCur} °C";
         // seriesTempIn.strokeWidth = 1;
         // seriesTempIn.stroke = am4core.color("#fcff4c");
@@ -444,9 +444,9 @@ am4core.ready(function () {
 
         // Create tMinMax series
         var seriesTempMin = tminmax.series.push(new am4charts.LineSeries());
-        seriesTempMin.dataFields.valueY = "Tmin";
-        seriesTempMin.dataFields.dateX = "ObsTime";
-        seriesTempMin.tooltipText = "{Tmin} °C min";
+        seriesTempMin.dataFields.valueY = "tmn";
+        seriesTempMin.dataFields.dateX = "ot";
+        seriesTempMin.tooltipText = "{tmn} °C min";
         seriesTempMin.strokeWidth = 1;
         seriesTempMin.stroke = am4core.color("#0ec7ff");
         seriesTempMin.tooltip.getFillFromObject = false;
@@ -455,9 +455,9 @@ am4core.ready(function () {
         seriesTempMin.tensionY = 1;
         seriesTempMin.tensionX = 0.8;
         var seriesTempMax = tminmax.series.push(new am4charts.LineSeries());
-        seriesTempMax.dataFields.valueY = "Tmax";
-        seriesTempMax.dataFields.dateX = "ObsTime";
-        seriesTempMax.tooltipText = "{Tmax} °C max";
+        seriesTempMax.dataFields.valueY = "tmx";
+        seriesTempMax.dataFields.dateX = "ot";
+        seriesTempMax.tooltipText = "{tmx} °C max";
         seriesTempMax.strokeWidth = 1;
         seriesTempMax.stroke = am4core.color("#ff2955");
         seriesTempMax.tooltip.getFillFromObject = false;
@@ -470,9 +470,9 @@ am4core.ready(function () {
 
         // Create Hum series
         var seriesHum = hum.series.push(new am4charts.LineSeries());
-        seriesHum.dataFields.valueY = "HumOutCur";
-        seriesHum.dataFields.dateX = "ObsTime";
-        seriesHum.tooltipText = "{HumOutCur} %";
+        seriesHum.dataFields.valueY = "ho";
+        seriesHum.dataFields.dateX = "ot";
+        seriesHum.tooltipText = "{ho} %";
         seriesHum.strokeWidth = 1;
         seriesHum.stroke = am4core.color("#5c8fff");
         seriesHum.tooltip.getFillFromObject = false;
@@ -481,9 +481,9 @@ am4core.ready(function () {
         seriesHum.tensionY = 1;
         seriesHum.tensionX = 0.8;
         var seriesHuIn = hum.series.push(new am4charts.LineSeries());
-        seriesHuIn.dataFields.valueY = "HumInCur";
-        seriesHuIn.dataFields.dateX = "ObsTime";
-        seriesHuIn.tooltipText = "{HumInCur} %";
+        seriesHuIn.dataFields.valueY = "hi";
+        seriesHuIn.dataFields.dateX = "ot";
+        seriesHuIn.tooltipText = "{hi} %";
         seriesHuIn.strokeWidth = 1;
         seriesHuIn.stroke = am4core.color("#0ec7ff");
         seriesHuIn.tooltip.getFillFromObject = false;
@@ -496,9 +496,9 @@ am4core.ready(function () {
 
         // Create wind series
         var seriesWind = wind.series.push(new am4charts.LineSeries());
-        seriesWind.dataFields.valueY = "WindSpeedCur";
-        seriesWind.dataFields.dateX = "ObsTime";
-        seriesWind.tooltipText = "Current {WindSpeedCur} km/h";
+        seriesWind.dataFields.valueY = "ws";
+        seriesWind.dataFields.dateX = "ot";
+        seriesWind.tooltipText = "Current {ws} km/h";
         seriesWind.strokeWidth = 1;
         seriesWind.stroke = am4core.color("#11ff1e");
         seriesWind.tooltip.getFillFromObject = false;
@@ -507,9 +507,9 @@ am4core.ready(function () {
         seriesWind.tensionY = 1;
         seriesWind.tensionX = 0.8;
         var seriesWindGust = wind.series.push(new am4charts.LineSeries());
-        seriesWindGust.dataFields.valueY = "WindGust10";
-        seriesWindGust.dataFields.dateX = "ObsTime";
-        seriesWindGust.tooltipText = "Gust {WindGust10} km/h";
+        seriesWindGust.dataFields.valueY = "wg";
+        seriesWindGust.dataFields.dateX = "ot";
+        seriesWindGust.tooltipText = "Gust {wg} km/h";
         seriesWindGust.strokeWidth = 1;
         seriesWindGust.stroke = am4core.color("#ffbf8d");
         seriesWindGust.tooltip.getFillFromObject = false;
@@ -518,9 +518,9 @@ am4core.ready(function () {
         seriesWindGust.tensionY = 1;
         seriesWindGust.tensionX = 0.8;
         var seriesWinAvg = wind.series.push(new am4charts.LineSeries());
-        seriesWinAvg.dataFields.valueY = "WindAvgSpeedCur";
-        seriesWinAvg.dataFields.dateX = "ObsTime";
-        seriesWinAvg.tooltipText = "Avg {WindAvgSpeedCur} km/h";
+        seriesWinAvg.dataFields.valueY = "was";
+        seriesWinAvg.dataFields.dateX = "ot";
+        seriesWinAvg.tooltipText = "Avg {was} km/h";
         seriesWinAvg.strokeWidth = 1;
         seriesWinAvg.stroke = am4core.color("#ff8d8d");
         seriesWinAvg.tooltip.getFillFromObject = false;
@@ -534,16 +534,16 @@ am4core.ready(function () {
 
         // Create rain series
         var seriesRain = rain.series.push(new am4charts.LineSeries());
-        seriesRain.dataFields.valueY = "RainDay";
-        seriesRain.dataFields.dateX = "ObsTime";
-        seriesRain.tooltipText = "{RainDay} mm";
+        seriesRain.dataFields.valueY = "rd";
+        seriesRain.dataFields.dateX = "ot";
+        seriesRain.tooltipText = "{rd} mm";
         seriesRain.strokeWidth = 1;
         seriesRain.tensionY = 1;
         seriesRain.tensionX = 0.8;
         var seriesRainRate = rain.series.push(new am4charts.LineSeries());
-        seriesRainRate.dataFields.valueY = "RainRateCur";
-        seriesRainRate.dataFields.dateX = "ObsTime";
-        seriesRainRate.tooltipText = "{RainRateCur} mm/h";
+        seriesRainRate.dataFields.valueY = "rr";
+        seriesRainRate.dataFields.dateX = "ot";
+        seriesRainRate.tooltipText = "{rr} mm/h";
         seriesRainRate.strokeWidth = 1;
         seriesRainRate.tensionY = 1;
         seriesRainRate.tensionX = 0.8;
@@ -551,9 +551,9 @@ am4core.ready(function () {
 
         // Create pressure series
         var seriesPressure = pressure.series.push(new am4charts.LineSeries());
-        seriesPressure.dataFields.valueY = "PressCur";
-        seriesPressure.dataFields.dateX = "ObsTime";
-        seriesPressure.tooltipText = "{PressCur} hPa";
+        seriesPressure.dataFields.valueY = "p";
+        seriesPressure.dataFields.dateX = "ot";
+        seriesPressure.tooltipText = "{p} hPa";
         seriesPressure.strokeWidth = 1;
         seriesPressure.tensionY = 1;
         seriesPressure.tensionX = 0.8;
@@ -561,9 +561,9 @@ am4core.ready(function () {
 
         // Create solar series
         var seriesSolar = solar.series.push(new am4charts.LineSeries());
-        seriesSolar.dataFields.valueY = "SolarRad";
-        seriesSolar.dataFields.dateX = "ObsTime";
-        seriesSolar.tooltipText = "{SolarRad} W/m²";
+        seriesSolar.dataFields.valueY = "sr";
+        seriesSolar.dataFields.dateX = "ot";
+        seriesSolar.tooltipText = "{sr} W/m²";
         seriesSolar.strokeWidth = 1;
         seriesSolar.stroke = am4core.color("#ffdf43");
         seriesSolar.tooltip.getFillFromObject = false;
@@ -576,7 +576,7 @@ am4core.ready(function () {
         // Create solar series
         var seriesUV = uv.series.push(new am4charts.LineSeries());
         seriesUV.dataFields.valueY = "UV";
-        seriesUV.dataFields.dateX = "ObsTime";
+        seriesUV.dataFields.dateX = "ot";
         seriesUV.tooltipText = "{UV}";
         seriesUV.strokeWidth = 1;
         seriesUV.stroke = am4core.color("#ffdf43");
@@ -589,9 +589,9 @@ am4core.ready(function () {
 
         // Create windir series
         var seriesWindDir = wd.series.push(new am4charts.LineSeries());
-        seriesWindDir.dataFields.valueY = "WindDirCur";
-        seriesWindDir.dataFields.dateX = "ObsTime";
-        seriesWindDir.tooltipText = "{WindDirCur}° / {WindDirCurEng} current";
+        seriesWindDir.dataFields.valueY = "wd";
+        seriesWindDir.dataFields.dateX = "ot";
+        seriesWindDir.tooltipText = "{wd}° / {wdce} current";
         seriesWindDir.strokeWidth = 0;
         seriesWindDir.stroke = am4core.color("#7fdfff");
         seriesWindDir.tooltip.getFillFromObject = false;
@@ -606,9 +606,9 @@ am4core.ready(function () {
 
 
         var seriesWindDirAvg = wd.series.push(new am4charts.LineSeries());
-        seriesWindDirAvg.dataFields.valueY = "WindDirAvg10";
-        seriesWindDirAvg.dataFields.dateX = "ObsTime";
-        seriesWindDirAvg.tooltipText = "{WindDirAvg10}° / {WindDirAvg10Eng} average";
+        seriesWindDirAvg.dataFields.valueY = "wda";
+        seriesWindDirAvg.dataFields.dateX = "ot";
+        seriesWindDirAvg.tooltipText = "{wda}° / {wdae} average";
         seriesWindDirAvg.strokeWidth = 0;
         seriesWindDirAvg.stroke = am4core.color("#dafaff");
         seriesWindDirAvg.tooltip.getFillFromObject = false;
@@ -652,12 +652,12 @@ am4core.ready(function () {
         /* Create and configure series */
         var windspeed = windrose.series.push(new am4charts.RadarSeries());
         var circleBulletWS = windspeed.bullets.push(new am4core.Circle());
-        circleBulletWS.tooltipText = "{WindSpeedCur} km/h @ {WindDirCur}° {WindDirCurEng}";
+        circleBulletWS.tooltipText = "{ws} km/h @ {wd}° {wdce}";
         circleBulletWS.radius = 3;
         circleBulletWS.strokeWidth = 1;
         windspeed.strokeOpacity = 0;
-        windspeed.dataFields.valueX = "WindDirCur";
-        windspeed.dataFields.valueY = "WindSpeedCur";
+        windspeed.dataFields.valueX = "wd";
+        windspeed.dataFields.valueY = "ws";
         windspeed.name = "Speed";
         windspeed.sequencedInterpolation = true;
         windspeed.sequencedInterpolationDelay = 10;
@@ -667,12 +667,12 @@ am4core.ready(function () {
 
         var windgust = windrose.series.push(new am4charts.RadarSeries());
         var circleBulletWG = windgust.bullets.push(new am4core.Circle());
-        circleBulletWG.tooltipText = "{WindGust10} km/h @ {WindDirCur}° {WindDirCurEng}";
+        circleBulletWG.tooltipText = "{wg} km/h @ {wd}° {wdce}";
         circleBulletWG.radius = 3;
         circleBulletWG.strokeWidth = 1;
         windgust.strokeOpacity = 0;
-        windgust.dataFields.valueX = "WindDirCur";
-        windgust.dataFields.valueY = "WindGust10";
+        windgust.dataFields.valueX = "wd";
+        windgust.dataFields.valueY = "wg";
         windgust.name = "Gust";
         windgust.sequencedInterpolation = true;
         windgust.sequencedInterpolationDelay = 10;
@@ -681,12 +681,12 @@ am4core.ready(function () {
 
         var windAvg = windrose.series.push(new am4charts.RadarSeries());
         var circleBulletWA = windAvg.bullets.push(new am4core.Circle());
-        circleBulletWA.tooltipText = "{WindAvgSpeedCur} km/h @ {WindDirCur}° {WindDirCurEng}";
+        circleBulletWA.tooltipText = "{was} km/h @ {wd}° {wdce}";
         circleBulletWA.radius = 3;
         circleBulletWA.strokeWidth = 1;
         windAvg.strokeOpacity = 0;
-        windAvg.dataFields.valueX = "WindDirCur";
-        windAvg.dataFields.valueY = "WindAvgSpeedCur";
+        windAvg.dataFields.valueX = "wd";
+        windAvg.dataFields.valueY = "was";
         windAvg.name = "Avg";
         windAvg.sequencedInterpolation = true;
         windAvg.sequencedInterpolationDelay = 10;
@@ -701,7 +701,7 @@ am4core.ready(function () {
         if (raining) {
             var rainrose = am4core.create("rainrose", am4charts.RadarChart);
             // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-            // categoryAxis.dataFields.category = "WindDirCurEng";
+            // categoryAxis.dataFields.category = "wdce";
             /* Create axes */
             var xAxisRR = rainrose.xAxes.push(new am4charts.ValueAxis());
             xAxisRR.renderer.maxLabelPosition = 0.99;
@@ -718,6 +718,7 @@ am4core.ready(function () {
 
             var yAxisRR = rainrose.yAxes.push(new am4charts.ValueAxis());
             yAxisRR.renderer.labels.disabled = true;
+            xAxisRR.min = 1;
             // yAxis.renderer.labels.template.verticalCenter = "bottom";
             // yAxis.renderer.labels.template.horizontalCenter = "right";
             // yAxis.renderer.maxLabelPosition = 01;
@@ -729,13 +730,13 @@ am4core.ready(function () {
             /* Create and configure series */
             var rainRate = rainrose.series.push(new am4charts.RadarSeries());
             var circleBulletRR = rainRate.bullets.push(new am4core.Circle());
-            circleBulletRR.tooltipText = "{RainRateCur} mm/h from {WindDirAvg10}° {WindDirAvg10Eng}";
+            circleBulletRR.tooltipText = "{rr} mm/h from {wda}° {wdae}";
             circleBulletRR.radius = 3;
             circleBulletRR.strokeWidth = 1;
             // rainRate.minBulletDistance = 1.5;
             rainRate.strokeOpacity = 0;
-            rainRate.dataFields.valueX = "WindDirAvg10";
-            rainRate.dataFields.valueY = "RainRateCur";
+            rainRate.dataFields.valueX = "wda";
+            rainRate.dataFields.valueY = "rr";
             rainRate.name = "Rain Rate";
             // rainRate.sequencedInterpolation = true;
             // rainRate.sequencedInterpolationDelay = 10;
@@ -746,7 +747,7 @@ am4core.ready(function () {
         if (h < 2) {
             var tempRose = am4core.create("chartTR", am4charts.RadarChart);
             // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-            // categoryAxis.dataFields.category = "WindDirCurEng";
+            // categoryAxis.dataFields.category = "wdEng";
             /* Create axes */
             var xAxisTR = tempRose.xAxes.push(new am4charts.ValueAxis());
             xAxisTR.renderer.maxLabelPosition = 0.99;
@@ -774,13 +775,13 @@ am4core.ready(function () {
             /* Create and configure series */
             var tempd = tempRose.series.push(new am4charts.RadarSeries());
             var circleBulletTR = tempd.bullets.push(new am4core.Circle());
-            circleBulletTR.tooltipText = "{Tmin} °C from {WindDirAvg10}° {WindDirAvg10Eng}";
+            circleBulletTR.tooltipText = "{tmn} °C from {wda}° {wdae}";
             circleBulletTR.radius = 3;
             circleBulletTR.strokeWidth = 1;
             // rainRate.minBulletDistance = 1.5;
             tempd.strokeOpacity = 0;
-            tempd.dataFields.valueX = "WindDirAvg10";
-            tempd.dataFields.valueY = "Tmin";
+            tempd.dataFields.valueX = "wda";
+            tempd.dataFields.valueY = "tmn";
             tempd.name = "Temp Min";
             // rainRate.sequencedInterpolation = true;
             // rainRate.sequencedInterpolationDelay = 10;
@@ -789,13 +790,13 @@ am4core.ready(function () {
 
             var tempMd = tempRose.series.push(new am4charts.RadarSeries());
             var circleBulletTmR = tempMd.bullets.push(new am4core.Circle());
-            circleBulletTmR.tooltipText = "{Tmax} °C from {WindDirAvg10}° {WindDirAvg10Eng}";
+            circleBulletTmR.tooltipText = "{tmx} °C from {wda}° {wdae}";
             circleBulletTmR.radius = 3;
             circleBulletTmR.strokeWidth = 1;
             // rainRate.minBulletDistance = 1.5;
             tempMd.strokeOpacity = 0;
-            tempMd.dataFields.valueX = "WindDirAvg10";
-            tempMd.dataFields.valueY = "Tmax";
+            tempMd.dataFields.valueX = "wda";
+            tempMd.dataFields.valueY = "tmx";
             tempMd.name = "Temp Max";
             // rainRate.sequencedInterpolation = true;
             // rainRate.sequencedInterpolationDelay = 10;
@@ -806,7 +807,7 @@ am4core.ready(function () {
 
             var pressR = am4core.create("chartPR", am4charts.RadarChart);
             // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-            // categoryAxis.dataFields.category = "WindDirCurEng";
+            // categoryAxis.dataFields.category = "wdce";
             /* Create axes */
             var xAxisPR = pressR.xAxes.push(new am4charts.ValueAxis());
             xAxisPR.renderer.maxLabelPosition = 0.99;
@@ -834,13 +835,13 @@ am4core.ready(function () {
             /* Create and configure series */
             var pressD = pressR.series.push(new am4charts.RadarSeries());
             var circleBulletPR = pressD.bullets.push(new am4core.Circle());
-            circleBulletPR.tooltipText = "{PressCur} hPa from {WindDirAvg10}° {WindDirAvg10Eng}";
+            circleBulletPR.tooltipText = "{p} hPa from {wda}° {wdae}";
             circleBulletPR.radius = 3;
             circleBulletPR.strokeWidth = 1;
             // rainRate.minBulletDistance = 1.5;
             pressD.strokeOpacity = 0;
-            pressD.dataFields.valueX = "WindDirAvg10";
-            pressD.dataFields.valueY = "PressCur";
+            pressD.dataFields.valueX = "wda";
+            pressD.dataFields.valueY = "p";
             pressD.name = "Pressure";
             // rainRate.sequencedInterpolation = true;
             // rainRate.sequencedInterpolationDelay = 10;
@@ -851,7 +852,7 @@ am4core.ready(function () {
 
             var humRose = am4core.create("chartHR", am4charts.RadarChart);
             // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-            // categoryAxis.dataFields.category = "WindDirCurEng";
+            // categoryAxis.dataFields.category = "wdce";
             /* Create axes */
             var xAxisHR = humRose.xAxes.push(new am4charts.ValueAxis());
             xAxisHR.renderer.maxLabelPosition = 0.99;
@@ -879,13 +880,13 @@ am4core.ready(function () {
             /* Create and configure series */
             var humd = humRose.series.push(new am4charts.RadarSeries());
             var circleBulletHR = humd.bullets.push(new am4core.Circle());
-            circleBulletHR.tooltipText = "{HumOutCur} % from {WindDirAvg10}° {WindDirAvg10Eng}";
+            circleBulletHR.tooltipText = "{ho} % from {wda}° {wdae}";
             circleBulletHR.radius = 3;
             circleBulletHR.strokeWidth = 1;
             // rainRate.minBulletDistance = 1.5;
             humd.strokeOpacity = 0;
-            humd.dataFields.valueX = "WindDirAvg10";
-            humd.dataFields.valueY = "HumOutCur";
+            humd.dataFields.valueX = "wda";
+            humd.dataFields.valueY = "ho";
             humd.name = "Humidity";
             // rainRate.sequencedInterpolation = true;
             // rainRate.sequencedInterpolationDelay = 10;

@@ -1,5 +1,8 @@
 @using Newtonsoft.Json
-@model List<WURequest.Models.Observations>
+@using WURequest.Models
+@model List<Observations>
+@using Microsoft.Extensions.Options
+@inject IOptions<AppSettings> _appSettings
 @{
     var cnt = Model.Select(x => true).Count();
     var latest = Model.LastOrDefault();
@@ -10,7 +13,7 @@
         nStep = nStep / 4;
     }
     var raing = Model.Where(obs => obs.RainRateCur > 0);
-    var graph = Model.Where((x, i) => i % nStep == 0);
+    var graphPoints = Model.Where((x, i) => i % nStep == 0);
     // var graph2 = graph
     //     .Select(c =>
     //     {
@@ -19,46 +22,51 @@
     //         c.WindAvgSpeedCur *= 3.6;
     //         return c;
     //     });
-    var observationses = graph.ToList();
-    var obj = observationses.Where(x => true).Select(o =>
+    var observations = graphPoints.ToList();
+    var obj = observations.Where(x => true).Select(o =>
         new
         {
-            ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
-            TempOutCur = Convert.ToDecimal(o.TempOutCur),
-            TempInCur = Convert.ToDecimal(o.TempInCur),
-            DewCur = Convert.ToDecimal(o.DewCur),
-            Tmin = Convert.ToDecimal(o.Tmin),
-            Tmax = Convert.ToDecimal(o.Tmax),
-            HumOutCur = Convert.ToInt32(o.HumOutCur),
-            HumInCur = Convert.ToInt32(o.HumInCur),
-            PressCur = Convert.ToDecimal(o.PressCur),
-            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6),
-            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
-            WindDirCur = Convert.ToInt32(o.WindDirCur),
-            WindDirCurEng = o.WindDirCurEng,
-            WindGust10 = Convert.ToDecimal(o.WindGust10 * 3.6),
-            WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
-            WindDirAvg10Eng = o.WindDirAvg10Eng,
-            RainRateCur = Convert.ToDecimal(o.RainRateCur),
-            RainDay = Convert.ToDecimal(o.RainDay),
-            SolarRad = Convert.ToInt32(o.SolarRad),
+            ot = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
+            to = Convert.ToDecimal(o.TempOutCur),
+            // TempInCur = Convert.ToDecimal(o.TempInCur),
+            dc = Convert.ToDecimal(o.DewCur),
+            tmn = Convert.ToDecimal(o.Tmin),
+            tmx = Convert.ToDecimal(o.Tmax),
+            ho = Convert.ToInt32(o.HumOutCur),
+            hi = Convert.ToInt32(o.HumInCur),
+            p = Convert.ToDecimal(o.PressCur),
+            ws = Convert.ToDecimal(o.WindSpeedCur * 3.6),
+            was = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
+            wd = Convert.ToInt32(o.WindDirCur),
+            // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
+            wdce = o.WindDirCurEng,
+            wg = Convert.ToDecimal(o.WindGust10 * 3.6),
+            wda = Convert.ToDecimal(o.WindDirAvg10),
+            // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
+            wdae = o.WindDirAvg10Eng,
+            rr = Convert.ToDecimal(o.RainRateCur),
+            rd = Convert.ToDecimal(o.RainDay),
+            sr = Convert.ToInt32(o.SolarRad),
             UV = Convert.ToInt32(o.UV)
         }).ToList();
     var rainobj = Model.Where(obs => obs.RainRateCur > 0).Select(o =>
         new
         {
-            WindDirAvg10 = Convert.ToDecimal(o.WindDirAvg10),
-            WindDirAvg10Eng = o.WindDirAvg10Eng,
-            RainRateCur = Convert.ToDecimal(o.RainRateCur)
+            // ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
+            wda = Convert.ToDecimal(o.WindDirAvg10),
+            // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
+            wdae = o.WindDirAvg10Eng,
+            rr = Convert.ToDecimal(o.RainRateCur)
         }).ToList();
-    var windobj = observationses.Where(obs => obs.WindSpeedCur > 0).Select(o =>
+    var windobj = observations.Where(obs => obs.WindSpeedCur > 0).Select(o =>
         new
         {
-            WindDirCur = Convert.ToDecimal(o.WindDirCur),
-            WindDirCurEng = o.WindDirCurEng,
-            WindGust10 = Convert.ToDecimal(o.WindGust10 * 3.6),
-            WindAvgSpeedCur = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
-            WindSpeedCur = Convert.ToDecimal(o.WindSpeedCur * 3.6)
+            wd = Convert.ToDecimal(o.WindDirCur),
+            // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
+            wdce = o.WindDirCurEng,
+            wg = Convert.ToDecimal(o.WindGust10 * 3.6),
+            was = Convert.ToDecimal(o.WindAvgSpeedCur * 3.6),
+            ws = Convert.ToDecimal(o.WindSpeedCur * 3.6)
         }).ToList();
 
     // int nStepRain = 100;
@@ -79,7 +87,10 @@
 
 @if (latest != null)
 {
-    <h1>Monthly weather<br/>Stellenberg Durbanville</h1>
+    <h1>
+        Monthly weather<br/>
+        @_appSettings.Value.StationName
+    </h1>
     <div class="row">
         <div class="col-12" style="text-align: center">
             @latest.ObsTime.ToLocalTime().ToString("dddd dd MMM yyyy - HH:mm:ss zzz")
