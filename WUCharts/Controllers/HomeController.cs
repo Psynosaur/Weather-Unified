@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using WUCharts.Models;
 using WURequest.Models;
 using WURequest.Services;
@@ -15,21 +16,26 @@ namespace WUCharts.Controllers
     {
         private readonly ObservationsService _observationsService;
         private readonly ForecastService _forecastService;
+        private readonly IOptions<AppSettings> _appSettings;
 
 
-        public HomeController(ObservationsService observationsService, ForecastService forecastService)
+        public HomeController(ObservationsService observationsService, ForecastService forecastService,
+            IOptions<AppSettings> appSettings)
         {
             _observationsService = observationsService;
             _forecastService = forecastService;
+            _appSettings = appSettings;
         }
+
         [Route("/forecast")]
         public IActionResult Forecast()
         {
-            ViewData["Title"] = "Weather Forecast";
+            ViewData["Title"] = $"{_appSettings.Value.StationName} - Weather Forecast";
             ViewData["Description"] = "Six day weather forecast";
             var model = _forecastService.Latest().Result.FirstOrDefault();
             return View(model);
         }
+
         [Route("/")]
         public IActionResult Index()
 
@@ -114,6 +120,7 @@ namespace WUCharts.Controllers
         {
             return View();
         }
+
         [Route("/error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
@@ -126,18 +133,22 @@ namespace WUCharts.Controllers
         {
             ViewData["Title"] = "Hour";
             ViewData["Description"] = "Live Hourly weather data for the day";
-            if (id <= 24 && id >= 0 || id == null)
+            switch (id)
             {
-                bool nulled = String.IsNullOrEmpty(id.ToString());
-                if (nulled) id = DateTime.Now.Hour;
-                int hour = id ?? 0;
-                List<Observations> model = _observationsService.Hourly(hour).Result;
-                return View(model);
-            }
-            else
-            {
-                List<Observations> model = _observationsService.Hourly(0).Result;
-                return View(model);
+                case <= 24 and >= 0:
+                case null:
+                {
+                    bool nulled = String.IsNullOrEmpty(id.ToString());
+                    if (nulled) id = DateTime.Now.Hour;
+                    int hour = id ?? 0;
+                    List<Observations> model = _observationsService.Hourly(hour).Result;
+                    return View(model);
+                }
+                default:
+                {
+                    List<Observations> model = _observationsService.Hourly(0).Result;
+                    return View(model);
+                }
             }
         }
 
@@ -145,8 +156,9 @@ namespace WUCharts.Controllers
         public IActionResult Day()
         {
             ViewData["Title"] = "Day";
-            ViewData["Description"] = "Weather information for Durbanville South Africa, captured " +
-                                      "using a Fine Offset WH2310 weather station and a meteobridge weather interface";
+            ViewData["Description"] =
+                $"Weather information for {_appSettings.Value.StationName} {_appSettings.Value.Country}, captured " +
+                $"using a {_appSettings.Value.WeatherStation} weather station and a meteobridge weather interface";
             List<Observations> model = _observationsService.Daily().Result;
             return View(model);
         }
@@ -154,21 +166,29 @@ namespace WUCharts.Controllers
         [Route("/date/{id?}")]
         public IActionResult Date(string id = null)
         {
-            ViewData["Title"] = $"Past {_observationsService.Count()} records";
-            ViewData["Description"] = $"Historical weather data for Durbanville South Africa - {_observationsService.Count()} records strong";
-            if (id == null) id = DateTime.Now.ToString("yyyy-MM-dd");
+            ViewData["Title"] = $"Past records";
+            ViewData["Description"] =
+                $"Historical weather data for {_appSettings.Value.StationName} {_appSettings.Value.Country}";
+            if (id == null)
+            {
+                List<Observations> model = _observationsService.Daily().Result;
+                return View(model);
+            }
+
             if (DateTime.TryParse(id, out _))
             {
                 List<Observations> model = _observationsService.Date(id).Result;
                 return View(model);
             }
+
             return RedirectToAction("Error");
         }
+
         [Route("/rain")]
         public IActionResult Rain(string start, string end)
         {
-            ViewData["Title"] = "Rain"; 
-            ViewData["Description"] = "Rain data for Durbanville Stellenberg - South Africa";
+            ViewData["Title"] = "Rain";
+            ViewData["Description"] = $"Rain data for {_appSettings.Value.StationName} - {_appSettings.Value.Country}";
             List<List<RainObs>> model = _observationsService.Rain(start, end);
             return View(model);
         }
@@ -177,7 +197,8 @@ namespace WUCharts.Controllers
         public IActionResult Week()
         {
             ViewData["Title"] = "Week";
-            ViewData["Description"] = "Weather data for Durbanville Stellenberg South Africa - past week";
+            ViewData["Description"] =
+                $"Weather data for {_appSettings.Value.StationName} - {_appSettings.Value.Country} - past week";
             List<Observations> model = _observationsService.Weekly().Result;
             return View(model);
         }
@@ -186,7 +207,8 @@ namespace WUCharts.Controllers
         public IActionResult Month()
         {
             ViewData["Title"] = "Month";
-            ViewData["Description"] = "Weather data for Durbanville Stellenberg South Africa - current month";
+            ViewData["Description"] =
+                $"Weather data for {_appSettings.Value.StationName} - {_appSettings.Value.Country} - past month";
             List<Observations> model = _observationsService.Monthly().Result;
             return View(model);
         }

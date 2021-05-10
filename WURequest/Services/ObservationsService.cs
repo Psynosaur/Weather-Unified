@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Events;
 using WURequest.Models;
 
 namespace WURequest.Services
@@ -15,7 +17,14 @@ namespace WURequest.Services
 
         public ObservationsService(IObservationDatabaseSettings settings, ILoggerFactory logFactory)
         {
-            var client = new MongoClient(settings.ConnectionString);
+            var mongoConnectionUrl = new MongoUrl(settings.ConnectionString);
+            var mongoClientSettings = MongoClientSettings.FromUrl(mongoConnectionUrl);
+            // mongoClientSettings.ClusterConfigurator = cb => {
+            //     cb.Subscribe<CommandStartedEvent>(e => {
+            //         Console.WriteLine($"{e.CommandName} - {e.Command.ToJson()}");
+            //     });
+            // };
+            var client = new MongoClient(mongoClientSettings);
             var database = client.GetDatabase(settings.DatabaseName);
             _observation = database.GetCollection<Observations>(settings.ObservationCollectionName);
             _logger = logFactory.CreateLogger<ObservationsService>();
@@ -66,12 +75,11 @@ namespace WURequest.Services
             {
                 var tm = DateTime.ParseExact(date, "yyyy-MM-dd",
                     System.Globalization.CultureInfo.InvariantCulture);
-                var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Local);
+                var dayStart = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Local);
                 // Offset for station timezone
-                var dayStart = hm;
                 var dayEnd = dayStart.AddDays(1);
                 var observations = await _observation.Find(
-                        e => e.ObsTime > dayStart && e.ObsTime < dayEnd)
+                        e => e.ObsTime >= dayStart && e.ObsTime <= dayEnd)
                     .SortBy(e => e.ObsTime).ToListAsync();
                 return observations;
             }
@@ -172,7 +180,7 @@ namespace WURequest.Services
             try
             {
                 var utcNow = DateTime.UtcNow;
-                var thirtydaysago = utcNow.AddDays(-30);
+                var thirtydaysago = utcNow.AddMonths(-1);
                 var observations = await _observation.Find(
                         x => x.ObsTime > thirtydaysago)
                     .SortBy(e => e.ObsTime).ToListAsync();
