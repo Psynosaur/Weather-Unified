@@ -1,9 +1,15 @@
-﻿body , footer div p{
+﻿body {
     padding-bottom: 20px;
     background-color: #313131;
     /*background-color: #3e3b3b;*/
     color: #fff;
+    /*background-image: url(../img/background.jpg);*/
+    /*background-position: center center;*/
+    /*background-repeat: no-repeat;*/
+    /*background-attachment: fixed;*/
+    /*background-size: cover;*/
 }
+
 .card {
     height: fit-content;
     border-radius: 6px;
@@ -11,6 +17,7 @@
 
 #second .list-group-item, #first .list-group-item, .list-group-item, .card {
     background-color: #363636;
+    /*background-color: transparent;*/
 }
 
 .containerx h3, h3, h2, h1 ,p {
@@ -110,9 +117,21 @@ footer  {
 #RiseAndSet{
     text-align: center;
     /*padding: unset;*/
-    font-weight: bold;
+    /*font-weight: bold;*/
 }
 hr{
     margin: 0.75rem 0;
 }
 
+#forecastTemp{
+    text-align: center;
+    padding: unset;
+    font-weight: bold;
+}
+/*@media only screen and (max-width: 767px) {*/
+/*    body {*/
+/*        !* The file size of this background image is 93% smaller*/
+/*        to improve page load speed on mobile internet connections *!*/
+/*        background-image: url(../img/background-mobile.jpg);*/
+/*    }*/
+/*}*/

@@ -5,7 +5,10 @@
 @inject IOptions<AppSettings> _appSettings
 @{
     var latest = Model.LastOrDefault();
+    var cnt = Model.Select(x => true).Count();
     int nStep = 1;
+    var start = "";
+    var maxTime = "";
     var graphPoints = Model.Where((x, i) => i % nStep == 0);
     // var graph2 = graph
     //     .Select(c =>
@@ -73,6 +76,27 @@
                  var raining = @rainobj.Count >0;
                  if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
                  var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+                 @if (latest != null)
+                 {
+                     start = cnt > 0 ? latest.ObsTime.ToLocalTime().ToString("HH:mm") : DateTime.Now.ToString("HH:mm");
+                     maxTime = DateTime.Now.ToString("HH:mm");
+                 }
+                         flatpickr("#time", {
+                                    enableTime: true,
+                                    // plugins: [new confirmDatePlugin({})],
+                                    // confirmText: "OK ",
+                                    
+                                    noCalendar: true,
+                                    dateFormat: "H:i",
+                                    time_24hr: true,
+                                    defaultDate: "@start",
+                                    minTime: "00:00",
+                                    maxTime: "@maxTime",
+                                    onClose: function(selectedDates, dateStr, instance){
+                                                      window.location = '/hour/' + dateStr.substring(0, dateStr.length - 3);
+                                             },
+                                    theme: "dark"               
+                         });
             </script>
 }
 
@@ -82,9 +106,10 @@
         Hourly weather<br/>
         @_appSettings.Value.StationName
     </h1>
-    <div class="columns">
-        <div class="column" style="text-align: center">
-            @latest.ObsTime.ToLocalTime().ToString("dddd dd MMM yyyy - HH:mm:ss zzz")
+    <div class="columns has-text-light">
+        <div class="column has-text-light" style="text-align: center">
+            @latest.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")<br/>
+            <input id="time" class="flatpickr flatpickr-input active" type="text" placeholder="@latest.ObsTime.ToLocalTime().ToString("HH:mm")" data-id="multipleCustomConjunction">
         </div>
     </div>
     @await Html.PartialAsync("_DoubleGraph", Model)

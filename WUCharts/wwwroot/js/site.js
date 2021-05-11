@@ -43,7 +43,7 @@ am4core.ready(function () {
         var temp = am4core.create("chartemp", am4charts.XYChart);
         temp.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
         var labelTemp = temp.chartContainer.createChild(am4core.Label);
-        labelTemp.text = "Outdoor Temp";
+        labelTemp.text = "Temp & Dew point";
         labelTemp.align = "center";
         // temp.exporting.menu = new am4core.ExportMenu();
         // temp.exporting.menu.align = "left";
@@ -53,14 +53,14 @@ am4core.ready(function () {
         var tminmax = am4core.create("chartminmax", am4charts.XYChart);
         tminmax.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
         var labelTemp = tminmax.chartContainer.createChild(am4core.Label);
-        labelTemp.text = "Outdoor Temp Min/Max";
+        labelTemp.text = "Temp Min/Max";
         labelTemp.align = "center";
 
         // Create humidity chart instance
         var hum = am4core.create("charthum", am4charts.XYChart);
         hum.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
         var labelHum = hum.chartContainer.createChild(am4core.Label);
-        labelHum.text = "Outdoor & Indoor Humidity";
+        labelHum.text = "Humidity";
         labelHum.align = "center";
 
         // Create wind chart instance
@@ -82,7 +82,7 @@ am4core.ready(function () {
         var pressure = am4core.create("chartpressure", am4charts.XYChart);
         pressure.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
         var labelPressure = pressure.chartContainer.createChild(am4core.Label);
-        labelPressure.text = "Indoor Pressure";
+        labelPressure.text = "Pressure";
         labelPressure.align = "center";
 
         // Create Solar chart instance
@@ -404,7 +404,7 @@ am4core.ready(function () {
         seriesTemp.dataFields.valueY = "to";
         seriesTemp.dataFields.dateX = "ot";
         seriesTemp.tooltipText = "Outdoor {to} °C";
-        seriesTemp.strokeWidth = 1;
+        seriesTemp.strokeWidth = 1.2;
         seriesTemp.stroke = am4core.color("#ff8145");
         seriesTemp.tooltip.getFillFromObject = false;
         seriesTemp.tooltip.background.fill = am4core.color("#ff8145");
@@ -422,7 +422,7 @@ am4core.ready(function () {
         seriesTempDeW.dataFields.valueY = "dc";
         seriesTempDeW.dataFields.dateX = "ot";
         seriesTempDeW.tooltipText = "Dew Point {dc} °C";
-        seriesTempDeW.strokeWidth = 1;
+        seriesTempDeW.strokeWidth = 1.2;
         seriesTempDeW.stroke = am4core.color("#87f7ff");
         seriesTempDeW.tooltip.getFillFromObject = false;
         seriesTempDeW.tooltip.background.fill = am4core.color("#87f7ff");
@@ -434,7 +434,7 @@ am4core.ready(function () {
         // seriesTempIn.dataFields.valueY = "TempInCur";
         // seriesTempIn.dataFields.dateX = "ot";
         // seriesTempIn.tooltipText = "Indoor {TempInCur} °C";
-        // seriesTempIn.strokeWidth = 1;
+        // seriesTempIn.strokeWidth = 1.2;
         // seriesTempIn.stroke = am4core.color("#fcff4c");
         // seriesTempIn.tooltip.getFillFromObject = false;
         // seriesTempIn.tooltip.background.fill = am4core.color("#fcff4c");
@@ -447,7 +447,7 @@ am4core.ready(function () {
         seriesTempMin.dataFields.valueY = "tmn";
         seriesTempMin.dataFields.dateX = "ot";
         seriesTempMin.tooltipText = "{tmn} °C min";
-        seriesTempMin.strokeWidth = 1;
+        seriesTempMin.strokeWidth = 1.2;
         seriesTempMin.stroke = am4core.color("#0ec7ff");
         seriesTempMin.tooltip.getFillFromObject = false;
         seriesTempMin.tooltip.background.fill = am4core.color("#0ec7ff");
@@ -458,7 +458,7 @@ am4core.ready(function () {
         seriesTempMax.dataFields.valueY = "tmx";
         seriesTempMax.dataFields.dateX = "ot";
         seriesTempMax.tooltipText = "{tmx} °C max";
-        seriesTempMax.strokeWidth = 1;
+        seriesTempMax.strokeWidth = 1.2;
         seriesTempMax.stroke = am4core.color("#ff2955");
         seriesTempMax.tooltip.getFillFromObject = false;
         seriesTempMax.tooltip.background.fill = am4core.color("#ff2955");
@@ -472,8 +472,8 @@ am4core.ready(function () {
         var seriesHum = hum.series.push(new am4charts.LineSeries());
         seriesHum.dataFields.valueY = "ho";
         seriesHum.dataFields.dateX = "ot";
-        seriesHum.tooltipText = "{ho} %";
-        seriesHum.strokeWidth = 1;
+        seriesHum.tooltipText = "Outdoors {ho} %";
+        seriesHum.strokeWidth = 1.2;
         seriesHum.stroke = am4core.color("#5c8fff");
         seriesHum.tooltip.getFillFromObject = false;
         seriesHum.tooltip.background.fill = am4core.color("#5c8fff");
@@ -483,8 +483,8 @@ am4core.ready(function () {
         var seriesHuIn = hum.series.push(new am4charts.LineSeries());
         seriesHuIn.dataFields.valueY = "hi";
         seriesHuIn.dataFields.dateX = "ot";
-        seriesHuIn.tooltipText = "{hi} %";
-        seriesHuIn.strokeWidth = 1;
+        seriesHuIn.tooltipText = "Indoors {hi} %";
+        seriesHuIn.strokeWidth = 1.2;
         seriesHuIn.stroke = am4core.color("#0ec7ff");
         seriesHuIn.tooltip.getFillFromObject = false;
         seriesHuIn.tooltip.background.fill = am4core.color("#0ec7ff");
@@ -499,7 +499,7 @@ am4core.ready(function () {
         seriesWind.dataFields.valueY = "ws";
         seriesWind.dataFields.dateX = "ot";
         seriesWind.tooltipText = "Current {ws} km/h";
-        seriesWind.strokeWidth = 1;
+        seriesWind.strokeWidth = 1.2;
         seriesWind.stroke = am4core.color("#11ff1e");
         seriesWind.tooltip.getFillFromObject = false;
         seriesWind.tooltip.background.fill = am4core.color("#11ff1e");
@@ -510,7 +510,7 @@ am4core.ready(function () {
         seriesWindGust.dataFields.valueY = "wg";
         seriesWindGust.dataFields.dateX = "ot";
         seriesWindGust.tooltipText = "Gust {wg} km/h";
-        seriesWindGust.strokeWidth = 1;
+        seriesWindGust.strokeWidth = 1.2;
         seriesWindGust.stroke = am4core.color("#ffbf8d");
         seriesWindGust.tooltip.getFillFromObject = false;
         seriesWindGust.tooltip.background.fill = am4core.color("#ffbf8d");
@@ -521,7 +521,7 @@ am4core.ready(function () {
         seriesWinAvg.dataFields.valueY = "was";
         seriesWinAvg.dataFields.dateX = "ot";
         seriesWinAvg.tooltipText = "Avg {was} km/h";
-        seriesWinAvg.strokeWidth = 1;
+        seriesWinAvg.strokeWidth = 1.2;
         seriesWinAvg.stroke = am4core.color("#ff8d8d");
         seriesWinAvg.tooltip.getFillFromObject = false;
         seriesWinAvg.tooltip.background.fill = am4core.color("#ff8d8d");
@@ -537,14 +537,14 @@ am4core.ready(function () {
         seriesRain.dataFields.valueY = "rd";
         seriesRain.dataFields.dateX = "ot";
         seriesRain.tooltipText = "{rd} mm";
-        seriesRain.strokeWidth = 1;
+        seriesRain.strokeWidth = 1.2;
         seriesRain.tensionY = 1;
         seriesRain.tensionX = 0.8;
         var seriesRainRate = rain.series.push(new am4charts.LineSeries());
         seriesRainRate.dataFields.valueY = "rr";
         seriesRainRate.dataFields.dateX = "ot";
         seriesRainRate.tooltipText = "{rr} mm/h";
-        seriesRainRate.strokeWidth = 1;
+        seriesRainRate.strokeWidth = 1.2;
         seriesRainRate.tensionY = 1;
         seriesRainRate.tensionX = 0.8;
         rain.cursor = new am4charts.XYCursor();
@@ -554,7 +554,7 @@ am4core.ready(function () {
         seriesPressure.dataFields.valueY = "p";
         seriesPressure.dataFields.dateX = "ot";
         seriesPressure.tooltipText = "{p} hPa";
-        seriesPressure.strokeWidth = 1;
+        seriesPressure.strokeWidth = 1.2;
         seriesPressure.tensionY = 1;
         seriesPressure.tensionX = 0.8;
         pressure.cursor = new am4charts.XYCursor();
@@ -564,7 +564,7 @@ am4core.ready(function () {
         seriesSolar.dataFields.valueY = "sr";
         seriesSolar.dataFields.dateX = "ot";
         seriesSolar.tooltipText = "{sr} W/m²";
-        seriesSolar.strokeWidth = 1;
+        seriesSolar.strokeWidth = 1.2;
         seriesSolar.stroke = am4core.color("#ffdf43");
         seriesSolar.tooltip.getFillFromObject = false;
         seriesSolar.tooltip.background.fill = am4core.color("#ffdf43");
@@ -578,7 +578,7 @@ am4core.ready(function () {
         seriesUV.dataFields.valueY = "UV";
         seriesUV.dataFields.dateX = "ot";
         seriesUV.tooltipText = "{UV}";
-        seriesUV.strokeWidth = 1;
+        seriesUV.strokeWidth = 1.2;
         seriesUV.stroke = am4core.color("#ffdf43");
         seriesUV.tooltip.getFillFromObject = false;
         seriesUV.tooltip.background.fill = am4core.color("#ffdf43");

@@ -155,10 +155,10 @@ namespace WUCharts.Controllers
         [Route("/day")]
         public IActionResult Day()
         {
-            ViewData["Title"] = "Day";
+            ViewData["Title"] = $"{_appSettings.Value.StationName} {_appSettings.Value.Country} - Weather Today";
             ViewData["Description"] =
                 $"Weather information for {_appSettings.Value.StationName} {_appSettings.Value.Country}, captured " +
-                $"using a {_appSettings.Value.WeatherStation} weather station and a meteobridge weather interface";
+                $"using a {_appSettings.Value.WeatherStation} weather station";
             List<Observations> model = _observationsService.Daily().Result;
             return View(model);
         }
@@ -166,7 +166,7 @@ namespace WUCharts.Controllers
         [Route("/date/{id?}")]
         public IActionResult Date(string id = null)
         {
-            ViewData["Title"] = $"Past records";
+            ViewData["Title"] = $"{_appSettings.Value.StationName} {_appSettings.Value.Country} - Past records";
             ViewData["Description"] =
                 $"Historical weather data for {_appSettings.Value.StationName} {_appSettings.Value.Country}";
             if (id == null)
@@ -196,7 +196,7 @@ namespace WUCharts.Controllers
         [Route("/week")]
         public IActionResult Week()
         {
-            ViewData["Title"] = "Week";
+            ViewData["Title"] = $"{_appSettings.Value.StationName} {_appSettings.Value.Country} - past week";
             ViewData["Description"] =
                 $"Weather data for {_appSettings.Value.StationName} - {_appSettings.Value.Country} - past week";
             List<Observations> model = _observationsService.Weekly().Result;
@@ -206,7 +206,7 @@ namespace WUCharts.Controllers
         [Route("/month")]
         public IActionResult Month()
         {
-            ViewData["Title"] = "Month";
+            ViewData["Title"] = $"{_appSettings.Value.StationName} {_appSettings.Value.Country} - past month";
             ViewData["Description"] =
                 $"Weather data for {_appSettings.Value.StationName} - {_appSettings.Value.Country} - past month";
             List<Observations> model = _observationsService.Monthly().Result;
