@@ -869,6 +869,8 @@ am4core.ready(function () {
 
             var yAxisHR = humRose.yAxes.push(new am4charts.ValueAxis());
             yAxisHR.renderer.labels.disabled = true;
+            yAxisHR.min = 0;
+            yAxisHR.max = 100;
             // yAxis.renderer.labels.template.verticalCenter = "bottom";
             // yAxis.renderer.labels.template.horizontalCenter = "right";
             // yAxis.renderer.maxLabelPosition = 01;

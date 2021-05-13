@@ -84,6 +84,9 @@ footer  {
     display: flex;
     justify-content: center;
 }
+.image-container img {
+    height: 6.5rem;
+}
 
 .moon{
     /* 
@@ -98,10 +101,7 @@ footer  {
     margin-left: auto;
     margin-right: auto;
 }
-.image-container img {
-    height:30%;
-    width:30%;
-}
+
 #narrative {
     line-height: 1.5em;
     height: 6em;       /* height is 2x line-height, so two lines will display */
@@ -114,7 +114,7 @@ footer  {
     overflow: hidden;  /* prevents extra lines from being visible */
     text-align: center;
 }
-#RiseAndSet{
+#WeekdaySubHeadings{
     text-align: center;
     /*padding: unset;*/
     /*font-weight: bold;*/
