@@ -78,10 +78,18 @@
                         <li class="list-group-item">Direction<span style="float:right;">@latest.WindDirCur&#176 / @latest.WindDirCurEng</span></li>
                         <li class="list-group-item">Direction Avg<span style="float:right;">@latest.WindDirAvg10&#176 / @latest.WindDirAvg10Eng</span></li>
                         <li class="list-group-item">Chill<span style="float:right;">@latest.WindChillCur &#176C</span></li>
-                        <p class="subtitle has-text-light is-4">Speed</p>
-                        <li class="list-group-item">Current<span style="float:right;">@(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
-                        <li class="list-group-item">Average<span style="float:right;">@(windObj.currWAvg > 0 ? windObj.currWAvg.ToString("0.00") : "0") km/h</span></li>
-                        <li class="list-group-item">Gust<span style="float:right;">@(windObj.currGust > 0 ? windObj.currGust.ToString("0.00") : "0") km/h</span></li>
+                        @if (windObj.currWind == 0 && windObj.currWAvg == 0 && windObj.currGust == 0)
+                        {
+                            
+                        }
+                        else
+                        {
+                            <p class="subtitle has-text-light is-4">Speed</p>
+                            <li class="list-group-item">Current<span style="float:right;">@(windObj.currWind > 0 ? windObj.currWind.ToString("0.00") : "0") km/h</span></li>
+                            <li class="list-group-item">Average<span style="float:right;">@(windObj.currWAvg > 0 ? windObj.currWAvg.ToString("0.00") : "0") km/h</span></li>
+                            <li class="list-group-item">Gust<span style="float:right;">@(windObj.currGust > 0 ? windObj.currGust.ToString("0.00") : "0") km/h</span></li>
+                        }
+                        
                         @if (duration.Seconds > 0 && cnt < 5050 && cnt > 210)
                         {
                             <p class="subtitle has-text-light is-4">Sunlight</p>

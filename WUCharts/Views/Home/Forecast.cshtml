@@ -5,6 +5,7 @@
 
 @{
     var i = 0;
+    List<double> DayTimes = new List<double>();
 }
 
 @section Scripts
@@ -21,7 +22,16 @@
 
     @foreach (var day in Model.DayOfWeek)
     {
-        var rain = Convert.ToDecimal(Model.Daypart[0].Qpf[i + i + 1] + @Model.Daypart[0].Qpf[i + i]).ToString("0.##");
+        var rain = Convert.ToDecimal(Model.Qpf[i]);
+        TimeSpan span = DateTime.Parse(Model.SunriseTimeLocal[i]) - DateTime.Parse(Model.SunsetTimeLocal[i]);
+        double totalMinutes = span.TotalMinutes;
+        DayTimes.Add(totalMinutes);
+        TimeSpan timespan = new TimeSpan();
+        if (i > 0)
+        {
+            var lengthOfDay = DayTimes[i - 1] - DayTimes[i];
+            timespan = TimeSpan.FromMinutes(lengthOfDay);
+        }
         // Daytime stats should not display when it has passed(after 3pm) and data is 'null'
         <div class="column" id="weatherbox">
             <div class="box has-background-grey-darker has-text-light">
@@ -30,7 +40,7 @@
                         <h3 class="has-tooltip-arrow has-text-link" data-tooltip="Temp min">@Model.TemperatureMin[i]°C</h3>
                     </div>
                     <div class="column" id="WeekdaySubHeadings">
-                        <h1>@day</h1>
+                        <h2 class="is-size-4">@day</h2>
                     </div>
                     <div class="column" id="WeekdaySubHeadings">
                         @if (Model.TemperatureMax[i] == null)
@@ -48,16 +58,22 @@
 
                 <div class="columns is-mobile">
                     <div class="column" id="WeekdaySubHeadings">
-                        <span class="has-tooltip-arrow" data-tooltip="Sunrise">@DateTime.Parse(Model.SunriseTimeLocal[i]).ToString("HH:mm")</span>
+                        <h3 class="has-tooltip-arrow has-text-warning" data-tooltip="Sunrise">@DateTime.Parse(Model.SunriseTimeLocal[i]).ToString("HH:mm")</h3>
                     </div>
-                    @if (!string.IsNullOrEmpty(rain) && Convert.ToDecimal(rain) != 0)
+                    @if (Convert.ToDecimal(rain) != 0)
                     {
-                        <div class="column" id="forecastTemp">
-                            <h3 class="has-tooltip-arrow has-text-primary-light" data-tooltip="Expected rainfall">@rain mm</h3>
+                        <div class="column is-paddingless">
+                            <h3 class="has-tooltip-arrow has-text-info" data-tooltip="Expected rainfall">@rain mm</h3>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="column is-paddingless">
+                            <h3></h3>
                         </div>
                     }
                     <div class="column" id="WeekdaySubHeadings">
-                        <span class="has-tooltip-arrow" data-tooltip="Sunset">@DateTime.Parse(Model.SunsetTimeLocal[i]).ToString("HH:mm")</span>
+                        <h3 class="has-tooltip-arrow has-text-warning" data-tooltip="Sunset">@DateTime.Parse(Model.SunsetTimeLocal[i]).ToString("HH:mm")</h3>
                     </div>
                 </div>
 
@@ -70,7 +86,17 @@
                 @if (Model.Daypart[0].RelativeHumidity[i + i] > 0)
                 {
                     <hr/>
-                    <h2 class="subtitle has-text-light" style="text-align: center!important">Daytime</h2>
+                    if (i > 0)
+                    {
+                        <div class="has-tooltip-arrow" data-tooltip="@Math.Abs(timespan.Minutes)m and @Math.Abs(timespan.Seconds)s @(timespan.Minutes <= 0 ? "shorter" : "longer") than previous day">
+                            <h2 class="subtitle has-text-light" style="text-align: center!important">Daytime</h2>
+                        </div>
+                        <br/>
+                    }
+                    else
+                    {
+                        <h2 class="subtitle has-text-light" style="text-align: center!important">Daytime</h2>
+                    }
                     <div class="image-container">
                         <img src="/img/Weather Icons - 200x200_SVGs/SVGs/@(Model.Daypart[0].IconCode[i + i]).svg" alt=""/>
                     </div>
@@ -155,13 +181,13 @@
                     <div class="column is-half" id="WeekdaySubHeadings">
                         @if (!Model.MoonriseTimeLocal[i].IsNullOrWhiteSpace())
                         {
-                            <span class="has-tooltip-arrow" data-tooltip="Moonrise time">@DateTime.Parse(Model.MoonriseTimeLocal[i]).ToString("HH:mm")</span>
+                            <h3 class="has-tooltip-arrow has-text-grey-light" data-tooltip="Moonrise time">@DateTime.Parse(Model.MoonriseTimeLocal[i]).ToString("HH:mm")</h3>
                         }
                     </div>
                     <div class="column is-half" id="WeekdaySubHeadings">
                         @if (Model.MoonsetTimeLocal[i] != "")
                         {
-                            <span class="has-tooltip-arrow" data-tooltip="Moonset time">@DateTime.Parse(Model.MoonsetTimeLocal[i]).ToString("HH:mm")</span>
+                            <h3 class="has-tooltip-arrow has-text-grey-light" data-tooltip="Moonset time">@DateTime.Parse(Model.MoonsetTimeLocal[i]).ToString("HH:mm")</h3>
                         }
                     </div>
                 </div>
@@ -170,5 +196,4 @@
         </div>
         i += 1;
     }
-
 </div>

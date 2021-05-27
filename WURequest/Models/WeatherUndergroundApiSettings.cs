@@ -1,6 +1,6 @@
 ﻿namespace WURequest.Models
 {
-    public class WuApiSettings : IWuApiSettings
+    public class WeatherUndergroundApiSettings : IWeatherUndergroundApiSettings
     {
         public string StationId { get; set; }
         public string Pat { get; set; }
@@ -11,7 +11,7 @@
         public string Language { get; set; }
     }
 
-    public interface IWuApiSettings
+    public interface IWeatherUndergroundApiSettings
     {
         string StationId { get; set; }
         string Pat { get; set; }

@@ -33,7 +33,7 @@ am4core.ready(function () {
     // am4core.options.queue = true;
     am4core.useTheme(am4themes_dark);
     // We set our data to the model with reduced data points
-    
+
     var h = hrs;
     if (h <= 2) {
         var raindat = raindata;
@@ -543,7 +543,7 @@ am4core.ready(function () {
         var seriesRainRate = rain.series.push(new am4charts.LineSeries());
         seriesRainRate.dataFields.valueY = "rr";
         seriesRainRate.dataFields.dateX = "ot";
-        seriesRainRate.tooltipText = "{rr} mm/h";
+        seriesRainRate.tooltipText = "{rr} mm/h from {wda}° {wdae} ";
         seriesRainRate.strokeWidth = 1.2;
         seriesRainRate.tensionY = 1;
         seriesRainRate.tensionX = 0.8;
@@ -650,19 +650,19 @@ am4core.ready(function () {
 
 
         /* Create and configure series */
-        var windspeed = windrose.series.push(new am4charts.RadarSeries());
-        var circleBulletWS = windspeed.bullets.push(new am4core.Circle());
-        circleBulletWS.tooltipText = "{ws} km/h @ {wd}° {wdce}";
-        circleBulletWS.radius = 3;
-        circleBulletWS.strokeWidth = 1;
-        windspeed.strokeOpacity = 0;
-        windspeed.dataFields.valueX = "wd";
-        windspeed.dataFields.valueY = "ws";
-        windspeed.name = "Speed";
-        windspeed.sequencedInterpolation = true;
-        windspeed.sequencedInterpolationDelay = 10;
-        windspeed.data = winddat;
-        windspeed.fill = am4core.color("#15dbac");
+        // var windspeed = windrose.series.push(new am4charts.RadarSeries());
+        // var circleBulletWS = windspeed.bullets.push(new am4core.Circle());
+        // circleBulletWS.tooltipText = "{ws} km/h @ {wd}° {wdce}";
+        // circleBulletWS.radius = 3;
+        // circleBulletWS.strokeWidth = 1;
+        // windspeed.strokeOpacity = 0;
+        // windspeed.dataFields.valueX = "wd";
+        // windspeed.dataFields.valueY = "ws";
+        // windspeed.name = "Speed";
+        // windspeed.sequencedInterpolation = true;
+        // windspeed.sequencedInterpolationDelay = 10;
+        // windspeed.data = winddat;
+        // windspeed.fill = am4core.color("#15dbac");
 
 
         var windgust = windrose.series.push(new am4charts.RadarSeries());
@@ -677,7 +677,7 @@ am4core.ready(function () {
         windgust.sequencedInterpolation = true;
         windgust.sequencedInterpolationDelay = 10;
         windgust.data = winddat;
-        windgust.fill = am4core.color("#8fbfbf");
+        windgust.fill = am4core.color("#71e769");
 
         var windAvg = windrose.series.push(new am4charts.RadarSeries());
         var circleBulletWA = windAvg.bullets.push(new am4core.Circle());
@@ -691,7 +691,7 @@ am4core.ready(function () {
         windAvg.sequencedInterpolation = true;
         windAvg.sequencedInterpolationDelay = 10;
         windAvg.data = winddat;
-        windAvg.fill = am4core.color("#c1c1c1");
+        windAvg.fill = am4core.color("#8ebdf3");
 
 
         /* Add legend */
@@ -730,9 +730,9 @@ am4core.ready(function () {
             /* Create and configure series */
             var rainRate = rainrose.series.push(new am4charts.RadarSeries());
             var circleBulletRR = rainRate.bullets.push(new am4core.Circle());
-            circleBulletRR.tooltipText = "{rr} mm/h from {wda}° {wdae}";
+            circleBulletRR.tooltipText = "{ot} : {rr} mm/h from {wda}° {wdae}";
             circleBulletRR.radius = 3;
-            circleBulletRR.strokeWidth = 1;
+            circleBulletRR.strokeWidth = 0.5;
             // rainRate.minBulletDistance = 1.5;
             rainRate.strokeOpacity = 0;
             rainRate.dataFields.valueX = "wda";

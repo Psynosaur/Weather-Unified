@@ -18,17 +18,17 @@ namespace WURequest.Controllers
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ObservationsService _observationsService;
-        private readonly IWuApiSettings _wuApiSettings;
+        private readonly IWeatherUndergroundApiSettings _weatherUndergroundApiSettings;
         private readonly ILogger _logger;
         public WeatherController(
             ObservationsService observationsService,
             IWebHostEnvironment hostingEnvironment, 
-            IWuApiSettings wuApiSettings,
+            IWeatherUndergroundApiSettings weatherUndergroundApiSettings,
             ILoggerFactory logFactory)
         {
             _observationsService = observationsService;
             _hostingEnvironment = hostingEnvironment;
-            _wuApiSettings = wuApiSettings;
+            _weatherUndergroundApiSettings = weatherUndergroundApiSettings;
             _logger = logFactory.CreateLogger<WeatherController>();
         }
 
@@ -74,7 +74,7 @@ namespace WURequest.Controllers
                     using (HttpResponseMessage response = await client.GetAsync(
                         string.Format(
                             "https://api.weather.com/v2/pws/observations/current?stationId={0}&format={1}&units={2}&apiKey={3}",
-                            _wuApiSettings.StationId, _wuApiSettings.Format, _wuApiSettings.Units, _wuApiSettings.Pat)))
+                            _weatherUndergroundApiSettings.StationId, _weatherUndergroundApiSettings.Format, _weatherUndergroundApiSettings.Units, _weatherUndergroundApiSettings.Pat)))
                     {
                         try
                         {

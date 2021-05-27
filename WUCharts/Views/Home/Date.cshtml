@@ -51,6 +51,7 @@
         new
         {
             // ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
+            ot  = o.ObsTime,
             wda = Convert.ToDecimal(o.WindDirAvg10),
             // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
             wdae = o.WindDirAvg10Eng,
@@ -102,10 +103,7 @@
     // int nStepRain = 100;
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);
 }
-
-@section Scripts
-{
-    <script type="text/javascript">
+<script type="text/javascript">
                 var hrs = 1;
                 var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
                 var raining = @rainobj.Count >0;
@@ -113,9 +111,12 @@
                 var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
                 var std = '@sd';
                 var wind = '@windobj.Count';
-                console.log("Std Deviation Solar : " + std);
-                console.log("wind count : " + wind);
+                // console.log("Std Deviation Solar : " + std);
+                // console.log("wind count : " + wind);
     </script>
+@section Scripts
+{
+    
     <script type="text/javascript">
             @if (cnt > 0)
             {

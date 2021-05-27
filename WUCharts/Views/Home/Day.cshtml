@@ -18,6 +18,12 @@
     //         c.WindAvgSpeedCur *= 3.6;
     //         return c;
     //     });
+    DateTime UnixTimestampToDateTime(double unixTime)
+    {
+        DateTime unixStart = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+        long unixTimeStampInTicks = (long) (unixTime * TimeSpan.TicksPerMillisecond);
+        return new DateTime(unixStart.Ticks + unixTimeStampInTicks, System.DateTimeKind.Utc);
+    }
     var observations = graphPoints.ToList();
     var obj = observations.Where(x => true).Select(o =>
         new
@@ -49,6 +55,7 @@
         new
         {
             // ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
+            ot  = o.ObsTime,
             wda = Convert.ToDecimal(o.WindDirAvg10),
             // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
             wdae = o.WindDirAvg10Eng,
@@ -67,15 +74,17 @@
     // int nStepRain = 100;
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);
 }
-
-@section Scripts
-{
-    <script type="text/javascript">
+<script type="text/javascript">
         var hrs = 1;
         var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
         var raining = @rainobj.Count >0;
         if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
         var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+         </script>
+@section Scripts
+{
+    
+    <script type="text/javascript">
         @if (latest != null)
         {
             start = cnt > 0 ? latest.ObsTime.ToLocalTime().ToString("HH:mm") : DateTime.Now.ToString("HH:mm");
@@ -98,6 +107,7 @@
         });
     </script>
 }
+
 @if (latest != null)
 {
     <h1>
@@ -105,7 +115,7 @@
     </h1>
     <div class="columns has-text-light">
         <div class="column has-text-light" style="text-align: center">
-             @latest.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")<br/>
+            @latest.ObsTime.ToLocalTime().ToString("dddd  dd MMM yyyy - HH:mm:ss zzz")<br/>
             <input id="time" class="flatpickr flatpickr-input active" type="text" placeholder="@latest.ObsTime.ToLocalTime().ToString("HH:mm")" data-id="multipleCustomConjunction">
         </div>
     </div>

@@ -30,6 +30,7 @@ h1 {
     text-align: center;
 }
 
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 900px) {
     .containerx {

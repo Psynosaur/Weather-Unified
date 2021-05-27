@@ -53,6 +53,7 @@
         new
         {
             // ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
+            ot  = o.ObsTime,
             wda = Convert.ToDecimal(o.WindDirAvg10),
             // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
             wdae = o.WindDirAvg10Eng,
@@ -73,9 +74,7 @@
     // var graphrain = Model.Where((x, i) => i % nStepRain == 0);
 }
 
-@section Scripts
-{
-    <script type="text/javascript">
+<script type="text/javascript">
                 var hrs = 2;
                 var pew = @nStep;
                 var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
@@ -83,7 +82,6 @@
                 if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
                 var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
             </script>
-}
 
 @if (latest != null)
 {

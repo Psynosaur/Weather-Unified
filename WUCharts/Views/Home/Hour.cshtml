@@ -49,6 +49,7 @@
         new
         {
             // ObsTime = Convert.ToInt64((o.ObsTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds),
+            ot  = o.ObsTime,
             wda = Convert.ToDecimal(o.WindDirAvg10),
             // ReSharper disable once RedundantAnonymousTypePropertyName - used in amcharts graphs
             wdae = o.WindDirAvg10Eng,
@@ -67,15 +68,18 @@
 
     var rainHour = Model.Any() ? Model.Select(x => x.RainDay).Last() - Model.Select(x => x.RainDay).First() : 0;
 }
+<script type="text/javascript">
+    var hrs = 0;
+    var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
+    var raining = @rainobj.Count >0;
+    if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
+    var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+</script>
 
 @section Scripts
 {
     <script type="text/javascript">
-                 var hrs = 0;
-                 var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
-                 var raining = @rainobj.Count >0;
-                 if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
-                 var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+                 
                  @if (latest != null)
                  {
                      start = cnt > 0 ? latest.ObsTime.ToLocalTime().ToString("HH:mm") : DateTime.Now.ToString("HH:mm");
