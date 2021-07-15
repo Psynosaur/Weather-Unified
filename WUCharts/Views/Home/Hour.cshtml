@@ -69,38 +69,38 @@
     var rainHour = Model.Any() ? Model.Select(x => x.RainDay).Last() - Model.Select(x => x.RainDay).First() : 0;
 }
 <script type="text/javascript">
-    var hrs = 0;
-    var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
-    var raining = @rainobj.Count >0;
-    if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
-    var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+   
 </script>
 
 @section Scripts
 {
     <script type="text/javascript">
-                 
-                 @if (latest != null)
-                 {
-                     start = cnt > 0 ? latest.ObsTime.ToLocalTime().ToString("HH:mm") : DateTime.Now.ToString("HH:mm");
-                     maxTime = DateTime.Now.ToString("HH:mm");
-                 }
-                         flatpickr("#time", {
-                                    enableTime: true,
-                                    // plugins: [new confirmDatePlugin({})],
-                                    // confirmText: "OK ",
-                                    
-                                    noCalendar: true,
-                                    dateFormat: "H:i",
-                                    time_24hr: true,
-                                    defaultDate: "@start",
-                                    minTime: "00:00",
-                                    maxTime: "@maxTime",
-                                    onClose: function(selectedDates, dateStr, instance){
-                                                      window.location = '/hour/' + dateStr.substring(0, dateStr.length - 3);
-                                             },
-                                    theme: "dark"               
-                         });
+             @if (latest != null)
+             {
+                 start = cnt > 0 ? latest.ObsTime.ToLocalTime().ToString("HH:mm") : DateTime.Now.ToString("HH:mm");
+                 maxTime = DateTime.Now.ToString("HH:mm");
+             }
+                     flatpickr("#time", {
+                                enableTime: true,
+                                // plugins: [new confirmDatePlugin({})],
+                                // confirmText: "OK ",
+                                
+                                noCalendar: true,
+                                dateFormat: "H:i",
+                                time_24hr: true,
+                                defaultDate: "@start",
+                                minTime: "00:00",
+                                maxTime: "@maxTime",
+                                onClose: function(selectedDates, dateStr, instance){
+                                                  window.location = '/hour/' + dateStr.substring(0, dateStr.length - 3);
+                                         },
+                                theme: "dark"               
+                     });
+              var hrs = 0;
+                 var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
+                 var raining = @rainobj.Count >0;
+                 if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
+                 var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
             </script>
 }
 

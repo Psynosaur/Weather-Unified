@@ -29,11 +29,15 @@ h1 {
 .flatpickr-input{
     text-align: center;
 }
-
+html {
+    /*width: fit-content;*/
+    /*height: fit-content;*/
+    background-color: unset!important;
+}
 
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 900px) {
-    .containerx {
+    .body {
         display: flex;
         flex-flow: column;
     }

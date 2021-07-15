@@ -88,7 +88,7 @@
                     <hr/>
                     if (i > 0)
                     {
-                        <div class="has-tooltip-arrow" data-tooltip="@Math.Abs(timespan.Minutes)m and @Math.Abs(timespan.Seconds)s @(timespan.Minutes <= 0 ? "shorter" : "longer") than previous day">
+                        <div class="has-tooltip-arrow" data-tooltip="@Math.Abs(timespan.Minutes)m and @Math.Abs(timespan.Seconds)s @(timespan.Minutes <= 0 && timespan.Seconds <= 0 ? "shorter" : "longer") than previous day">
                             <h2 class="subtitle has-text-light" style="text-align: center!important">Daytime</h2>
                         </div>
                         <br/>

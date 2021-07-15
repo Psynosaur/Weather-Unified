@@ -15,7 +15,7 @@ namespace WURequest.Services
     public class ForecastBackgroundService : BackgroundService
     {
         private readonly ForecastService _forecastService;
-        private readonly IWuApiSettings _wuApiSettings;
+        private readonly IWeatherUndergroundApiSettings _weatherUndergroundApiSettings;
         private readonly CrontabSchedule _schedule;
         private readonly ILogger _logger;
         private DateTime _nextRun;
@@ -25,12 +25,12 @@ namespace WURequest.Services
         private static string Schedule => "0 * * * *"; // every 60 minutes
         
         public ForecastBackgroundService(
-            ForecastService forecastService, IWuApiSettings wuApiSettings, ILoggerFactory logFactory)
+            ForecastService forecastService, IWeatherUndergroundApiSettings weatherUndergroundApiSettings, ILoggerFactory logFactory)
         {
             _schedule = CrontabSchedule.Parse(Schedule,new CrontabSchedule.ParseOptions { IncludingSeconds = false });
             _nextRun = _schedule.GetNextOccurrence(DateTime.Now);
             _forecastService = forecastService;
-            _wuApiSettings = wuApiSettings;
+            _weatherUndergroundApiSettings = weatherUndergroundApiSettings;
             _logger = logFactory.CreateLogger<ForecastBackgroundService>();
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -77,12 +77,12 @@ namespace WURequest.Services
                 //https://api.weather.com/v3/wx/forecast/daily/5day?geocode=-33.864643,18.659822&format=json&units=m&language=en-US&apiKey=d4748acffd2e4d8ab48acffd2e7d8abc
                 string url = string.Format(
                     "https://api.weather.com/v3/wx/forecast/daily/5day?geocode={0},{1}&format={2}&units={3}&language={4}&apiKey={5}",
-                    _wuApiSettings.Lat,
-                    _wuApiSettings.Lon,
-                    _wuApiSettings.Format,
-                    _wuApiSettings.Units,
-                    _wuApiSettings.Language,
-                    _wuApiSettings.Pat
+                    _weatherUndergroundApiSettings.Lat,
+                    _weatherUndergroundApiSettings.Lon,
+                    _weatherUndergroundApiSettings.Format,
+                    _weatherUndergroundApiSettings.Units,
+                    _weatherUndergroundApiSettings.Language,
+                    _weatherUndergroundApiSettings.Pat
                 );
                 using HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Accept.Add(
