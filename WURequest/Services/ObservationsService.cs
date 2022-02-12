@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Events;
 using WURequest.Models;
 
 namespace WURequest.Services
 {
-    public class ObservationsService
+    public class ObservationsService : IObservationsService
     {
         private readonly IMongoCollection<Observations> _observation;
         private readonly ILogger _logger;

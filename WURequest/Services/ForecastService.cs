@@ -7,7 +7,7 @@ using WURequest.Models;
 
 namespace WURequest.Services
 {
-    public class ForecastService
+    public class ForecastService : IForecastService
     {
         private readonly IMongoCollection<Forecasts> _forecast;
         private readonly ILogger _logger;

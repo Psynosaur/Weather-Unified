@@ -18,29 +18,25 @@ namespace WURequest
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ObservationDatabaseSettings>(
                 Configuration.GetSection(nameof(ObservationDatabaseSettings)));
-
-            services.AddSingleton<IObservationDatabaseSettings>(sp =>
-                sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
-            services.AddSingleton<ObservationsService>();
-            
             services.Configure<ForecastDatabaseSettings>(
                 Configuration.GetSection(nameof(ForecastDatabaseSettings)));
-
-            services.AddSingleton<IForecastDatabaseSettings>(sp =>
-                sp.GetRequiredService<IOptions<ForecastDatabaseSettings>>().Value);
-            services.AddSingleton<ForecastService>();
-            
             services.Configure<WeatherUndergroundApiSettings>(
                 Configuration.GetSection(nameof(WeatherUndergroundApiSettings)));
-
+            
+            services.AddSingleton<IForecastDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ForecastDatabaseSettings>>().Value);
+            services.AddSingleton<IObservationDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
             services.AddSingleton<IWeatherUndergroundApiSettings>(sp =>
                 sp.GetRequiredService<IOptions<WeatherUndergroundApiSettings>>().Value);
-
+            
+            services.AddSingleton<IForecastService, ForecastService>();
+            services.AddSingleton<IObservationsService, ObservationsService>();
+            
             services.AddRazorPages();
             services.AddHostedService<ForecastBackgroundService>();
             services.AddCors(c =>
@@ -50,7 +46,6 @@ namespace WURequest
             services.AddMemoryCache();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

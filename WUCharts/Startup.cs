@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using RobotsTxt;
 using WURequest.Models;
 using WURequest.Services;
 
@@ -44,6 +45,18 @@ namespace WUCharts
                             "application/json"
                         });
             });
+            
+            services.AddStaticRobotsTxt(builder =>
+                builder
+                    .AddSection(section =>
+                        section
+                            .AddComment("Allow All")
+                            .AddUserAgent("*")
+                            .Allow("/")
+                    )
+                    .AddSitemap("https://weatheru.co.za/sitemap.xml")
+            );
+
             // services.Configure<BrotliCompressionProviderOptions>(options =>
             //     {
             //         options.Level = CompressionLevel.Fastest;
@@ -58,17 +71,17 @@ namespace WUCharts
                 (Configuration.GetSection("AppSettings"));
             services.Configure<ObservationDatabaseSettings>(
                 Configuration.GetSection(nameof(ObservationDatabaseSettings)));
-
-            services.AddSingleton<IObservationDatabaseSettings>(sp =>
-                sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
-            services.AddSingleton<ObservationsService>();
-            
             services.Configure<ForecastDatabaseSettings>(
                 Configuration.GetSection(nameof(ForecastDatabaseSettings)));
             
-            services.AddSingleton<IForecastDatabaseSettings>(sp =>
-                sp.GetRequiredService<IOptions<ForecastDatabaseSettings>>().Value);
-            services.AddSingleton<ForecastService>();
+            services.AddSingleton<IForecastDatabaseSettings>(sp =>                      
+                sp.GetRequiredService<IOptions<ForecastDatabaseSettings>>().Value);  
+            
+            services.AddSingleton<IObservationDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
+              
+            services.AddSingleton<IObservationsService, ObservationsService>();
+            services.AddSingleton<IForecastService, ForecastService>();
             
             services
                 .AddControllersWithViews()
@@ -114,24 +127,8 @@ namespace WUCharts
                     await next();
                 }
             });
-            app.UseRobotsTxt(builder =>
-                builder
-                    .AddSection(section => 
-                        section
-                            .AddComment("Allow All")
-                            .AddUserAgent("*")
-                            .Allow("/")
-                    )
-                    // .AddSection(section => 
-                    //     section
-                    //         .AddComment("Disallow the rest")
-                    //         .AddUserAgent("*")
-                    //         .AddCrawlDelay(TimeSpan.FromSeconds(10))
-                    //         .Disallow("/")
-                    // )
-                    .AddSitemap("https://cptsats.co.za/sitemap.xml")
-                    .AddSitemap("https://weatheru.co.za/sitemap.xml")
-            );
+            app.UseRobotsTxt();
+            
             app.UseResponseCompression();
             app.UseCors(options => options.AllowAnyOrigin());
             app.UseHttpsRedirection();

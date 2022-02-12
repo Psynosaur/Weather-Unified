@@ -13,11 +13,11 @@ namespace WURequest.Controllers
     [ApiController]
     public class ObservationsController : ControllerBase
     {
-        private readonly ObservationsService _observationsService;
+        private readonly IObservationsService _observationsService;
         private readonly ILogger _logger;
 
         public ObservationsController(
-            ObservationsService observationsService,
+            IObservationsService observationsService,
             ILoggerFactory logFactory)
         {
             _observationsService = observationsService;

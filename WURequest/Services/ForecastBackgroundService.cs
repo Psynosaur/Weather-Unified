@@ -14,7 +14,7 @@ namespace WURequest.Services
     // https://medium.com/@gtaposh/net-core-3-1-cron-jobs-background-service-e3026047b26d
     public class ForecastBackgroundService : BackgroundService
     {
-        private readonly ForecastService _forecastService;
+        private readonly IForecastService _forecastService;
         private readonly IWeatherUndergroundApiSettings _weatherUndergroundApiSettings;
         private readonly CrontabSchedule _schedule;
         private readonly ILogger _logger;
@@ -25,7 +25,9 @@ namespace WURequest.Services
         private static string Schedule => "0 * * * *"; // every 60 minutes
         
         public ForecastBackgroundService(
-            ForecastService forecastService, IWeatherUndergroundApiSettings weatherUndergroundApiSettings, ILoggerFactory logFactory)
+            IForecastService forecastService,
+            IWeatherUndergroundApiSettings weatherUndergroundApiSettings,
+            ILoggerFactory logFactory)
         {
             _schedule = CrontabSchedule.Parse(Schedule,new CrontabSchedule.ParseOptions { IncludingSeconds = false });
             _nextRun = _schedule.GetNextOccurrence(DateTime.Now);

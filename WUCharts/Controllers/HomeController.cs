@@ -14,12 +14,14 @@ namespace WUCharts.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ObservationsService _observationsService;
-        private readonly ForecastService _forecastService;
+        private readonly IObservationsService _observationsService;
+        private readonly IForecastService _forecastService;
         private readonly IOptions<AppSettings> _appSettings;
 
 
-        public HomeController(ObservationsService observationsService, ForecastService forecastService,
+        public HomeController(
+            IObservationsService observationsService,
+            IForecastService forecastService,
             IOptions<AppSettings> appSettings)
         {
             _observationsService = observationsService;

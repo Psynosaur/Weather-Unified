@@ -1,8 +1,6 @@
 ﻿using System;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using Newtonsoft.Json;
-
 namespace WURequest.Models
 {
     public class Observations
@@ -14,7 +12,6 @@ namespace WURequest.Models
         [BsonElement("DateTime")]
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         [BsonRepresentation(BsonType.DateTime)]
-        [JsonProperty("DateTime")]
         public DateTime ObsTime { get; set; } 
         public double TempOutCur { get; set; }
         public double Tmin { get; set; }
