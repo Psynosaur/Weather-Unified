@@ -30,6 +30,7 @@ am5.ready(function () {
     var pageData = objdata;
     var timeFrame = hrs;
     var winddat = winddata;
+    var raindat = raindata;
 
     // This changes based on variable timeFrame
     let tUnint = "minute";
@@ -75,17 +76,17 @@ am5.ready(function () {
     // 7. Set data
 
     function createXYChart({
-                              id,
-                              valueFields,
-                              tooltipText,
-                              strokeFillColors,
-                              labelText,
-                              min,
-                              max,
-                              bullets,
-                              connected,
-                              strokeWidth
-                          } = {}) {
+                               id,
+                               valueFields,
+                               tooltipText,
+                               strokeFillColors,
+                               labelText,
+                               min,
+                               max,
+                               bullets,
+                               connected,
+                               strokeWidth
+                           } = {}) {
         // 1. Create root element
         var root = am5.Root.new(id);
         // 2. Set themes
@@ -96,7 +97,7 @@ am5.ready(function () {
         var chart = root.container.children.push(am5xy.XYChart.new(root, {
             panX: false,
             panY: false,
-            wheelX: "panX",
+            wheelX: "none",
             wheelY: "none",
             pinchZoomX: true,
         }));
@@ -154,8 +155,6 @@ am5.ready(function () {
                     fill: am5.color(strokeFillColors[i]),
                     stroke: am5.color(strokeFillColors[i]),
                     tension: 0.8,
-                    strokeWidth: strokeWidth,
-                    connect: connected
                 })
             );
             chart.children.unshift(am5.Label.new(root, {
@@ -175,133 +174,104 @@ am5.ready(function () {
                         })
                     })
                 });
+                series.strokes.template.setAll({
+                    strokeDasharray: [0, 1],
+                });
 
             }
             series.data.setAll(pageData);
         }
     }
-    
+
     function createPolarChart({
                                   id,
-                                  valueFields,
+                                  valueYFields,
                                   tooltipText,
                                   strokeFillColors,
-                                  labelText,
+                                  valueXFields,
                                   min,
                                   max,
-                                  bullets,
-                                  connected,
+                                  data,
                                   strokeWidth
                               } = {}) {
         var root = am5.Root.new(id);
 
-// Set themes
-// https://www.amcharts.com/docs/v5/concepts/themes/
         root.setThemes([
             am5themes_Dark.new(root)
         ]);
 
-
-
-// Create chart
-// https://www.amcharts.com/docs/v5/charts/radar-chart/
         var chart = root.container.children.push(am5radar.RadarChart.new(root, {
             panX: false,
             panY: false,
-            wheelX: "panX",
-            wheelY: "zoomX"
+            wheelX: "none",
+            wheelY: "none"
         }));
 
-// Add cursor
-// https://www.amcharts.com/docs/v5/charts/radar-chart/#Cursor
         var cursor = chart.set("cursor", am5radar.RadarCursor.new(root, {
-            behavior: "none"
+            behavior: "zoomX"
         }));
 
-        cursor.lineY.set("visible", false);
-        cursor.lineX.set("visible", false);
+        cursor.lineY.set("visible", true);
+        cursor.lineX.set("visible", true);
+        console.log(3)
 
-// Create axes and their renderers
-// https://www.amcharts.com/docs/v5/charts/radar-chart/#Adding_axes
-        var xRenderer = am5radar.AxisRendererCircular.new(root, {});
-        xRenderer.labels.template.setAll({
-            radius: 10
+
+        var xRenderer = am5radar.AxisRendererCircular.new(root, {
+            minGridDistance: 30
         });
 
-        // var xAxis = chart.xAxes.push(
-        //     am5xy.ValueAxis.new(root, {
-        //         min: min,
-        //         max: max,
-        //         strictMinMax: true,
-        //         renderer: am5radar.AxisRendererX.new(root, {
-        //             minGridDistance: 20,
-        //         })
-        //     }));
-        var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
-            renderer: am5radar.AxisRendererRadial.new(root, {})
-        }));
+        var xAxis = chart.xAxes.push(
+            am5xy.ValueAxis.new(root, {
+                maxDeviation: 0,
+                min: min,
+                max: max,
+                strictMinMax: true,
+                categoryField: "wd",
+                renderer: xRenderer
+            }));
+
         var yAxis = chart.yAxes.push(
             am5xy.ValueAxis.new(root, {
-            renderer: am5radar.AxisRendererRadial.new(root, {})
-        }));
+                min: 0,
+                renderer: am5radar.AxisRendererRadial.new(root, {})
+            }));
 
-// Create series
-// https://www.amcharts.com/docs/v5/charts/radar-chart/#Adding_series
-
-        var series = chart.series.push(am5radar.RadarLineSeries.new(root, {
-            stacked: true,
-            name: "Series ",
-            xAxis: xAxis,
-            yAxis: yAxis,
-            valueYField: valueFields[0],
-            valueXField: "wd",
-            tooltip: am5.Tooltip.new(root, {
-                labelText: "{wg} km/h @ {wd}° {wdce}"
-            })
-        }));
+        for (let i = 0; i < valueYFields.length; i++) {
+            var series = chart.series.push(am5radar.RadarLineSeries.new(root, {
+                name: `Series${id}${i}`,
+                xAxis: xAxis,
+                yAxis: yAxis,
+                valueYField: valueYFields[i],
+                valueXField: valueXFields[i],
+                tooltip: am5.Tooltip.new(root, {
+                    labelText: tooltipText[i]
+                }),
+                connectEnds: false
+            }));
 
 
-        series.strokes.template.set("strokeWidth", 2);
-        series.bullets.push(function() {
-            return am5.Bullet.new(root, {
-                sprite: am5.Circle.new(root, {
-                    radius: 5,
-                    fill: series.get("fill"),
-                    strokeWidth: 2,
-                    stroke: root.interfaceColors.get("background")
+            series.strokes.template.set("strokeWidth", 2);
+            let fillz = series.get("fill");
+            series.bullets.push(function () {
+                return am5.Bullet.new(root, {
+                    sprite: am5.Circle.new(root, {
+                        radius: 4,
+                        fill: fillz,
+                        strokeWidth: strokeWidth,
+                        stroke: root.interfaceColors.get("background")
+                    })
                 })
             })
-        })
+            series.strokes.template.setAll({
+                strokeDasharray: [0, 1],
+                color: strokeFillColors[i]
+            });
 
-        var series1 = chart.series.push(am5radar.RadarLineSeries.new(root, {
-            stacked: true,
-            name: "Series ",
-            xAxis: xAxis,
-            yAxis: yAxis,
-            valueYField: valueFields[1],
-            valueXField: "wd",
-            tooltip: am5.Tooltip.new(root, {
-                labelText: "{was} km/h @ {wd}° {wdce}"
-            })
-        }));
-
-
-        series1.strokes.template.set("strokeWidth", 2);
-        series1.bullets.push(function() {
-            return am5.Bullet.new(root, {
-                sprite: am5.Circle.new(root, {
-                    radius: 5,
-                    fill: series1.get("fill"),
-                    strokeWidth: 2,
-                    stroke: root.interfaceColors.get("background")
-                })
-            })
-        })
-        series.data.setAll(winddat);
-        series1.data.setAll(winddat);
-        xAxis.data.setAll(winddat);
+            series.data.setAll(data);
+            xAxis.data.setAll(data);
+        }
     }
-        
+
 
     createXYChart({
             id: "chartemp",
@@ -389,12 +359,29 @@ am5.ready(function () {
         }
     );
     createPolarChart({
-        id:"windrose",
-        valueFields: ["wg","was"],
-        strokeFillColors: ["#71e769", "#8ebdf3"],
+        id: "windrose",
+        valueYFields: ["wg", "was"],
+        strokeFillColors: ["#ffdf43", "#8ebdf3"],
+        tooltipText: ["{wg} km/h @ {wd}° {wdce}", "{was} km/h @ {wd}° {wdce}"],
+        valueXFields: ["wd", "wd"],
         min: 0,
         max: 360,
+        data: winddat,
+        strokeWidth: 0.5
     })
+    if (raindat) {
+        createPolarChart({
+            id: "rainrose",
+            valueYFields: ["rr"],
+            strokeFillColors: ["#8ebdf3"],
+            tooltipText: ["{ot} : {rr} mm/h from {wda}° {wdae}"],
+            min: 0,
+            max: 360,
+            valueXFields: ["wda"],
+            data: raindat,
+            strokeWidth: 0.5
+        })
+    }
 
     // REMOVE ME!!!!
     console.log(`timeFrame : ${timeFrame}\ntimeUnit : ${tUnint},\ndateFormat : ${dateFormat}\nCount : ${baseIntervalCount}`)
