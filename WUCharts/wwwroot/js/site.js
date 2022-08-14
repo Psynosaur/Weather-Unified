@@ -26,876 +26,376 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-// amCharts JS
-am4core.ready(function () {
-    // am4core.useTheme(am4themes_animated);
-    am4core.options.minPolylineStep = 5;
-    // am4core.options.queue = true;
-    am4core.useTheme(am4themes_dark);
-    // We set our data to the model with reduced data points
+am5.ready(function () {
+    var pageData = objdata;
+    var timeFrame = hrs;
+    var winddat = winddata;
 
-    var h = hrs;
-    if (h <= 2) {
-        var raindat = raindata;
-        var winddat = winddata;
-        var objdat = objdata;
-        // Create temp chart instance
-        var temp = am4core.create("chartemp", am4charts.XYChart);
-        temp.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        var labelTemp = temp.chartContainer.createChild(am4core.Label);
-        labelTemp.text = "Temp & Dew point";
-        labelTemp.align = "center";
-        // temp.exporting.menu = new am4core.ExportMenu();
-        // temp.exporting.menu.align = "left";
-        // temp.exporting.menu.verticalAlign = "top";
+    // This changes based on variable timeFrame
+    let tUnint = "minute";
+    let dateFormat = "HH:mm";
+    let baseIntervalCount = 5;
+    let gridCount = 180;
+    switch (timeFrame) {
+        case 1:
+            tUnint = "minute";
+            gridCount = 60
+            break;
+        case 2:
+            tUnint = "hour"
+            dateFormat = "dd-MM HH:mm";
+            baseIntervalCount = 1;
+            gridCount = 24
+            break;
+        case 3:
+            tUnint = "hour"
+            dateFormat = "dd-MM HH:mm";
+            baseIntervalCount = 2;
+            gridCount = 48;
+            break;
+        default:
+            tUnint = "second";
+            baseIntervalCount = 30;
+            gridCount = 600
+    }
+    // These are the steps to setup a XY line chart in amcharts 5
 
-        // Create TminMax chart instance
-        var tminmax = am4core.create("chartminmax", am4charts.XYChart);
-        tminmax.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        var labelTemp = tminmax.chartContainer.createChild(am4core.Label);
-        labelTemp.text = "Temp Min/Max";
-        labelTemp.align = "center";
+    // 1. Create root element
+    // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+    // 2. Set themes
+    // https://www.amcharts.com/docs/v5/concepts/themes/
+    // 3. Create chart
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/
+    // 4. Add cursor
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+    // 5. Create axes
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+    // 6. Add series
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+    // 7. Set data
 
-        // Create humidity chart instance
-        var hum = am4core.create("charthum", am4charts.XYChart);
-        hum.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        var labelHum = hum.chartContainer.createChild(am4core.Label);
-        labelHum.text = "Humidity";
-        labelHum.align = "center";
-
-        // Create wind chart instance
-        var wind = am4core.create("chartwind", am4charts.XYChart);
-        wind.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        wind.numberFormatter.numberFormat
-        var labelWind = wind.chartContainer.createChild(am4core.Label);
-        labelWind.text = "Wind Speed";
-        labelWind.align = "center";
-
-        // Create rain chart instance
-        var rain = am4core.create("chartrain", am4charts.XYChart);
-        rain.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        var labelRain = rain.chartContainer.createChild(am4core.Label);
-        labelRain.text = "Rain";
-        labelRain.align = "center";
-
-        // Create pressure chart instance
-        var pressure = am4core.create("chartpressure", am4charts.XYChart);
-        pressure.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        var labelPressure = pressure.chartContainer.createChild(am4core.Label);
-        labelPressure.text = "Pressure";
-        labelPressure.align = "center";
-
-        // Create Solar chart instance
-        var solar = am4core.create("chartsolar", am4charts.XYChart);
-        solar.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        var labelSolar = solar.chartContainer.createChild(am4core.Label);
-        labelSolar.text = "Radiation";
-        labelSolar.align = "center";
-
-        // Create UV chart instance
-        var uv = am4core.create("chartuv", am4charts.XYChart);
-        uv.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        var labelUV = uv.chartContainer.createChild(am4core.Label);
-        labelUV.text = "UV index";
-        labelUV.align = "center";
-
-        // Create winddir chart instance
-        var wd = am4core.create("chartwd", am4charts.XYChart);
-        wd.dateFormatter.inputDateFormat = "MM/dd/yyyy HH:mm";
-        var labelWD = wd.chartContainer.createChild(am4core.Label);
-        labelWD.text = "Wind Direction";
-        labelWD.align = "center";
-        // var labelWD2 = wd.yAxes.push(new am4charts.ValueAxis());
-        // labelWD2.title.text = "N";
-        // labelWD2.renderer.opposite = true;
-
-        // Add data
-        temp.data = objdat;
-        wind.data = objdat;
-        hum.data = objdat;
-        rain.data = objdat;
-        tminmax.data = objdat;
-        pressure.data = objdat;
-        solar.data = objdat;
-        uv.data = objdat;
-        wd.data = objdat;
-
-        // Create temp axes
-        var categoryAxisTemp = temp.xAxes.push(new am4charts.DateAxis());
-        categoryAxisTemp.renderer.grid.template.location = 0;
-        categoryAxisTemp.renderer.minGridDistance = 60;
-        categoryAxisTemp.baseInterval = {
-            "timeUnit": "minute"
-        };
-        switch (h) {
-            case 1:
-                categoryAxisTemp.baseInterval = {
-                    "timeUnit": "minute"
-                };
-                categoryAxisTemp.dateFormats.setKey("minute", "HH:mm");
-                break;
-            case 2:
-                categoryAxisTemp.baseInterval = {
-                    "timeUnit": "minute",
-                    "count": 30
-                };
-                categoryAxisTemp.dateFormats.setKey("minute", "dd-MM HH:mm");
-                break;
-            default:
-                categoryAxisTemp.baseInterval = {
-                    "timeUnit": "second",
-                    "count": 15
-                };
-                categoryAxisTemp.dateFormats.setKey("second", "HH:mm");
-        }
-        var valueAxisTemp = temp.yAxes.push(new am4charts.ValueAxis());
-
-        // Create tMinMax axes
-        var categoryAxisTminmax = tminmax.xAxes.push(new am4charts.DateAxis());
-        categoryAxisTminmax.renderer.grid.template.location = 0;
-        categoryAxisTminmax.renderer.minGridDistance = 60;
-        categoryAxisTminmax.baseInterval = {
-            "timeUnit": "minute"
-        };
-        switch (h) {
-            case 1:
-                categoryAxisTminmax.baseInterval = {
-                    "timeUnit": "minute"
-                };
-                categoryAxisTminmax.dateFormats.setKey("minute", "HH:mm");
-                break;
-            case 2:
-                categoryAxisTminmax.baseInterval = {
-                    "timeUnit": "minute",
-                    "count": 15
-                };
-                categoryAxisTminmax.dateFormats.setKey("minute", "dd-MM HH:mm");
-                break;
-            default:
-                categoryAxisTminmax.baseInterval = {
-                    "timeUnit": "second",
-                    "count": 15
-                };
-                categoryAxisTminmax.dateFormats.setKey("second", "HH:mm");
-        }
-        var valueAxisTminmax = tminmax.yAxes.push(new am4charts.ValueAxis());
-
-        // Create hum axes
-        var categoryAxisHum = hum.xAxes.push(new am4charts.DateAxis());
-        categoryAxisHum.renderer.grid.template.location = 0;
-        categoryAxisHum.renderer.minGridDistance = 60;
-        categoryAxisHum.baseInterval = {
-            "timeUnit": "minute"
-        };
-        switch (h) {
-            case 1:
-                categoryAxisHum.baseInterval = {
-                    "timeUnit": "minute"
-                };
-                categoryAxisHum.dateFormats.setKey("minute", "HH:mm");
-                break;
-            case 2:
-                categoryAxisHum.baseInterval = {
-                    "timeUnit": "minute",
-                    "count": 30
-                };
-                categoryAxisHum.dateFormats.setKey("minute", "dd-MM HH:mm");
-                break;
-            default:
-                categoryAxisHum.baseInterval = {
-                    "timeUnit": "second",
-                    "count": 15
-                };
-                categoryAxisHum.dateFormats.setKey("second", "HH:mm");
-        }
-        var valueAxisHum = hum.yAxes.push(new am4charts.ValueAxis());
-
-        // Create wind axes
-        var categoryAxisWind = wind.xAxes.push(new am4charts.DateAxis());
-        categoryAxisWind.renderer.grid.template.location = 0;
-        categoryAxisWind.renderer.minGridDistance = 60;
-
-        switch (h) {
-            case 1:
-                categoryAxisWind.baseInterval = {
-                    "timeUnit": "minute"
-                };
-                categoryAxisWind.dateFormats.setKey("minute", "HH:mm");
-                break;
-            case 2:
-                categoryAxisWind.baseInterval = {
-                    "timeUnit": "minute",
-                    "count": 15
-                };
-                categoryAxisWind.dateFormats.setKey("minute", "dd-MM HH:mm");
-                break;
-            default:
-                categoryAxisWind.baseInterval = {
-                    "timeUnit": "second",
-                    "count": 15
-                };
-                categoryAxisWind.dateFormats.setKey("second", "HH:mm");
-        }
-        var valueAxisWind = wind.yAxes.push(new am4charts.ValueAxis());
-        valueAxisWind.min = 0;
-
-
-        // Create rain axes
-        var categoryAxisRain = rain.xAxes.push(new am4charts.DateAxis());
-        categoryAxisRain.renderer.grid.template.location = 0;
-        categoryAxisRain.renderer.minGridDistance = 60;
-        categoryAxisRain.baseInterval = {
-            "timeUnit": "minute"
-        };
-
-        switch (h) {
-            case 1:
-                categoryAxisRain.baseInterval = {
-                    "timeUnit": "minute"
-                };
-                categoryAxisRain.dateFormats.setKey("minute", "HH:mm");
-                break;
-            case 2:
-                categoryAxisRain.baseInterval = {
-                    "timeUnit": "minute",
-                    "count": 15
-                };
-                categoryAxisRain.dateFormats.setKey("minute", "dd-MM HH:mm");
-                break;
-            default:
-                categoryAxisRain.baseInterval = {
-                    "timeUnit": "second",
-                    "count": 15
-                };
-                categoryAxisRain.dateFormats.setKey("second", "HH:mm");
-        }
-        var valueAxisRain = rain.yAxes.push(new am4charts.ValueAxis());
-        valueAxisRain.min = 0;
-
-        // Create pressure axes
-        var categoryAxisPressure = pressure.xAxes.push(new am4charts.DateAxis());
-        categoryAxisPressure.renderer.grid.template.location = 0;
-        categoryAxisPressure.renderer.minGridDistance = 60;
-        categoryAxisPressure.baseInterval = {
-            "timeUnit": "minute"
-        };
-        switch (h) {
-            case 1:
-                categoryAxisPressure.baseInterval = {
-                    "timeUnit": "minute"
-                };
-                categoryAxisPressure.dateFormats.setKey("minute", "HH:mm");
-                break;
-            case 2:
-                categoryAxisPressure.baseInterval = {
-                    "timeUnit": "minute",
-                    "count": 15
-                };
-                categoryAxisPressure.dateFormats.setKey("minute", "dd-MM HH:mm");
-                break;
-            default:
-                categoryAxisPressure.baseInterval = {
-                    "timeUnit": "second",
-                    "count": 15
-                };
-                categoryAxisPressure.dateFormats.setKey("second", "HH:mm");
-        }
-        var valueAxisPressure = pressure.yAxes.push(new am4charts.ValueAxis());
-
-        var categoryAxisSolar = solar.xAxes.push(new am4charts.DateAxis());
-        categoryAxisSolar.renderer.grid.template.location = 0;
-        categoryAxisSolar.renderer.minGridDistance = 60;
-        categoryAxisSolar.baseInterval = {
-            "timeUnit": "minute"
-        };
-        switch (h) {
-            case 1:
-                categoryAxisSolar.baseInterval = {
-                    "timeUnit": "minute"
-                };
-                categoryAxisSolar.dateFormats.setKey("minute", "HH:mm");
-                break;
-            case 2:
-                categoryAxisSolar.baseInterval = {
-                    "timeUnit": "minute",
-                    "count": 30
-                };
-                categoryAxisSolar.dateFormats.setKey("minute", "dd-MM HH:mm");
-                break;
-            default:
-                categoryAxisSolar.baseInterval = {
-                    "timeUnit": "second",
-                    "count": 15
-                };
-                categoryAxisSolar.dateFormats.setKey("second", "HH:mm");
-        }
-        var valueAxisSolar = solar.yAxes.push(new am4charts.ValueAxis());
-        valueAxisSolar.min = 0;
-        valueAxisSolar.strictMinMax = true;
-
-        // Create UV axes
-        var categoryAxisUV = uv.xAxes.push(new am4charts.DateAxis());
-        categoryAxisUV.renderer.grid.template.location = 0;
-        categoryAxisUV.renderer.minGridDistance = 60;
-        categoryAxisUV.baseInterval = {
-            "timeUnit": "minute"
-        };
-        switch (h) {
-            case 1:
-                categoryAxisUV.baseInterval = {
-                    "timeUnit": "minute"
-                };
-                categoryAxisUV.dateFormats.setKey("minute", "HH:mm");
-                break;
-            case 2:
-                categoryAxisUV.baseInterval = {
-                    "timeUnit": "minute",
-                    "count": 30
-                };
-                categoryAxisUV.dateFormats.setKey("minute", "dd-MM HH:mm");
-                break;
-            default:
-                categoryAxisUV.baseInterval = {
-                    "timeUnit": "second",
-                    "count": 15
-                };
-                categoryAxisUV.dateFormats.setKey("second", "HH:mm");
-        }
-        var valueAxisUV = uv.yAxes.push(new am4charts.ValueAxis());
-        valueAxisUV.min = 0;
-        valueAxisUV.strictMinMax = true;
-
-        // Create WindDir axes
-        var categoryAxisWD = wd.xAxes.push(new am4charts.DateAxis());
-        categoryAxisWD.renderer.grid.template.location = 0;
-        categoryAxisWD.renderer.minGridDistance = 60;
-        categoryAxisWD.baseInterval = {
-            "timeUnit": "minute"
-        };
-        switch (h) {
-            case 1:
-                categoryAxisWD.baseInterval = {
-                    "timeUnit": "minute"
-                };
-                categoryAxisWD.dateFormats.setKey("minute", "HH:mm");
-                break;
-            case 2:
-                categoryAxisWD.baseInterval = {
-                    "timeUnit": "minute"
-                    // "count" : 30
-                };
-                categoryAxisWD.dateFormats.setKey("minute", "dd-MM HH:mm");
-                break;
-            default:
-                categoryAxisWD.baseInterval = {
-                    "timeUnit": "second"
-                    // "count" : 15
-                };
-                categoryAxisWD.dateFormats.setKey("second", "HH:mm");
-        }
-        var valueAxisWD = wd.yAxes.push(new am4charts.ValueAxis());
-        valueAxisWD.min = 0;
-        valueAxisWD.max = 360;
-        valueAxisWD.renderer.minGridDistance = 12.3;
-        valueAxisWD.strictMinMax = true;
-
-        // Create temp series
-        var seriesTemp = temp.series.push(new am4charts.LineSeries());
-        seriesTemp.dataFields.valueY = "to";
-        seriesTemp.dataFields.dateX = "ot";
-        seriesTemp.tooltipText = "Outdoor {to} °C";
-        seriesTemp.strokeWidth = 1.2;
-        seriesTemp.stroke = am4core.color("#ff8145");
-        seriesTemp.tooltip.getFillFromObject = false;
-        seriesTemp.tooltip.background.fill = am4core.color("#ff8145");
-        seriesTemp.tooltip.label.fill = am4core.color("#000");
-        // seriesTemp.heatRules.push({
-        //     "target": seriesTemp.lines.template,
-        //     "property": "stroke",
-        //     "min": am4core.color("#F5DBCB"),
-        //     "max": am4core.color("#ED7B84"),
-        //     "dataField": "valueY"
+    function createXYChart({
+                              id,
+                              valueFields,
+                              tooltipText,
+                              strokeFillColors,
+                              labelText,
+                              min,
+                              max,
+                              bullets,
+                              connected,
+                              strokeWidth
+                          } = {}) {
+        // 1. Create root element
+        var root = am5.Root.new(id);
+        // 2. Set themes
+        root.setThemes([
+            am5themes_Dark.new(root)
+        ]);
+        // 3. Create chart
+        var chart = root.container.children.push(am5xy.XYChart.new(root, {
+            panX: false,
+            panY: false,
+            wheelX: "panX",
+            wheelY: "none",
+            pinchZoomX: true,
+        }));
+        // 4. Add cursor
+        var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+            behavior: "zoomX"
+        }));
+        cursor.lineY.set("visible", false);
+        // 5. Create axes
+        // Temperature and aew chart axes
+        var xAxis = chart.xAxes.push(
+            am5xy.DateAxis.new(root, {
+                maxDeviation: 0.5,
+                baseInterval: {
+                    timeUnit: tUnint,
+                    count: baseIntervalCount
+                },
+                gridIntervals: [
+                    {timeUnit: tUnint, count: gridCount}
+                ],
+                renderer: am5xy.AxisRendererX.new(root, {
+                    minGridDistance: 60,
+                }),
+                tooltip: am5.Tooltip.new(root, {})
+            }));
+        // xAxis.get("dateFormats")[tUnint] = dateFormat;
+        // var xRenderer = xAxis.get("renderer");
+        // xRenderer.grid.template.setAll({
+        //     location: 0
         // });
-        seriesTemp.tensionY = 1;
-        seriesTemp.tensionX = 0.8;
-        var seriesTempDeW = temp.series.push(new am4charts.LineSeries());
-        seriesTempDeW.dataFields.valueY = "dc";
-        seriesTempDeW.dataFields.dateX = "ot";
-        seriesTempDeW.tooltipText = "Dew Point {dc} °C";
-        seriesTempDeW.strokeWidth = 1.2;
-        seriesTempDeW.stroke = am4core.color("#87f7ff");
-        seriesTempDeW.tooltip.getFillFromObject = false;
-        seriesTempDeW.tooltip.background.fill = am4core.color("#87f7ff");
-        seriesTempDeW.tooltip.label.fill = am4core.color("#000");
-        seriesTempDeW.tensionY = 1;
-        seriesTempDeW.tensionX = 0.8;
 
-        // var seriesTempIn = temp.series.push(new am4charts.LineSeries());
-        // seriesTempIn.dataFields.valueY = "TempInCur";
-        // seriesTempIn.dataFields.dateX = "ot";
-        // seriesTempIn.tooltipText = "Indoor {TempInCur} °C";
-        // seriesTempIn.strokeWidth = 1.2;
-        // seriesTempIn.stroke = am4core.color("#fcff4c");
-        // seriesTempIn.tooltip.getFillFromObject = false;
-        // seriesTempIn.tooltip.background.fill = am4core.color("#fcff4c");
-        // seriesTempIn.tooltip.label.fill = am4core.color("#000");
-        // temp.scrollbarX = new am4core.Scrollbar();
-        temp.cursor = new am4charts.XYCursor();
+        var yAxis = chart.yAxes.push(
+            am5xy.ValueAxis.new(root, {
+                min: min,
+                max: max,
+                strictMinMax: true,
+                renderer: am5xy.AxisRendererY.new(root, {
+                    minGridDistance: 30,
+                })
+            }));
 
-        // Create tMinMax series
-        var seriesTempMin = tminmax.series.push(new am4charts.LineSeries());
-        seriesTempMin.dataFields.valueY = "tmn";
-        seriesTempMin.dataFields.dateX = "ot";
-        seriesTempMin.tooltipText = "{tmn} °C min";
-        seriesTempMin.strokeWidth = 1.2;
-        seriesTempMin.stroke = am4core.color("#0ec7ff");
-        seriesTempMin.tooltip.getFillFromObject = false;
-        seriesTempMin.tooltip.background.fill = am4core.color("#0ec7ff");
-        seriesTempMin.tooltip.label.fill = am4core.color("#000");
-        seriesTempMin.tensionY = 1;
-        seriesTempMin.tensionX = 0.8;
-        var seriesTempMax = tminmax.series.push(new am4charts.LineSeries());
-        seriesTempMax.dataFields.valueY = "tmx";
-        seriesTempMax.dataFields.dateX = "ot";
-        seriesTempMax.tooltipText = "{tmx} °C max";
-        seriesTempMax.strokeWidth = 1.2;
-        seriesTempMax.stroke = am4core.color("#ff2955");
-        seriesTempMax.tooltip.getFillFromObject = false;
-        seriesTempMax.tooltip.background.fill = am4core.color("#ff2955");
-        seriesTempMax.tooltip.label.fill = am4core.color("#000");
-        seriesTempMax.tensionY = 1;
-        seriesTempMax.tensionX = 0.8;
-        // tminmax.scrollbarX = new am4core.Scrollbar();
-        tminmax.cursor = new am4charts.XYCursor();
+        // 6. Add series
+        for (let i = 0; i < valueFields.length; i++) {
+            var series = chart.series.push(
+                am5xy.SmoothedXLineSeries.new(root, {
+                    name: `Series${id}${i}`,
+                    xAxis: xAxis,
+                    yAxis: yAxis,
+                    valueYField: valueFields[i],
+                    valueXField: "ot",
+                    tooltip: am5.Tooltip.new(root, {
+                        labelText: tooltipText[i],
+                        getFillFromObject: false
+                    }),
+                    fill: am5.color(strokeFillColors[i]),
+                    stroke: am5.color(strokeFillColors[i]),
+                    tension: 0.8,
+                    strokeWidth: strokeWidth,
+                    connect: connected
+                })
+            );
+            chart.children.unshift(am5.Label.new(root, {
+                text: labelText,
+                fontSize: 14,
+                textAlign: "center",
+                x: am5.percent(50),
+                centerX: am5.percent(50)
+            }));
+            if (bullets) {
+                let fill = series.get("fill");
+                series.bullets.push(function (root) {
+                    return am5.Bullet.new(root, {
+                        sprite: am5.Circle.new(root, {
+                            radius: 2,
+                            fill: fill
+                        })
+                    })
+                });
 
-        // Create Hum series
-        var seriesHum = hum.series.push(new am4charts.LineSeries());
-        seriesHum.dataFields.valueY = "ho";
-        seriesHum.dataFields.dateX = "ot";
-        seriesHum.tooltipText = "Outdoors {ho} %";
-        seriesHum.strokeWidth = 1.2;
-        seriesHum.stroke = am4core.color("#5c8fff");
-        seriesHum.tooltip.getFillFromObject = false;
-        seriesHum.tooltip.background.fill = am4core.color("#5c8fff");
-        seriesHum.tooltip.label.fill = am4core.color("#000");
-        seriesHum.tensionY = 1;
-        seriesHum.tensionX = 0.8;
-        var seriesHuIn = hum.series.push(new am4charts.LineSeries());
-        seriesHuIn.dataFields.valueY = "hi";
-        seriesHuIn.dataFields.dateX = "ot";
-        seriesHuIn.tooltipText = "Indoors {hi} %";
-        seriesHuIn.strokeWidth = 1.2;
-        seriesHuIn.stroke = am4core.color("#0ec7ff");
-        seriesHuIn.tooltip.getFillFromObject = false;
-        seriesHuIn.tooltip.background.fill = am4core.color("#0ec7ff");
-        seriesHuIn.tooltip.label.fill = am4core.color("#000");
-        seriesHuIn.tensionY = 1;
-        seriesHuIn.tensionX = 0.8;
-        // tminmax.scrollbarX = new am4core.Scrollbar();
-        hum.cursor = new am4charts.XYCursor();
-
-        // Create wind series
-        var seriesWind = wind.series.push(new am4charts.LineSeries());
-        seriesWind.dataFields.valueY = "ws";
-        seriesWind.dataFields.dateX = "ot";
-        seriesWind.tooltipText = "Current {ws} km/h";
-        seriesWind.strokeWidth = 1.2;
-        seriesWind.stroke = am4core.color("#11ff1e");
-        seriesWind.tooltip.getFillFromObject = false;
-        seriesWind.tooltip.background.fill = am4core.color("#11ff1e");
-        seriesWind.tooltip.label.fill = am4core.color("#000");
-        seriesWind.tensionY = 1;
-        seriesWind.tensionX = 0.8;
-        var seriesWindGust = wind.series.push(new am4charts.LineSeries());
-        seriesWindGust.dataFields.valueY = "wg";
-        seriesWindGust.dataFields.dateX = "ot";
-        seriesWindGust.tooltipText = "Gust {wg} km/h";
-        seriesWindGust.strokeWidth = 1.2;
-        seriesWindGust.stroke = am4core.color("#ffbf8d");
-        seriesWindGust.tooltip.getFillFromObject = false;
-        seriesWindGust.tooltip.background.fill = am4core.color("#ffbf8d");
-        seriesWindGust.tooltip.label.fill = am4core.color("#000");
-        seriesWindGust.tensionY = 1;
-        seriesWindGust.tensionX = 0.8;
-        var seriesWinAvg = wind.series.push(new am4charts.LineSeries());
-        seriesWinAvg.dataFields.valueY = "was";
-        seriesWinAvg.dataFields.dateX = "ot";
-        seriesWinAvg.tooltipText = "Avg {was} km/h";
-        seriesWinAvg.strokeWidth = 1.2;
-        seriesWinAvg.stroke = am4core.color("#ff8d8d");
-        seriesWinAvg.tooltip.getFillFromObject = false;
-        seriesWinAvg.tooltip.background.fill = am4core.color("#ff8d8d");
-        seriesWinAvg.tooltip.label.fill = am4core.color("#000");
-        seriesWinAvg.tensionY = 1;
-        seriesWinAvg.tensionX = 0.8;
-        wind.cursor = new am4charts.XYCursor();
-        wind.cursor = new am4charts.XYCursor();
-
-
-        // Create rain series
-        var seriesRain = rain.series.push(new am4charts.LineSeries());
-        seriesRain.dataFields.valueY = "rd";
-        seriesRain.dataFields.dateX = "ot";
-        seriesRain.tooltipText = "{rd} mm";
-        seriesRain.strokeWidth = 1.2;
-        seriesRain.tensionY = 1;
-        seriesRain.tensionX = 0.8;
-        var seriesRainRate = rain.series.push(new am4charts.LineSeries());
-        seriesRainRate.dataFields.valueY = "rr";
-        seriesRainRate.dataFields.dateX = "ot";
-        seriesRainRate.tooltipText = "{rr} mm/h from {wda}° {wdae} ";
-        seriesRainRate.strokeWidth = 1.2;
-        seriesRainRate.tensionY = 1;
-        seriesRainRate.tensionX = 0.8;
-        rain.cursor = new am4charts.XYCursor();
-
-        // Create pressure series
-        var seriesPressure = pressure.series.push(new am4charts.LineSeries());
-        seriesPressure.dataFields.valueY = "p";
-        seriesPressure.dataFields.dateX = "ot";
-        seriesPressure.tooltipText = "{p} hPa";
-        seriesPressure.strokeWidth = 1.2;
-        seriesPressure.tensionY = 1;
-        seriesPressure.tensionX = 0.8;
-        pressure.cursor = new am4charts.XYCursor();
-
-        // Create solar series
-        var seriesSolar = solar.series.push(new am4charts.LineSeries());
-        seriesSolar.dataFields.valueY = "sr";
-        seriesSolar.dataFields.dateX = "ot";
-        seriesSolar.tooltipText = "{sr} W/m²";
-        seriesSolar.strokeWidth = 1.2;
-        seriesSolar.stroke = am4core.color("#ffdf43");
-        seriesSolar.tooltip.getFillFromObject = false;
-        seriesSolar.tooltip.background.fill = am4core.color("#ffdf43");
-        seriesSolar.tooltip.label.fill = am4core.color("#000");
-        seriesSolar.tensionY = 1;
-        seriesSolar.tensionX = 0.8;
-        solar.cursor = new am4charts.XYCursor();
-
-        // Create solar series
-        var seriesUV = uv.series.push(new am4charts.LineSeries());
-        seriesUV.dataFields.valueY = "UV";
-        seriesUV.dataFields.dateX = "ot";
-        seriesUV.tooltipText = "{UV}";
-        seriesUV.strokeWidth = 1.2;
-        seriesUV.stroke = am4core.color("#ffdf43");
-        seriesUV.tooltip.getFillFromObject = false;
-        seriesUV.tooltip.background.fill = am4core.color("#ffdf43");
-        seriesUV.tooltip.label.fill = am4core.color("#000");
-        seriesUV.tensionY = 1;
-        seriesUV.tensionX = 0.8;
-        uv.cursor = new am4charts.XYCursor();
-
-        // Create windir series
-        var seriesWindDir = wd.series.push(new am4charts.LineSeries());
-        seriesWindDir.dataFields.valueY = "wd";
-        seriesWindDir.dataFields.dateX = "ot";
-        seriesWindDir.tooltipText = "{wd}° / {wdce} current";
-        seriesWindDir.strokeWidth = 0;
-        seriesWindDir.stroke = am4core.color("#7fdfff");
-        seriesWindDir.tooltip.getFillFromObject = false;
-        seriesWindDir.tooltip.background.fill = am4core.color("#7fdfff");
-        seriesWindDir.tooltip.label.fill = am4core.color("#000");
-        seriesWindDir.tensionY = 1;
-        seriesWindDir.tensionX = 0.8;
-        seriesWindDir.connect = false;
-
-        var bullet1 = seriesWindDir.bullets.push(new am4core.Circle());
-        bullet1.radius = 1;
-
-
-        var seriesWindDirAvg = wd.series.push(new am4charts.LineSeries());
-        seriesWindDirAvg.dataFields.valueY = "wda";
-        seriesWindDirAvg.dataFields.dateX = "ot";
-        seriesWindDirAvg.tooltipText = "{wda}° / {wdae} average";
-        seriesWindDirAvg.strokeWidth = 0;
-        seriesWindDirAvg.stroke = am4core.color("#dafaff");
-        seriesWindDirAvg.tooltip.getFillFromObject = false;
-        seriesWindDirAvg.tooltip.background.fill = am4core.color("#dafaff");
-        seriesWindDirAvg.tooltip.label.fill = am4core.color("#000");
-        seriesWindDirAvg.tensionY = 1;
-        seriesWindDirAvg.tensionX = 0.8;
-        seriesWindDirAvg.connect = false;
-        var bullet2 = seriesWindDirAvg.bullets.push(new am4core.Circle());
-        bullet2.radius = 1;
-
-        wd.cursor = new am4charts.XYCursor();
-
-        /* Create windrose instance */
-        var windrose = am4core.create("windrose", am4charts.RadarChart);
-
-        /* Create axes */
-        var xAxis = windrose.xAxes.push(new am4charts.ValueAxis());
-        xAxis.renderer.maxLabelPosition = 0.99;
-        xAxis.min = 0;
-        xAxis.max = 360;
-        xAxis.renderer.minGridDistance = 40;
-        xAxis.strictMinMax = true;
-        xAxis.dateFormatter = new am4core.DateFormatter();
-        xAxis.dateFormatter.dateFormat = "HH:mm";
-        // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
-        // categoryAxisWR.tooltipDateFormat = "HH:mm";
-        // xAxis.numberFormatter.numberFormat = "#.0°|0°";
-
-
-        var yAxis = windrose.yAxes.push(new am4charts.ValueAxis());
-        yAxis.renderer.labels.disabled = false;
-        // yAxis.renderer.labels.template.verticalCenter = "bottom";
-        // yAxis.renderer.labels.template.horizontalCenter = "right";
-        // yAxis.renderer.maxLabelPosition = 01;
-        // yAxis.renderer.labels.template.paddingBottom = 1;
-        // yAxis.renderer.labels.template.paddingRight = 3;
-        // yAxis.renderer.minGridDistance = 20;
-
-
-        /* Create and configure series */
-        // var windspeed = windrose.series.push(new am4charts.RadarSeries());
-        // var circleBulletWS = windspeed.bullets.push(new am4core.Circle());
-        // circleBulletWS.tooltipText = "{ws} km/h @ {wd}° {wdce}";
-        // circleBulletWS.radius = 3;
-        // circleBulletWS.strokeWidth = 1;
-        // windspeed.strokeOpacity = 0;
-        // windspeed.dataFields.valueX = "wd";
-        // windspeed.dataFields.valueY = "ws";
-        // windspeed.name = "Speed";
-        // windspeed.sequencedInterpolation = true;
-        // windspeed.sequencedInterpolationDelay = 10;
-        // windspeed.data = winddat;
-        // windspeed.fill = am4core.color("#15dbac");
-
-
-        var windgust = windrose.series.push(new am4charts.RadarSeries());
-        var circleBulletWG = windgust.bullets.push(new am4core.Circle());
-        circleBulletWG.tooltipText = "{wg} km/h @ {wd}° {wdce}";
-        circleBulletWG.radius = 3;
-        circleBulletWG.strokeWidth = 1;
-        windgust.strokeOpacity = 0;
-        windgust.dataFields.valueX = "wd";
-        windgust.dataFields.valueY = "wg";
-        windgust.name = "Gust";
-        windgust.sequencedInterpolation = true;
-        windgust.sequencedInterpolationDelay = 10;
-        windgust.data = winddat;
-        windgust.fill = am4core.color("#71e769");
-
-        var windAvg = windrose.series.push(new am4charts.RadarSeries());
-        var circleBulletWA = windAvg.bullets.push(new am4core.Circle());
-        circleBulletWA.tooltipText = "{was} km/h @ {wd}° {wdce}";
-        circleBulletWA.radius = 3;
-        circleBulletWA.strokeWidth = 1;
-        windAvg.strokeOpacity = 0;
-        windAvg.dataFields.valueX = "wd";
-        windAvg.dataFields.valueY = "was";
-        windAvg.name = "Avg";
-        windAvg.sequencedInterpolation = true;
-        windAvg.sequencedInterpolationDelay = 10;
-        windAvg.data = winddat;
-        windAvg.fill = am4core.color("#8ebdf3");
-
-
-        /* Add legend */
-        windrose.legend = new am4charts.Legend();
-        /* Add cursor */
-        // windrose.cursor = new am4charts.RadarCursor();
-        if (raining) {
-            var rainrose = am4core.create("rainrose", am4charts.RadarChart);
-            // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-            // categoryAxis.dataFields.category = "wdce";
-            /* Create axes */
-            var xAxisRR = rainrose.xAxes.push(new am4charts.ValueAxis());
-            xAxisRR.renderer.maxLabelPosition = 0.99;
-            xAxisRR.min = 0;
-            xAxisRR.max = 360;
-            xAxisRR.renderer.minGridDistance = 40;
-            xAxisRR.strictMinMax = true;
-            xAxisRR.dateFormatter = new am4core.DateFormatter();
-            xAxisRR.dateFormatter.dateFormat = "HH:mm";
-            // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
-            // categoryAxisWR.tooltipDateFormat = "HH:mm";
-            // xAxis.numberFormatter.numberFormat = "#.0°|0°";
-
-
-            var yAxisRR = rainrose.yAxes.push(new am4charts.ValueAxis());
-            yAxisRR.renderer.labels.disabled = true;
-            xAxisRR.min = 1;
-            // yAxis.renderer.labels.template.verticalCenter = "bottom";
-            // yAxis.renderer.labels.template.horizontalCenter = "right";
-            // yAxis.renderer.maxLabelPosition = 01;
-            // yAxis.renderer.labels.template.paddingBottom = 1;
-            // yAxis.renderer.labels.template.paddingRight = 3;
-            // yAxis.renderer.minGridDistance = 20;
-
-
-            /* Create and configure series */
-            var rainRate = rainrose.series.push(new am4charts.RadarSeries());
-            var circleBulletRR = rainRate.bullets.push(new am4core.Circle());
-            circleBulletRR.tooltipText = "{ot} : {rr} mm/h from {wda}° {wdae}";
-            circleBulletRR.radius = 3;
-            circleBulletRR.strokeWidth = 0.5;
-            // rainRate.minBulletDistance = 1.5;
-            rainRate.strokeOpacity = 0;
-            rainRate.dataFields.valueX = "wda";
-            rainRate.dataFields.valueY = "rr";
-            rainRate.name = "Rain Rate";
-            // rainRate.sequencedInterpolation = true;
-            // rainRate.sequencedInterpolationDelay = 10;
-            rainRate.data = raindat;
-            rainRate.fill = am4core.color("#ffffff");
-        }
-
-        if (h < 2) {
-            var tempRose = am4core.create("chartTR", am4charts.RadarChart);
-            // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-            // categoryAxis.dataFields.category = "wdEng";
-            /* Create axes */
-            var xAxisTR = tempRose.xAxes.push(new am4charts.ValueAxis());
-            xAxisTR.renderer.maxLabelPosition = 0.99;
-            xAxisTR.min = 0;
-            xAxisTR.max = 360;
-            xAxisTR.renderer.minGridDistance = 40;
-            xAxisTR.strictMinMax = true;
-            xAxisTR.dateFormatter = new am4core.DateFormatter();
-            xAxisTR.dateFormatter.dateFormat = "HH:mm";
-            // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
-            // categoryAxisWR.tooltipDateFormat = "HH:mm";
-            // xAxis.numberFormatter.numberFormat = "#.0°|0°";
-
-
-            var yAxisTR = tempRose.yAxes.push(new am4charts.ValueAxis());
-            yAxisTR.renderer.labels.disabled = true;
-            // yAxis.renderer.labels.template.verticalCenter = "bottom";
-            // yAxis.renderer.labels.template.horizontalCenter = "right";
-            // yAxis.renderer.maxLabelPosition = 01;
-            // yAxis.renderer.labels.template.paddingBottom = 1;
-            // yAxis.renderer.labels.template.paddingRight = 3;
-            // yAxis.renderer.minGridDistance = 20;
-
-
-            /* Create and configure series */
-            var tempd = tempRose.series.push(new am4charts.RadarSeries());
-            var circleBulletTR = tempd.bullets.push(new am4core.Circle());
-            circleBulletTR.tooltipText = "{tmn} °C from {wda}° {wdae}";
-            circleBulletTR.radius = 3;
-            circleBulletTR.strokeWidth = 1;
-            // rainRate.minBulletDistance = 1.5;
-            tempd.strokeOpacity = 0;
-            tempd.dataFields.valueX = "wda";
-            tempd.dataFields.valueY = "tmn";
-            tempd.name = "Temp Min";
-            // rainRate.sequencedInterpolation = true;
-            // rainRate.sequencedInterpolationDelay = 10;
-            tempd.data = objdat;
-            tempd.fill = am4core.color("#0ec7ff");
-
-            var tempMd = tempRose.series.push(new am4charts.RadarSeries());
-            var circleBulletTmR = tempMd.bullets.push(new am4core.Circle());
-            circleBulletTmR.tooltipText = "{tmx} °C from {wda}° {wdae}";
-            circleBulletTmR.radius = 3;
-            circleBulletTmR.strokeWidth = 1;
-            // rainRate.minBulletDistance = 1.5;
-            tempMd.strokeOpacity = 0;
-            tempMd.dataFields.valueX = "wda";
-            tempMd.dataFields.valueY = "tmx";
-            tempMd.name = "Temp Max";
-            // rainRate.sequencedInterpolation = true;
-            // rainRate.sequencedInterpolationDelay = 10;
-            tempMd.data = objdat;
-            tempMd.fill = am4core.color("#ff2955");
-            tempRose.legend = new am4charts.Legend();
-            tempRose.cursor = new am4charts.RadarCursor();
-
-            var pressR = am4core.create("chartPR", am4charts.RadarChart);
-            // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-            // categoryAxis.dataFields.category = "wdce";
-            /* Create axes */
-            var xAxisPR = pressR.xAxes.push(new am4charts.ValueAxis());
-            xAxisPR.renderer.maxLabelPosition = 0.99;
-            xAxisPR.min = 0;
-            xAxisPR.max = 360;
-            xAxisPR.renderer.minGridDistance = 40;
-            xAxisPR.strictMinMax = true;
-            xAxisPR.dateFormatter = new am4core.DateFormatter();
-            xAxisPR.dateFormatter.dateFormat = "HH:mm";
-            // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
-            // categoryAxisWR.tooltipDateFormat = "HH:mm";
-            // xAxis.numberFormatter.numberFormat = "#.0°|0°";
-
-
-            var yAxisPR = pressR.yAxes.push(new am4charts.ValueAxis());
-            yAxisPR.renderer.labels.disabled = true;
-            // yAxis.renderer.labels.template.verticalCenter = "bottom";
-            // yAxis.renderer.labels.template.horizontalCenter = "right";
-            // yAxis.renderer.maxLabelPosition = 01;
-            // yAxis.renderer.labels.template.paddingBottom = 1;
-            // yAxis.renderer.labels.template.paddingRight = 3;
-            // yAxis.renderer.minGridDistance = 20;
-
-
-            /* Create and configure series */
-            var pressD = pressR.series.push(new am4charts.RadarSeries());
-            var circleBulletPR = pressD.bullets.push(new am4core.Circle());
-            circleBulletPR.tooltipText = "{p} hPa from {wda}° {wdae}";
-            circleBulletPR.radius = 3;
-            circleBulletPR.strokeWidth = 1;
-            // rainRate.minBulletDistance = 1.5;
-            pressD.strokeOpacity = 0;
-            pressD.dataFields.valueX = "wda";
-            pressD.dataFields.valueY = "p";
-            pressD.name = "Pressure";
-            // rainRate.sequencedInterpolation = true;
-            // rainRate.sequencedInterpolationDelay = 10;
-            pressD.data = objdat;
-            pressD.fill = am4core.color("#43fff9");
-            pressR.legend = new am4charts.Legend();
-            pressR.cursor = new am4charts.RadarCursor();
-
-            var humRose = am4core.create("chartHR", am4charts.RadarChart);
-            // var categoryAxis = windrose.xAxes.push(new am4charts.CategoryAxis());
-            // categoryAxis.dataFields.category = "wdce";
-            /* Create axes */
-            var xAxisHR = humRose.xAxes.push(new am4charts.ValueAxis());
-            xAxisHR.renderer.maxLabelPosition = 0.99;
-            xAxisHR.min = 0;
-            xAxisHR.max = 360;
-            xAxisHR.renderer.minGridDistance = 40;
-            xAxisHR.strictMinMax = true;
-            xAxisHR.dateFormatter = new am4core.DateFormatter();
-            xAxisHR.dateFormatter.dateFormat = "HH:mm";
-            // var categoryAxisWR = windrose.xAxes.push(new am4charts.DateAxis());
-            // categoryAxisWR.tooltipDateFormat = "HH:mm";
-            // xAxis.numberFormatter.numberFormat = "#.0°|0°";
-
-
-            var yAxisHR = humRose.yAxes.push(new am4charts.ValueAxis());
-            yAxisHR.renderer.labels.disabled = true;
-            yAxisHR.min = 0;
-            yAxisHR.max = 100;
-            // yAxis.renderer.labels.template.verticalCenter = "bottom";
-            // yAxis.renderer.labels.template.horizontalCenter = "right";
-            // yAxis.renderer.maxLabelPosition = 01;
-            // yAxis.renderer.labels.template.paddingBottom = 1;
-            // yAxis.renderer.labels.template.paddingRight = 3;
-            // yAxis.renderer.minGridDistance = 20;
-
-
-            /* Create and configure series */
-            var humd = humRose.series.push(new am4charts.RadarSeries());
-            var circleBulletHR = humd.bullets.push(new am4core.Circle());
-            circleBulletHR.tooltipText = "{ho} % from {wda}° {wdae}";
-            circleBulletHR.radius = 3;
-            circleBulletHR.strokeWidth = 1;
-            // rainRate.minBulletDistance = 1.5;
-            humd.strokeOpacity = 0;
-            humd.dataFields.valueX = "wda";
-            humd.dataFields.valueY = "ho";
-            humd.name = "Humidity";
-            // rainRate.sequencedInterpolation = true;
-            // rainRate.sequencedInterpolationDelay = 10;
-            humd.data = objdat;
-            humd.fill = am4core.color("#43fff9");
-            humRose.legend = new am4charts.Legend();
-            humRose.cursor = new am4charts.RadarCursor();
+            }
+            series.data.setAll(pageData);
         }
     }
+    
+    function createPolarChart({
+                                  id,
+                                  valueFields,
+                                  tooltipText,
+                                  strokeFillColors,
+                                  labelText,
+                                  min,
+                                  max,
+                                  bullets,
+                                  connected,
+                                  strokeWidth
+                              } = {}) {
+        var root = am5.Root.new(id);
+
+// Set themes
+// https://www.amcharts.com/docs/v5/concepts/themes/
+        root.setThemes([
+            am5themes_Dark.new(root)
+        ]);
+
+
+
+// Create chart
+// https://www.amcharts.com/docs/v5/charts/radar-chart/
+        var chart = root.container.children.push(am5radar.RadarChart.new(root, {
+            panX: false,
+            panY: false,
+            wheelX: "panX",
+            wheelY: "zoomX"
+        }));
+
+// Add cursor
+// https://www.amcharts.com/docs/v5/charts/radar-chart/#Cursor
+        var cursor = chart.set("cursor", am5radar.RadarCursor.new(root, {
+            behavior: "none"
+        }));
+
+        cursor.lineY.set("visible", false);
+        cursor.lineX.set("visible", false);
+
+// Create axes and their renderers
+// https://www.amcharts.com/docs/v5/charts/radar-chart/#Adding_axes
+        var xRenderer = am5radar.AxisRendererCircular.new(root, {});
+        xRenderer.labels.template.setAll({
+            radius: 10
+        });
+
+        // var xAxis = chart.xAxes.push(
+        //     am5xy.ValueAxis.new(root, {
+        //         min: min,
+        //         max: max,
+        //         strictMinMax: true,
+        //         renderer: am5radar.AxisRendererX.new(root, {
+        //             minGridDistance: 20,
+        //         })
+        //     }));
+        var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
+            renderer: am5radar.AxisRendererRadial.new(root, {})
+        }));
+        var yAxis = chart.yAxes.push(
+            am5xy.ValueAxis.new(root, {
+            renderer: am5radar.AxisRendererRadial.new(root, {})
+        }));
+
+// Create series
+// https://www.amcharts.com/docs/v5/charts/radar-chart/#Adding_series
+
+        var series = chart.series.push(am5radar.RadarLineSeries.new(root, {
+            stacked: true,
+            name: "Series ",
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: valueFields[0],
+            valueXField: "wd",
+            tooltip: am5.Tooltip.new(root, {
+                labelText: "{wg} km/h @ {wd}° {wdce}"
+            })
+        }));
+
+
+        series.strokes.template.set("strokeWidth", 2);
+        series.bullets.push(function() {
+            return am5.Bullet.new(root, {
+                sprite: am5.Circle.new(root, {
+                    radius: 5,
+                    fill: series.get("fill"),
+                    strokeWidth: 2,
+                    stroke: root.interfaceColors.get("background")
+                })
+            })
+        })
+
+        var series1 = chart.series.push(am5radar.RadarLineSeries.new(root, {
+            stacked: true,
+            name: "Series ",
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: valueFields[1],
+            valueXField: "wd",
+            tooltip: am5.Tooltip.new(root, {
+                labelText: "{was} km/h @ {wd}° {wdce}"
+            })
+        }));
+
+
+        series1.strokes.template.set("strokeWidth", 2);
+        series1.bullets.push(function() {
+            return am5.Bullet.new(root, {
+                sprite: am5.Circle.new(root, {
+                    radius: 5,
+                    fill: series1.get("fill"),
+                    strokeWidth: 2,
+                    stroke: root.interfaceColors.get("background")
+                })
+            })
+        })
+        series.data.setAll(winddat);
+        series1.data.setAll(winddat);
+        xAxis.data.setAll(winddat);
+    }
+        
+
+    createXYChart({
+            id: "chartemp",
+            valueFields: ["to", "dc"],
+            tooltipText: ["Outdoor {to} °C", "Dew Point {dc} °C"],
+            strokeFillColors: ["#ff8145", "#87f7ff"],
+            labelText: "Temp & Dew point"
+        }
+    );
+    createXYChart(
+        {
+            id: "chartminmax",
+            valueFields: ["tmn", "tmx"],
+            tooltipText: ["{tmn} °C min", "{tmx} °C max"],
+            strokeFillColors: ["#0ec7ff", "#ff2955"],
+            labelText: "Temp Min/Max"
+        }
+    );
+    createXYChart(
+        {
+            id: "charthum",
+            valueFields: ["ho", "hi"],
+            tooltipText: ["Outdoors {ho} %", "Indoors {hi} %"],
+            strokeFillColors: ["#5c8fff", "#0ec7ff"],
+            labelText: "Humidity"
+        }
+    );
+    createXYChart(
+        {
+            id: "chartpressure",
+            valueFields: ["p"],
+            tooltipText: ["{p} hPa"],
+            strokeFillColors: ["#ff8d8d"],
+            labelText: "Pressure"
+        }
+    );
+    createXYChart(
+        {
+            id: "chartwind",
+            valueFields: ["ws", "wg", "was"],
+            tooltipText: ["Current {ws} km/h", "Gust {wg} km/h", "Avg {was} km/h"],
+            strokeFillColors: ["#11ff1e", "#ffbf8d", "#ff8d8d"],
+            labelText: "Wind Speed"
+        }
+    );
+    createXYChart(
+        {
+            id: "chartrain",
+            valueFields: ["rd", "rr"],
+            tooltipText: ["{rd} mm", "{rr} mm/h from {wda}° {wdae}"],
+            strokeFillColors: ["#5c8fff", "#87f7ff"],
+            labelText: "Rain",
+        }
+    );
+    createXYChart(
+        {
+            id: "chartsolar",
+            valueFields: ["sr"],
+            tooltipText: ["{sr} W/m²"],
+            strokeFillColors: ["#ffdf43"],
+            labelText: "Radiation"
+        }
+    );
+    createXYChart(
+        {
+            id: "chartuv",
+            valueFields: ["UV"],
+            tooltipText: ["{UV}"],
+            strokeFillColors: ["#ffdf43"],
+            labelText: "UV index"
+        }
+    );
+    createXYChart(
+        {
+            id: "chartwd",
+            valueFields: ["wd", "wda"],
+            tooltipText: ["{wd}° / {wdce} current", "{wda}° / {wdae} average"],
+            strokeFillColors: ["#7fdfff", "#dafaff"],
+            labelText: "Wind Direction",
+            min: 0,
+            max: 360,
+            bullets: true,
+            connected: false,
+            strokeWidth: 0
+        }
+    );
+    createPolarChart({
+        id:"windrose",
+        valueFields: ["wg","was"],
+        strokeFillColors: ["#71e769", "#8ebdf3"],
+        min: 0,
+        max: 360,
+    })
+
+    // REMOVE ME!!!!
+    console.log(`timeFrame : ${timeFrame}\ntimeUnit : ${tUnint},\ndateFormat : ${dateFormat}\nCount : ${baseIntervalCount}`)
 });
