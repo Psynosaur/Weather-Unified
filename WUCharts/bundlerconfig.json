@@ -11,10 +11,6 @@
   {
     "outputFileName": "wwwroot/js/site.min.js",
     "inputFiles": [
-      "wwwroot/lib/assets/amcharts5-dark.js",
-      "wwwroot/lib/assets/amcharts5-index.js",
-      "wwwroot/lib/assets/amcharts5-radar.js",
-      "wwwroot/lib/assets/amcharts5-xy.js",
       "wwwroot/lib/assets/flatpickr.js",
       "wwwroot/js/site.js"
     ],
