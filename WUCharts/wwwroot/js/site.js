@@ -40,7 +40,8 @@ am5.ready(function () {
     switch (timeFrame) {
         case 1:
             tUnint = "minute";
-            gridCount = 60
+            baseIntervalCount = 5;
+            gridCount = 120
             break;
         case 2:
             tUnint = "hour"
@@ -85,10 +86,12 @@ am5.ready(function () {
                                max,
                                bullets,
                                connected,
-                               strokeWidth
+                               strokeWidth,
+                               fps
                            } = {}) {
         // 1. Create root element
         var root = am5.Root.new(id);
+        root.fps = fps;
         // 2. Set themes
         root.setThemes([
             am5themes_Dark.new(root)
@@ -136,6 +139,7 @@ am5.ready(function () {
                 strictMinMax: true,
                 renderer: am5xy.AxisRendererY.new(root, {
                     minGridDistance: 30,
+                    strokeWidth: 1.2
                 })
             }));
 
@@ -165,12 +169,12 @@ am5.ready(function () {
                 centerX: am5.percent(50)
             }));
             if (bullets) {
-                let fill = series.get("fill");
+                // let fill = series.get("fill");
                 series.bullets.push(function (root) {
                     return am5.Bullet.new(root, {
                         sprite: am5.Circle.new(root, {
-                            radius: 2,
-                            fill: fill
+                            radius: 1.4,
+                            fill: am5.color(strokeFillColors[i])
                         })
                     })
                 });
@@ -192,10 +196,13 @@ am5.ready(function () {
                                   min,
                                   max,
                                   data,
-                                  strokeWidth
+                                  strokeWidth,
+                                  fps,
+                                  seriesNames,
+                                  showLegend,
                               } = {}) {
         var root = am5.Root.new(id);
-
+        root.fps = fps;
         root.setThemes([
             am5themes_Dark.new(root)
         ]);
@@ -208,37 +215,37 @@ am5.ready(function () {
         }));
 
         var cursor = chart.set("cursor", am5radar.RadarCursor.new(root, {
-            behavior: "zoomX"
+            behavior: "none"
         }));
 
-        cursor.lineY.set("visible", true);
-        cursor.lineX.set("visible", true);
-        console.log(3)
-
+        cursor.lineY.set("visible", false);
+        cursor.lineX.set("visible", false);
 
         var xRenderer = am5radar.AxisRendererCircular.new(root, {
-            minGridDistance: 30
+            minGridDistance: 40
         });
-
+        xRenderer.grid.template.setAll({
+            location: 0,
+            maxLabelPosition: 0.99
+        });
         var xAxis = chart.xAxes.push(
             am5xy.ValueAxis.new(root, {
                 maxDeviation: 0,
                 min: min,
                 max: max,
                 strictMinMax: true,
-                categoryField: "wd",
                 renderer: xRenderer
             }));
 
         var yAxis = chart.yAxes.push(
             am5xy.ValueAxis.new(root, {
-                min: 0,
+                min: 1,
                 renderer: am5radar.AxisRendererRadial.new(root, {})
             }));
 
         for (let i = 0; i < valueYFields.length; i++) {
             var series = chart.series.push(am5radar.RadarLineSeries.new(root, {
-                name: `Series${id}${i}`,
+                name: seriesNames ? seriesNames[i] : `Series${id}${i}`,
                 xAxis: xAxis,
                 yAxis: yAxis,
                 valueYField: valueYFields[i],
@@ -246,26 +253,30 @@ am5.ready(function () {
                 tooltip: am5.Tooltip.new(root, {
                     labelText: tooltipText[i]
                 }),
-                connectEnds: false
+                connectEnds: false,
+                sequencedInterpolation: true,
+                sequencedInterpolationDelay: 10
             }));
-
-
-            series.strokes.template.set("strokeWidth", 2);
-            let fillz = series.get("fill");
             series.bullets.push(function () {
                 return am5.Bullet.new(root, {
                     sprite: am5.Circle.new(root, {
                         radius: 4,
-                        fill: fillz,
+                        fill: am5.color(strokeFillColors[i]),
                         strokeWidth: strokeWidth,
                         stroke: root.interfaceColors.get("background")
                     })
                 })
             })
+            
+            if(showLegend){
+                var legend = chart.children.push(am5.Legend.new(root, {}));
+                legend.data.setAll(chart.series.values);
+            }
             series.strokes.template.setAll({
                 strokeDasharray: [0, 1],
                 color: strokeFillColors[i]
             });
+
 
             series.data.setAll(data);
             xAxis.data.setAll(data);
@@ -278,7 +289,8 @@ am5.ready(function () {
             valueFields: ["to", "dc"],
             tooltipText: ["Outdoor {to} °C", "Dew Point {dc} °C"],
             strokeFillColors: ["#ff8145", "#87f7ff"],
-            labelText: "Temp & Dew point"
+            labelText: "Temp & Dew point",
+            fps: 60
         }
     );
     createXYChart(
@@ -287,7 +299,8 @@ am5.ready(function () {
             valueFields: ["tmn", "tmx"],
             tooltipText: ["{tmn} °C min", "{tmx} °C max"],
             strokeFillColors: ["#0ec7ff", "#ff2955"],
-            labelText: "Temp Min/Max"
+            labelText: "Temp Min/Max",
+            fps: 60
         }
     );
     createXYChart(
@@ -296,7 +309,8 @@ am5.ready(function () {
             valueFields: ["ho", "hi"],
             tooltipText: ["Outdoors {ho} %", "Indoors {hi} %"],
             strokeFillColors: ["#5c8fff", "#0ec7ff"],
-            labelText: "Humidity"
+            labelText: "Humidity",
+            fps: 60
         }
     );
     createXYChart(
@@ -305,7 +319,8 @@ am5.ready(function () {
             valueFields: ["p"],
             tooltipText: ["{p} hPa"],
             strokeFillColors: ["#ff8d8d"],
-            labelText: "Pressure"
+            labelText: "Pressure",
+            fps: 60
         }
     );
     createXYChart(
@@ -314,7 +329,9 @@ am5.ready(function () {
             valueFields: ["ws", "wg", "was"],
             tooltipText: ["Current {ws} km/h", "Gust {wg} km/h", "Avg {was} km/h"],
             strokeFillColors: ["#11ff1e", "#ffbf8d", "#ff8d8d"],
-            labelText: "Wind Speed"
+            labelText: "Wind Speed",
+            fps: 60,
+            min: 0
         }
     );
     createXYChart(
@@ -324,6 +341,8 @@ am5.ready(function () {
             tooltipText: ["{rd} mm", "{rr} mm/h from {wda}° {wdae}"],
             strokeFillColors: ["#5c8fff", "#87f7ff"],
             labelText: "Rain",
+            fps: 60,
+            min: 0
         }
     );
     createXYChart(
@@ -332,7 +351,9 @@ am5.ready(function () {
             valueFields: ["sr"],
             tooltipText: ["{sr} W/m²"],
             strokeFillColors: ["#ffdf43"],
-            labelText: "Radiation"
+            labelText: "Radiation",
+            fps: 60,
+            min: 0
         }
     );
     createXYChart(
@@ -341,7 +362,9 @@ am5.ready(function () {
             valueFields: ["UV"],
             tooltipText: ["{UV}"],
             strokeFillColors: ["#ffdf43"],
-            labelText: "UV index"
+            labelText: "UV index",
+            fps: 60,
+            min: 0
         }
     );
     createXYChart(
@@ -355,7 +378,8 @@ am5.ready(function () {
             max: 360,
             bullets: true,
             connected: false,
-            strokeWidth: 0
+            strokeWidth: 0,
+            fps: 60
         }
     );
     createPolarChart({
@@ -367,7 +391,10 @@ am5.ready(function () {
         min: 0,
         max: 360,
         data: winddat,
-        strokeWidth: 0.5
+        strokeWidth: 0.5,
+        fps: 60,
+        seriesNames: ["Gust", "Average"],
+        showLegend: true
     })
     if (raindat) {
         createPolarChart({
@@ -379,9 +406,54 @@ am5.ready(function () {
             max: 360,
             valueXFields: ["wda"],
             data: raindat,
-            strokeWidth: 0.5
+            strokeWidth: 0.5,
+            fps: 60,
+            showLegend: false
         })
     }
+    // if (timeFrame < 2) {
+    //     // var setCanvasSize = function() {
+    //     //     canvas.width = 400;
+    //     //     canvas.height = 400;
+    //     // }
+    //     // setCanvasSize();
+    //     createPolarChart({
+    //         id: "chartTR",
+    //         valueYFields: ["tmn", "tmx"],
+    //         strokeFillColors: ["#ffdf43", "#8ebdf3"],
+    //         tooltipText: ["{tmn} °C from {wda}° {wdae}", "{tmx} °C from {wda}° {wdae}"],
+    //         valueXFields: ["wda", "wda"],
+    //         min: 0,
+    //         max: 360,
+    //         data: pageData,
+    //         strokeWidth: 0.5,
+    //         fps: 60
+    //     })
+    //     createPolarChart({
+    //         id: "chartPR",
+    //         valueYFields: ["p"],
+    //         strokeFillColors: ["#ffdf43"],
+    //         tooltipText: ["{p} hPa from {wda}° {wdae}"],
+    //         valueXFields: ["wda"],
+    //         min: 0,
+    //         max: 360,
+    //         data: pageData,
+    //         strokeWidth: 0.5,
+    //         fps: 60
+    //     })
+    //     createPolarChart({
+    //         id: "chartHR",
+    //         valueYFields: ["ho"],
+    //         strokeFillColors: ["#ffdf43"],
+    //         tooltipText: ["{ho} % from {wda}° {wdae}"],
+    //         valueXFields: ["wda"],
+    //         min: 0,
+    //         max: 360,
+    //         data: pageData,
+    //         strokeWidth: 0.5,
+    //         fps: 60
+    //     })
+    // }
 
     // REMOVE ME!!!!
     console.log(`timeFrame : ${timeFrame}\ntimeUnit : ${tUnint},\ndateFormat : ${dateFormat}\nCount : ${baseIntervalCount}`)
