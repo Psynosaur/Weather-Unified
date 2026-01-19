@@ -345,6 +345,5 @@ healthchecksdb
 /WUCharts/wwwroot/img/weather-icons-master.zip
 /WUCharts/wwwroot/lib/assets/drive-download-20200626T052830Z-001.zip
 WUApiNotes.txt
-WURequest/appsettings.json
-WUCharts/appsettings.json
-
+# WURequest/appsettings.json
+# WUCharts/appsettings.json

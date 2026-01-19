@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
     <UserSecretsId>2ca4fa97-9422-48bd-9c7d-56f8ada2c352</UserSecretsId>
     <ApplicationIcon />
@@ -10,9 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.14" />
-    <PackageReference Include="MongoDB.Driver" Version="2.14.1" />
+    <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.436" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NUglify" Version="1.21.15" />
     <PackageReference Include="RobotsTxtCore" Version="2.0.0" />
   </ItemGroup>
 
@@ -65,35 +67,7 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="wwwroot\lib\bootstrap.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap.min.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\jquery-3.2.1.slim.min.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\jquery-3.5.1.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\jquery-ui.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\popper.min.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="bundlerconfig.json">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+   
     <Content Update="wwwroot\lib\assets\flatpickr.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -110,22 +84,6 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\bootstrap.min.css" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\jquery-3.2.1.slim.min.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\jquery-3.5.1.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\jquery-ui.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap.min.css" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap.min.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-3.2.1.slim.min.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-3.5.1.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-ui.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\popper.min.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <DotNetCliToolReference Include="BundlerMinifier.Core" Version="3.2.447" />
   </ItemGroup>
 
 </Project>
