@@ -1,0 +1,36 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ObservationDatabaseSettings": {
+    "ObservationCollectionName": "Observations",
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "WeatherDb"
+  },
+  "ForeCastDatabaseSettings": {
+    "ForecastCollectionName": "Forecasts",
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "fcStore"
+  },
+  "WeatherUndergroundApiSettings": {
+    "StationId": "IBELLV3",
+    "Pat": "",
+    "Pat2": "",
+    "Lat": "-33",
+    "Lon": "18",
+    "Units": "m",
+    "Format": "json",
+    "Language": "en-GB"
+  },
+  "AppSettings": {
+    "StationName": "Durbanville",
+    "TimeZone": "+2",
+    "MagneticDeclination" : 25.32,
+    "Lat": -33,
+    "WURequestApiUrl": "https://localhost",
+    "WURequestApiPort": 5001
+  }
+}
