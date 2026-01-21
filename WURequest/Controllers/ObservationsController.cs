@@ -104,5 +104,103 @@ namespace WURequest.Controllers
                 throw;
             }
         }
+
+        [HttpGet("hourly/{hour}")]
+        public async Task<ActionResult<List<Observations>>> GetHourly(int hour)
+        {
+            try
+            {
+                return await _observationsService.Hourly(hour);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching hourly observations for hour {Hour}", hour);
+                throw;
+            }
+        }
+
+        [HttpGet("daily")]
+        public async Task<ActionResult<List<Observations>>> GetDaily()
+        {
+            try
+            {
+                return await _observationsService.Daily();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching daily observations");
+                throw;
+            }
+        }
+
+        [HttpGet("weekly")]
+        public async Task<ActionResult<List<Observations>>> GetWeekly()
+        {
+            try
+            {
+                return await _observationsService.Weekly();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching weekly observations");
+                throw;
+            }
+        }
+
+        [HttpGet("monthly")]
+        public async Task<ActionResult<List<Observations>>> GetMonthly()
+        {
+            try
+            {
+                return await _observationsService.Monthly();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching monthly observations");
+                throw;
+            }
+        }
+
+        [HttpGet("date/{date}")]
+        public async Task<ActionResult<List<Observations>>> GetByDate(string date)
+        {
+            try
+            {
+                return await _observationsService.Date(date);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching observations for date {Date}", date);
+                throw;
+            }
+        }
+
+        [HttpGet("rain")]
+        public ActionResult<List<List<RainObs>>> GetRainData([FromQuery] string start, [FromQuery] string end)
+        {
+            try
+            {
+                return _observationsService.Rain(start, end);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching rain data from {Start} to {End}", start, end);
+                throw;
+            }
+        }
+
+        [HttpGet("count")]
+        public ActionResult<long> GetCount()
+        {
+            try
+            {
+                return _observationsService.Count();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching observation count");
+                throw;
+            }
+        }
     }
 }

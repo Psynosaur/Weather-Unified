@@ -1,18 +1,16 @@
-﻿using System;
+using System;
 using System.IO.Compression;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using RobotsTxt;
+using Microsoft.Extensions.Hosting;
+using WUCharts.Services;
 using WURequest.Models;
-using WURequest.Services;
-
+using WebOptimizer;
 
 namespace WUCharts
 {
@@ -31,62 +29,49 @@ namespace WUCharts
             services.AddHealthChecks();
             services.AddResponseCompression(options =>
             {
-                // options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<BrotliCompressionProvider>();
                 options.Providers.Add<GzipCompressionProvider>();
-                options.MimeTypes = 
+                options.MimeTypes =
                     ResponseCompressionDefaults.MimeTypes.Concat(
-                        new[]
-                        {
-                            "text/*",
-                            "text/css",
-                            "application/javascript",
-                            "text/javascript",
-                            "text/json",
-                            "application/json"
-                        });
+                        new[] { "image/svg+xml" });
             });
-            
-            services.AddStaticRobotsTxt(builder =>
-                builder
-                    .AddSection(section =>
-                        section
-                            .AddComment("Allow All")
-                            .AddUserAgent("*")
-                            .Allow("/")
-                    )
-                    .AddSitemap("https://weatheru.co.za/sitemap.xml")
-            );
 
-            // services.Configure<BrotliCompressionProviderOptions>(options =>
-            //     {
-            //         options.Level = CompressionLevel.Fastest;
-            //     }
-            // );
+            // Add WebOptimizer for bundling and minification
+            services.AddWebOptimizer(pipeline =>
+            {
+                // CSS Bundle - equivalent to the old bundlerconfig.json CSS configuration
+                pipeline.AddCssBundle("/css/site.min.css",
+                    "lib/assets/bulma.min.css",
+                    "lib/assets/bulma-tooltip.min.css",
+                    "lib/assets/flatpickr.css",
+                    "css/site.css");
+
+                // JavaScript Bundle - equivalent to the old bundlerconfig.json JS configuration
+                pipeline.AddJavaScriptBundle("/js/site.min.js",
+                    "lib/assets/core.js",
+                    "lib/assets/charts.js",
+                    "lib/assets/dark.js",
+                    "lib/assets/flatpickr.js",
+                    "js/site.js");
+            });
+
             services.Configure<GzipCompressionProviderOptions>(options =>
                 {
                     options.Level = CompressionLevel.Optimal;
                 }
             );
+
+            // Configure settings
             services.Configure<AppSettings>
                 (Configuration.GetSection("AppSettings"));
-            services.Configure<ObservationDatabaseSettings>(
-                Configuration.GetSection(nameof(ObservationDatabaseSettings)));
-            services.Configure<ForecastDatabaseSettings>(
-                Configuration.GetSection(nameof(ForecastDatabaseSettings)));
-            
-            services.AddSingleton<IForecastDatabaseSettings>(sp =>                      
-                sp.GetRequiredService<IOptions<ForecastDatabaseSettings>>().Value);  
-            
-            services.AddSingleton<IObservationDatabaseSettings>(sp =>
-                sp.GetRequiredService<IOptions<ObservationDatabaseSettings>>().Value);
-              
-            services.AddSingleton<IObservationsService, ObservationsService>();
-            services.AddSingleton<IForecastService, ForecastService>();
-            
+
+            // Register HttpClient for API calls to WURequest
+            services.AddHttpClient<IWeatherApiService, WeatherApiService>();
+
             services
                 .AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
-           
+
             services.AddRazorPages().AddRazorPagesOptions(options =>
             {
                 options.Conventions.AddPageRoute("/robotstxt", "/Robots.Txt");
@@ -103,41 +88,25 @@ namespace WUCharts
             }
             else
             {
-                app.UseExceptionHandler("/error");
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios.
                 app.UseHsts();
             }
-            app.Use(async (context,next) =>
-            {
-                var url = context.Request.Path.Value;
-                
-                // Does the url contain "home" or "Home"
-                if (url.IndexOf("/home/",StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    var suburl = url.Substring(url.IndexOf("/home/", StringComparison.OrdinalIgnoreCase) + 6);
-                    // rewrite and continue processing
-                    context.Request.Path = "/" + suburl;
-                }
 
-                await next();
-                if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
-                {
-                    string originalPath = context.Request.Path.Value;
-                    context.Items["originalPath"] = originalPath;
-                    context.Request.Path = "/error";
-                    await next();
-                }
-            });
-            app.UseRobotsTxt();
-            
             app.UseResponseCompression();
+
             app.UseCors(options => options.AllowAnyOrigin());
             app.UseHttpsRedirection();
+
+            // Add WebOptimizer middleware BEFORE UseStaticFiles
+            app.UseWebOptimizer();
+
             var cachePeriod = env.IsDevelopment() ? "600" : "604800";
             app.UseStaticFiles(new StaticFileOptions
             {
                 OnPrepareResponse = ctx =>
                 {
-                    ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={cachePeriod}");
+                    ctx.Context.Response.Headers.CacheControl = $"public, max-age={cachePeriod}";
                 }
             });
             app.UseCookiePolicy();

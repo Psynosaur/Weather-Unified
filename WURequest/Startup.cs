@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +36,9 @@ namespace WURequest
             
             services.AddSingleton<IForecastService, ForecastService>();
             services.AddSingleton<IObservationsService, ObservationsService>();
+            
+            // Register HttpClient for external API calls
+            services.AddHttpClient<IForecastApiService, ForecastApiService>();
             
             services.AddRazorPages();
             services.AddHostedService<ForecastBackgroundService>();

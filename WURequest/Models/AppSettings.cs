@@ -7,7 +7,8 @@ namespace WURequest.Models
         public double MagneticDeclination { get; set; }
         public double Lat { get; set; }
         public string WeatherStation { get; set; }
-
+        public string WURequestApiUrl { get; set; }
+        public int WURequestApiPort { get; set; }
     }
 
     public interface IAppSettings
@@ -17,5 +18,7 @@ namespace WURequest.Models
         public double MagneticDeclination { get; set; }
         public double Lat { get; set; }
         public string WeatherStation { get; set; }
+        public string WURequestApiUrl { get; set; }
+        public int WURequestApiPort { get; set; }
     }
 }

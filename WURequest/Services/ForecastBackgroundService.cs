@@ -1,13 +1,9 @@
 using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson.Serialization;
 using NCrontab;
-using WURequest.Models;
 
 namespace WURequest.Services
 {
@@ -15,26 +11,26 @@ namespace WURequest.Services
     public class ForecastBackgroundService : BackgroundService
     {
         private readonly IForecastService _forecastService;
-        private readonly IWeatherUndergroundApiSettings _weatherUndergroundApiSettings;
+        private readonly IForecastApiService _forecastApiService;
         private readonly CrontabSchedule _schedule;
         private readonly ILogger _logger;
         private DateTime _nextRun;
 
         // private static string Schedule => "*/10 * * * * *"; // every 10 seconds
-
         private static string Schedule => "0 * * * *"; // every 60 minutes
         
         public ForecastBackgroundService(
             IForecastService forecastService,
-            IWeatherUndergroundApiSettings weatherUndergroundApiSettings,
+            IForecastApiService forecastApiService,
             ILoggerFactory logFactory)
         {
-            _schedule = CrontabSchedule.Parse(Schedule,new CrontabSchedule.ParseOptions { IncludingSeconds = false });
+            _schedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = false });
             _nextRun = _schedule.GetNextOccurrence(DateTime.Now);
             _forecastService = forecastService;
-            _weatherUndergroundApiSettings = weatherUndergroundApiSettings;
+            _forecastApiService = forecastApiService;
             _logger = logFactory.CreateLogger<ForecastBackgroundService>();
         }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
@@ -45,7 +41,7 @@ namespace WURequest.Services
                     var nextrun = _schedule.GetNextOccurrence(now);
                     if (now > _nextRun)
                     {
-                        Process();
+                        await ProcessAsync();
                         _nextRun = _schedule.GetNextOccurrence(DateTime.Now);
                     }
                     await Task.Delay(5000, stoppingToken); //5 seconds delay
@@ -54,59 +50,42 @@ namespace WURequest.Services
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex.ToString());
+                _logger.LogError(ex, "Error in ForecastBackgroundService execution");
                 throw;
             }
-            
         }
-        private async void Process()
-        {
-            try
-            {
-                await Forecast().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInformation(ex.ToString());
-                throw;
-            }
-            
-        }
-        private async Task Forecast()
-        {
-            try
-            {
-                //https://api.weather.com/v3/wx/forecast/daily/5day?geocode=-33.864643,18.659822&format=json&units=m&language=en-US&apiKey=d4748acffd2e4d8ab48acffd2e7d8abc
-                string url = string.Format(
-                    "https://api.weather.com/v3/wx/forecast/daily/5day?geocode={0},{1}&format={2}&units={3}&language={4}&apiKey={5}",
-                    _weatherUndergroundApiSettings.Lat,
-                    _weatherUndergroundApiSettings.Lon,
-                    _weatherUndergroundApiSettings.Format,
-                    _weatherUndergroundApiSettings.Units,
-                    _weatherUndergroundApiSettings.Language,
-                    _weatherUndergroundApiSettings.Pat
-                );
-                using HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
 
-                using HttpResponseMessage response = await client.GetAsync(url);
-                try
+        private async Task ProcessAsync()
+        {
+            try
+            {
+                await FetchAndStoreForecastAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing forecast data");
+                throw;
+            }
+        }
+
+        private async Task FetchAndStoreForecastAsync()
+        {
+            try
+            {
+                var forecast = await _forecastApiService.GetForecastAsync();
+                if (forecast != null)
                 {
-                    response.EnsureSuccessStatusCode();
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    var document = BsonSerializer.Deserialize<Forecasts>(responseBody);
-                    await _forecastService.Create(document);
+                    await _forecastService.Create(forecast);
+                    _logger.LogInformation("Successfully fetched and stored forecast data");
                 }
-                catch (Exception ex)
+                else
                 {
-                    _logger.LogInformation(ex.ToString());
-                    throw;
+                    _logger.LogWarning("Received null forecast data from API");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex.ToString());
+                _logger.LogError(ex, "Error fetching and storing forecast data");
                 throw;
             }
         }
