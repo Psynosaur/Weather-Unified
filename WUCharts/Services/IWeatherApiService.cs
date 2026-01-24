@@ -9,8 +9,8 @@ namespace WUCharts.Services
         Task<List<Observations>> GetLatestObservationsAsync();
         Task<List<Observations>> GetHourlyObservationsAsync(int hour);
         Task<List<Observations>> GetDailyObservationsAsync();
-        Task<List<Observations>> GetWeeklyObservationsAsync();
-        Task<List<Observations>> GetMonthlyObservationsAsync();
+        Task<List<Observations>> GetWeeklyObservationsAsync(string date = null);
+        Task<List<Observations>> GetMonthlyObservationsAsync(string date = null);
         Task<List<Observations>> GetObservationsByDateAsync(string date);
         Task<List<List<RainObs>>> GetRainDataAsync(string start, string end);
         Task<long> GetObservationCountAsync();
