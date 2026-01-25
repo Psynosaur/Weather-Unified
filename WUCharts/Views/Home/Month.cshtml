@@ -76,16 +76,17 @@
 @section Scripts
 {
     <script type="text/javascript">
-                    var hrs = 3;
-                    var pew = @nStep;
-                    var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
-                    var raining = @rainobj.Count >0;
-                    if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
-                    var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
-                </script>
+        var hrs = 3;
+        const pew = @nStep;
+        var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
+        var raining = @rainobj.Count >0;
+        if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
+        var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+    </script>
 }
 
-@{
+
+@{
     var currentDateStr = ViewData["CurrentDate"]?.ToString() ?? DateTime.Now.ToString("yyyy-MM-dd");
     var currentDate = DateTime.Parse(currentDateStr);
     var isCurrentMonth = (DateTime.Now.Date - currentDate.Date).TotalDays < 30;
@@ -105,7 +106,7 @@
     </h1>
     <div class="columns has-text-light">
         <div class="column is-2">
-            <button class="button is-info is-fullwidth" onclick="navigateToPreviousMonth()">
+            <button class="button is-dark is-fullwidth" onclick="navigateToPreviousMonth()">
                 <span class="icon">
                     <i class="fas fa-arrow-left"></i>
                 </span>
@@ -113,13 +114,13 @@
             </button>
         </div>
         <div class="column has-text-light" style="text-align: center">
-            <strong>Month: @monthStart.ToString("dd MMM") - @monthEnd.ToString("dd MMM yyyy")</strong><br/>
+            <small>Month: @monthStart.ToString("dd MMM") - @monthEnd.ToString("dd MMM yyyy")</small><br/>
             <small>Latest: @latest.ObsTime.ToLocalTime().ToString("dddd dd MMM yyyy HH:mm:ss zzz")</small>
         </div>
         <div class="column is-2">
             @if (!isCurrentMonth)
             {
-                <button class="button is-info is-fullwidth" onclick="navigateToNextMonth()">
+                <button class="button is-dark is-fullwidth" onclick="navigateToNextMonth()">
                     <span>Next Month</span>
                     <span class="icon">
                         <i class="fas fa-arrow-right"></i>
@@ -129,19 +130,19 @@
         </div>
     </div>
     <script>
-        var currentDate = new Date('@(ViewData["CurrentDate"]?.ToString() ?? DateTime.Now.ToString("yyyy-MM-dd"))');
+        const currentDate = new Date('@(ViewData["CurrentDate"]?.ToString() ?? DateTime.Now.ToString("yyyy-MM-dd"))');
         
         function navigateToPreviousMonth() {
-            var previousMonth = new Date(currentDate);
+            const previousMonth = new Date(currentDate);
             previousMonth.setMonth(previousMonth.getMonth() - 1);
-            var dateStr = previousMonth.toISOString().split('T')[0];
+            const dateStr = previousMonth.toISOString().split('T')[0];
             window.location = '/month/' + dateStr;
         }
         
         function navigateToNextMonth() {
-            var nextMonth = new Date(currentDate);
+            const nextMonth = new Date(currentDate);
             nextMonth.setMonth(nextMonth.getMonth() + 1);
-            var dateStr = nextMonth.toISOString().split('T')[0];
+            const dateStr = nextMonth.toISOString().split('T')[0];
             window.location = '/month/' + dateStr;
         }
     </script>
