@@ -1,4 +1,4 @@
-﻿body {
+body {
     padding-bottom: 20px;
     background-color: #313131;
     /*background-color: #3e3b3b;*/
@@ -71,6 +71,23 @@ html {
 #windrose, #rainrose {
     width: 100%;
     height: 370px;
+}
+
+/* Polar chart responsive sizing */
+#chartTR, #chartPR, #chartHR {
+    min-height: 400px;
+}
+
+@media screen and (max-width: 768px) {
+    #roses .column {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    #chartTR, #chartPR, #chartHR {
+        width: 100% !important;
+        height: 400px !important;
+    }
 }
 /*.topbar {*/
 /*   max-height: 10rem;*/

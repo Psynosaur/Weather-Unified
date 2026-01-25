@@ -1,4 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -154,16 +154,16 @@ am5.ready(function () {
                     valueXField: "ot",
                     tooltip: am5.Tooltip.new(root, {
                         labelText: tooltipText[i],
-                        getFillFromObject: false
+                        getFillFromObject: true
                     }),
                     fill: am5.color(strokeFillColors[i]),
                     stroke: am5.color(strokeFillColors[i]),
-                    tension: 0.8,
+                    tension: 0.3,
                 })
             );
             chart.children.unshift(am5.Label.new(root, {
                 text: labelText,
-                fontSize: 14,
+                fontSize: 18,
                 textAlign: "center",
                 x: am5.percent(50),
                 centerX: am5.percent(50)
@@ -200,6 +200,7 @@ am5.ready(function () {
                                   fps,
                                   seriesNames,
                                   showLegend,
+                                  labelText,
                               } = {}) {
         var root = am5.Root.new(id);
         root.fps = fps;
@@ -211,19 +212,41 @@ am5.ready(function () {
             panX: false,
             panY: false,
             wheelX: "none",
-            wheelY: "none"
+            wheelY: "none",
+            layout: root.verticalLayout,
+            showLegend: false,
         }));
+        
+        // Add label if provided
+        if (labelText) {
+            chart.children.unshift(am5.Label.new(root, {
+                text: labelText,
+                fontSize: 16,
+                fontWeight: "500",
+                textAlign: "center",
+                x: am5.percent(50),
+                centerX: am5.percent(50),
+                paddingTop: 0,
+                paddingBottom: 10
+            }));
+        }
 
         var cursor = chart.set("cursor", am5radar.RadarCursor.new(root, {
             behavior: "none"
         }));
-
+      
         cursor.lineY.set("visible", false);
         cursor.lineX.set("visible", false);
 
         var xRenderer = am5radar.AxisRendererCircular.new(root, {
             minGridDistance: 40
         });
+        xRenderer.labels.template.setAll({
+            radius: 0,
+            textAlign: "center",
+            showLegend: false,
+        });
+        
         xRenderer.grid.template.setAll({
             location: 0,
             maxLabelPosition: 0.99
@@ -237,10 +260,32 @@ am5.ready(function () {
                 renderer: xRenderer
             }));
 
+        // Calculate min and max from data for Y-axis
+        let yMin = Infinity;
+        let yMax = -Infinity;
+        
+        for (let i = 0; i < valueYFields.length; i++) {
+            data.forEach(item => {
+                const value = item[valueYFields[i]];
+                if (value != null) {
+                    yMin = Math.min(yMin, value);
+                    yMax = Math.max(yMax, value);
+                }
+            });
+        }
+        
+        // Add some padding (10% on each side)
+        const yRange = yMax - yMin;
+        const yPadding = yRange * 0.1;
+        
         var yAxis = chart.yAxes.push(
             am5xy.ValueAxis.new(root, {
-                min: 1,
-                renderer: am5radar.AxisRendererRadial.new(root, {})
+                min: yMin - yPadding,
+                max: yMax + yPadding,
+                strictMinMax: true,
+                renderer: am5radar.AxisRendererRadial.new(root, {
+                    minGridDistance: 20
+                })
             }));
 
         for (let i = 0; i < valueYFields.length; i++) {
@@ -394,7 +439,8 @@ am5.ready(function () {
         strokeWidth: 0.5,
         fps: 60,
         seriesNames: ["Gust", "Average"],
-        showLegend: true
+        showLegend: false,
+        // labelText: "Wind Rose"
     })
     if (raindat) {
         createPolarChart({
@@ -408,52 +454,60 @@ am5.ready(function () {
             data: raindat,
             strokeWidth: 0.5,
             fps: 60,
-            showLegend: false
+            showLegend: false,
+            // labelText: "Rain Rose"
         })
     }
-    // if (timeFrame < 2) {
-    //     // var setCanvasSize = function() {
-    //     //     canvas.width = 400;
-    //     //     canvas.height = 400;
-    //     // }
-    //     // setCanvasSize();
-    //     createPolarChart({
-    //         id: "chartTR",
-    //         valueYFields: ["tmn", "tmx"],
-    //         strokeFillColors: ["#ffdf43", "#8ebdf3"],
-    //         tooltipText: ["{tmn} °C from {wda}° {wdae}", "{tmx} °C from {wda}° {wdae}"],
-    //         valueXFields: ["wda", "wda"],
-    //         min: 0,
-    //         max: 360,
-    //         data: pageData,
-    //         strokeWidth: 0.5,
-    //         fps: 60
-    //     })
-    //     createPolarChart({
-    //         id: "chartPR",
-    //         valueYFields: ["p"],
-    //         strokeFillColors: ["#ffdf43"],
-    //         tooltipText: ["{p} hPa from {wda}° {wdae}"],
-    //         valueXFields: ["wda"],
-    //         min: 0,
-    //         max: 360,
-    //         data: pageData,
-    //         strokeWidth: 0.5,
-    //         fps: 60
-    //     })
-    //     createPolarChart({
-    //         id: "chartHR",
-    //         valueYFields: ["ho"],
-    //         strokeFillColors: ["#ffdf43"],
-    //         tooltipText: ["{ho} % from {wda}° {wdae}"],
-    //         valueXFields: ["wda"],
-    //         min: 0,
-    //         max: 360,
-    //         data: pageData,
-    //         strokeWidth: 0.5,
-    //         fps: 60
-    //     })
-    // }
+    if (timeFrame < 2) {
+        // var setCanvasSize = function() {
+        //     canvas.width = 400;
+        //     canvas.height = 400;
+        // }
+        // setCanvasSize();
+        createPolarChart({
+            id: "chartTR",
+            valueYFields: ["tmn", "tmx"],
+            strokeFillColors: ["#0ec5fd", "#ff4343"],
+            tooltipText: ["{tmn} °C from {wda}° {wdae}", "{tmx} °C from {wda}° {wdae}"],
+            valueXFields: ["wda", "wda"],
+            min: 0,
+            max: 360,
+            data: pageData,
+            strokeWidth: 0.5,
+            fps: 60,
+            seriesNames: ["Min Temp", "Max Temp"],
+            showLegend: false,
+            labelText: "Temperature Min/Max"
+        })
+        createPolarChart({
+            id: "chartPR",
+            valueYFields: ["p"],
+            strokeFillColors: ["#42fdf7"],
+            tooltipText: ["{p} hPa from {wda}° {wdae}"],
+            valueXFields: ["wda"],
+            min: 0,
+            max: 360,
+            data: pageData,
+            strokeWidth: 0.5,
+            fps: 60,
+            showLegend: false,
+            labelText: "Pressure"
+        })
+        createPolarChart({
+            id: "chartHR",
+            valueYFields: ["ho"],
+            strokeFillColors: ["#42fdf7"],
+            tooltipText: ["{ho} % from {wda}° {wdae}"],
+            valueXFields: ["wda"],
+            min: 0,
+            max: 360,
+            data: pageData,
+            strokeWidth: 0.5,
+            fps: 60,
+            showLegend: false,
+            labelText: "Humidity"
+        })
+    }
 
     // REMOVE ME!!!!
     console.log(`timeFrame : ${timeFrame}\ntimeUnit : ${tUnint},\ndateFormat : ${dateFormat}\nCount : ${baseIntervalCount}`)

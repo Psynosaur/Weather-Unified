@@ -76,15 +76,27 @@
 @section Scripts
 {
     <script type="text/javascript">
-                    var hrs = 3;
-                    var pew = @nStep;
-                    var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
-                    var raining = @rainobj.Count >0;
-                    if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
-                    var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
-                </script>
+        var hrs = 3;
+        const pew = @nStep;
+        var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
+        var raining = @rainobj.Count >0;
+        if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
+        var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+    </script>
 }
 
+
+@{
+    var currentDateStr = ViewData["CurrentDate"]?.ToString() ?? DateTime.Now.ToString("yyyy-MM-dd");
+    var currentDate = DateTime.Parse(currentDateStr);
+    var isCurrentMonth = (DateTime.Now.Date - currentDate.Date).TotalDays < 30;
+    
+    // Calculate date range in local time to match displayed observations
+    var firstObs = Model.FirstOrDefault();
+    var lastObs = Model.LastOrDefault();
+    DateTime monthStart = firstObs != null ? firstObs.ObsTime.ToLocalTime().Date : currentDate.AddMonths(-1);
+    DateTime monthEnd = lastObs != null ? lastObs.ObsTime.ToLocalTime().Date : currentDate;
+}
 
 @if (latest != null)
 {
@@ -92,11 +104,48 @@
         Monthly weather<br/>
         @_appSettings.Value.StationName
     </h1>
-    <div class="row">
-        <div class="col-12" style="text-align: center">
-            @latest.ObsTime.ToLocalTime().ToString("dddd dd MMM yyyy - HH:mm:ss zzz")
+    <div class="columns has-text-light">
+        <div class="column is-2">
+            <button class="button is-dark is-fullwidth" onclick="navigateToPreviousMonth()">
+                <span class="icon">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span>Previous Month</span>
+            </button>
+        </div>
+        <div class="column has-text-light" style="text-align: center">
+            <small>Month: @monthStart.ToString("dd MMM") - @monthEnd.ToString("dd MMM yyyy")</small><br/>
+            <small>Latest: @latest.ObsTime.ToLocalTime().ToString("dddd dd MMM yyyy HH:mm:ss zzz")</small>
+        </div>
+        <div class="column is-2">
+            @if (!isCurrentMonth)
+            {
+                <button class="button is-dark is-fullwidth" onclick="navigateToNextMonth()">
+                    <span>Next Month</span>
+                    <span class="icon">
+                        <i class="fas fa-arrow-right"></i>
+                    </span>
+                </button>
+            }
         </div>
     </div>
+    <script>
+        const currentDate = new Date('@(ViewData["CurrentDate"]?.ToString() ?? DateTime.Now.ToString("yyyy-MM-dd"))');
+        
+        function navigateToPreviousMonth() {
+            const previousMonth = new Date(currentDate);
+            previousMonth.setMonth(previousMonth.getMonth() - 1);
+            const dateStr = previousMonth.toISOString().split('T')[0];
+            window.location = '/month/' + dateStr;
+        }
+        
+        function navigateToNextMonth() {
+            const nextMonth = new Date(currentDate);
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            const dateStr = nextMonth.toISOString().split('T')[0];
+            window.location = '/month/' + dateStr;
+        }
+    </script>
 
     <div class="columns is-12-mobile">
         @await Html.PartialAsync("_CurrentConditions", Model)

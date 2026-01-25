@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using WURequest.Models;
@@ -13,11 +13,11 @@ namespace WURequest.Services
 
         public Task<List<Observations>> Date(string date);
 
-        public Task<List<Observations>> Weekly();
+        public Task<List<Observations>> Weekly(string date = null);
 
         public List<List<RainObs>> Rain(string start, string end);
 
-        public Task<List<Observations>> Monthly();
+        public Task<List<Observations>> Monthly(string date = null);
 
         public Task<List<Observations>> Latest();
         

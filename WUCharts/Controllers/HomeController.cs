@@ -177,23 +177,47 @@ namespace WUCharts.Controllers
             return View(model);
         }
 
-        [Route("/week")]
-        public async System.Threading.Tasks.Task<IActionResult> Week()
+        [Route("/week/{id?}")]
+        public async System.Threading.Tasks.Task<IActionResult> Week(string id = null)
         {
             ViewData["Title"] = $"{_appSettings.Value.StationName} {_appSettings.Value.Country} - past week";
             ViewData["Description"] =
                 $"Weather data for {_appSettings.Value.StationName} - {_appSettings.Value.Country} - past week";
-            List<Observations> model = await _weatherApiService.GetWeeklyObservationsAsync();
+            
+            // Store the current date for navigation
+            DateTime currentDate;
+            if (!string.IsNullOrEmpty(id) && DateTime.TryParse(id, out currentDate))
+            {
+                ViewData["CurrentDate"] = currentDate.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                ViewData["CurrentDate"] = DateTime.Now.ToString("yyyy-MM-dd");
+            }
+            
+            List<Observations> model = await _weatherApiService.GetWeeklyObservationsAsync(id);
             return View(model);
         }
 
-        [Route("/month")]
-        public async System.Threading.Tasks.Task<IActionResult> Month()
+        [Route("/month/{id?}")]
+        public async System.Threading.Tasks.Task<IActionResult> Month(string id = null)
         {
             ViewData["Title"] = $"{_appSettings.Value.StationName} {_appSettings.Value.Country} - past month";
             ViewData["Description"] =
                 $"Weather data for {_appSettings.Value.StationName} - {_appSettings.Value.Country} - past month";
-            List<Observations> model = await _weatherApiService.GetMonthlyObservationsAsync();
+            
+            // Store the current date for navigation
+            DateTime currentDate;
+            if (!string.IsNullOrEmpty(id) && DateTime.TryParse(id, out currentDate))
+            {
+                ViewData["CurrentDate"] = currentDate.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                ViewData["CurrentDate"] = DateTime.Now.ToString("yyyy-MM-dd");
+            }
+            
+            List<Observations> model = await _weatherApiService.GetMonthlyObservationsAsync(id);
             return View(model);
         }
     }

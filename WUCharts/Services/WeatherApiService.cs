@@ -38,15 +38,19 @@ namespace WUCharts.Services
             return await GetAsync<List<Observations>>(url, "fetching daily observations");
         }
 
-        public async Task<List<Observations>> GetWeeklyObservationsAsync()
+        public async Task<List<Observations>> GetWeeklyObservationsAsync(string date = null)
         {
-            var url = $"{_baseUrl}/weekly";
+            var url = string.IsNullOrEmpty(date) 
+                ? $"{_baseUrl}/weekly" 
+                : $"{_baseUrl}/weekly?date={date}";
             return await GetAsync<List<Observations>>(url, "fetching weekly observations");
         }
 
-        public async Task<List<Observations>> GetMonthlyObservationsAsync()
+        public async Task<List<Observations>> GetMonthlyObservationsAsync(string date = null)
         {
-            var url = $"{_baseUrl}/monthly";
+            var url = string.IsNullOrEmpty(date) 
+                ? $"{_baseUrl}/monthly" 
+                : $"{_baseUrl}/monthly?date={date}";
             return await GetAsync<List<Observations>>(url, "fetching monthly observations");
         }
 

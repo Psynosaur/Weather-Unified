@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -134,11 +134,11 @@ namespace WURequest.Controllers
         }
 
         [HttpGet("weekly")]
-        public async Task<ActionResult<List<Observations>>> GetWeekly()
+        public async Task<ActionResult<List<Observations>>> GetWeekly([FromQuery] string date = null)
         {
             try
             {
-                return await _observationsService.Weekly();
+                return await _observationsService.Weekly(date);
             }
             catch (Exception ex)
             {
@@ -148,11 +148,11 @@ namespace WURequest.Controllers
         }
 
         [HttpGet("monthly")]
-        public async Task<ActionResult<List<Observations>>> GetMonthly()
+        public async Task<ActionResult<List<Observations>>> GetMonthly([FromQuery] string date = null)
         {
             try
             {
-                return await _observationsService.Monthly();
+                return await _observationsService.Monthly(date);
             }
             catch (Exception ex)
             {

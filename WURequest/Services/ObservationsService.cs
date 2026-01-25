@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -88,15 +88,26 @@ namespace WURequest.Services
             }
         }
 
-        public async Task<List<Observations>> Weekly()
+        public async Task<List<Observations>> Weekly(string date = null)
         {
             try
             {
-                var tm = DateTime.UtcNow;
-                var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
+                DateTime tm;
+                if (!string.IsNullOrEmpty(date))
+                {
+                    tm = DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    tm = DateTime.SpecifyKind(tm, DateTimeKind.Local);
+                }
+                else
+                {
+                    tm = DateTime.Now;
+                }
+                
+                var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Local);
                 var weekstart = hm.AddDays(-6);
+                var weekend = hm.AddDays(1);
                 var observations = await _observation.Find(
-                        x => x.ObsTime > weekstart)
+                        x => x.ObsTime >= weekstart && x.ObsTime < weekend)
                     .SortBy(e => e.ObsTime).ToListAsync();
                 return observations;
             }
@@ -173,14 +184,26 @@ namespace WURequest.Services
             }
         }
 
-        public async Task<List<Observations>> Monthly()
+        public async Task<List<Observations>> Monthly(string date = null)
         {
             try
             {
-                var utcNow = DateTime.UtcNow;
-                var thirtydaysago = utcNow.AddMonths(-1);
+                DateTime tm;
+                if (!string.IsNullOrEmpty(date))
+                {
+                    tm = DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    tm = DateTime.SpecifyKind(tm, DateTimeKind.Local);
+                }
+                else
+                {
+                    tm = DateTime.Now;
+                }
+                
+                var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Local);
+                var monthstart = hm.AddMonths(-1);
+                var monthend = hm.AddDays(1);
                 var observations = await _observation.Find(
-                        x => x.ObsTime > thirtydaysago)
+                        x => x.ObsTime >= monthstart && x.ObsTime < monthend)
                     .SortBy(e => e.ObsTime).ToListAsync();
                 return observations;
             }
