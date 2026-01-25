@@ -48,9 +48,10 @@ namespace WUCharts
 
                 // JavaScript Bundle - equivalent to the old bundlerconfig.json JS configuration
                 pipeline.AddJavaScriptBundle("/js/site.min.js",
-                    "lib/assets/core.js",
-                    "lib/assets/charts.js",
-                    "lib/assets/dark.js",
+                    "lib/assets/amcharts5-index.js",
+                    "lib/assets/amcharts5-xy.js",
+                    "lib/assets/amcharts5-dark.js",
+                    "lib/assets/amcharts5-radar.js",
                     "lib/assets/flatpickr.js",
                     "js/site.js");
             });
