@@ -96,14 +96,14 @@ namespace WURequest.Services
                 if (!string.IsNullOrEmpty(date))
                 {
                     tm = DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                    tm = DateTime.SpecifyKind(tm, DateTimeKind.Utc);
+                    tm = DateTime.SpecifyKind(tm, DateTimeKind.Local);
                 }
                 else
                 {
-                    tm = DateTime.UtcNow;
+                    tm = DateTime.Now;
                 }
                 
-                var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
+                var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Local);
                 var weekstart = hm.AddDays(-6);
                 var weekend = hm.AddDays(1);
                 var observations = await _observation.Find(
@@ -192,14 +192,14 @@ namespace WURequest.Services
                 if (!string.IsNullOrEmpty(date))
                 {
                     tm = DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                    tm = DateTime.SpecifyKind(tm, DateTimeKind.Utc);
+                    tm = DateTime.SpecifyKind(tm, DateTimeKind.Local);
                 }
                 else
                 {
-                    tm = DateTime.UtcNow;
+                    tm = DateTime.Now;
                 }
                 
-                var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Utc);
+                var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Local);
                 var monthstart = hm.AddMonths(-1);
                 var monthend = hm.AddDays(1);
                 var observations = await _observation.Find(
