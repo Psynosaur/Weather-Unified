@@ -1,4 +1,4 @@
-﻿@using Newtonsoft.Json
+@using Newtonsoft.Json
 @model List<Observations>
 @using Microsoft.Extensions.Options
 @using WURequest.Models
@@ -76,12 +76,24 @@
 @section Scripts
 {
     <script type="text/javascript">
-                    var hrs = 2;
-                    var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
-                    var raining = @rainobj.Count >0;
-                    if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
-                    var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
-         </script>
+        var hrs = 2;
+        var objdata = @Html.Raw(JsonConvert.SerializeObject(obj));
+        var raining = @rainobj.Count >0;
+        if(raining){var raindata = @Html.Raw(JsonConvert.SerializeObject(rainobj));}
+        var winddata = @Html.Raw(JsonConvert.SerializeObject(windobj));
+    </script>
+}
+
+@{
+    var currentDateStr = ViewData["CurrentDate"]?.ToString() ?? DateTime.Now.ToString("yyyy-MM-dd");
+    var currentDate = DateTime.Parse(currentDateStr);
+    var isCurrentWeek = (DateTime.Now.Date - currentDate.Date).TotalDays < 7;
+    
+    // Calculate date range in local time to match displayed observations
+    var firstObs = Model.FirstOrDefault();
+    var lastObs = Model.LastOrDefault();
+    DateTime weekStart = firstObs != null ? firstObs.ObsTime.ToLocalTime().Date : currentDate.AddDays(-6);
+    DateTime weekEnd = lastObs != null ? lastObs.ObsTime.ToLocalTime().Date : currentDate;
 }
 
 @if (latest != null)
@@ -91,10 +103,47 @@
         @_appSettings.Value.StationName
     </h1>
     <div class="columns has-text-light">
+        <div class="column is-2">
+            <button class="button is-dark is-fullwidth" onclick="navigateToPreviousWeek()">
+                <span class="icon">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span>Previous Week</span>
+            </button>
+        </div>
         <div class="column has-text-light" style="text-align: center">
-            @latest.ObsTime.ToLocalTime().ToString("dddd dd MMM yyyy - HH:mm:ss zzz")
+            <small>Week: @weekStart.ToString("dd MMM") - @weekEnd.ToString("dd MMM yyyy")</small><br/>
+            <small>Latest: @latest.ObsTime.ToLocalTime().ToString("dddd dd MMM yyyy HH:mm:ss zzz")</small>
+        </div>
+        <div class="column is-2">
+            @if (!isCurrentWeek)
+            {
+                <button class="button is-dark is-fullwidth" onclick="navigateToNextWeek()">
+                    <span>Next Week</span>
+                    <span class="icon">
+                        <i class="fas fa-arrow-right"></i>
+                    </span>
+                </button>
+            }
         </div>
     </div>
+    <script>
+        const currentDate = new Date('@(ViewData["CurrentDate"]?.ToString() ?? DateTime.Now.ToString("yyyy-MM-dd"))');
+        
+        function navigateToPreviousWeek() {
+            const previousWeek = new Date(currentDate);
+            previousWeek.setDate(previousWeek.getDate() - 7);
+            const dateStr = previousWeek.toISOString().split('T')[0];
+            window.location = '/week/' + dateStr;
+        }
+        
+        function navigateToNextWeek() {
+            const nextWeek = new Date(currentDate);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            const dateStr = nextWeek.toISOString().split('T')[0];
+            window.location = '/week/' + dateStr;
+        }
+    </script>
     @await Html.PartialAsync("_DoubleGraph", Model)
 }
 else
