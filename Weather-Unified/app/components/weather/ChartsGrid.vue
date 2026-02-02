@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import type { GraphDataPoint } from '~/types/weather'
+import type { Timeframe } from '~/composables/useTimeframeConfig'
 
 interface Props {
   observations: GraphDataPoint[]
+  timeframe?: Timeframe
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  timeframe: 'default'
+})
 
 const { createXYChart, createPolarChart, disposeAllCharts } = useAmCharts()
+
+// Get timeframe configuration
+const timeframeConfig = useTimeframeConfig(props.timeframe)
 
 // Chart configuration
 const charts = [
@@ -58,7 +65,8 @@ const initializeCharts = () => {
     tooltipText: ['Outdoor {to} °C', 'Dew Point {dc} °C'],
     strokeFillColors: ['#ff8145', '#87f7ff'],
     labelText: 'Temp & Dew point',
-    fps: 60
+    fps: 60,
+    timeframeConfig
   }, props.observations)
 
   // Min/Max Temperature
@@ -68,7 +76,8 @@ const initializeCharts = () => {
     tooltipText: ['{tmn} °C min', '{tmx} °C max'],
     strokeFillColors: ['#0ec7ff', '#ff2955'],
     labelText: 'Temp Min/Max',
-    fps: 60
+    fps: 60,
+    timeframeConfig
   }, props.observations)
 
   // Humidity
@@ -78,7 +87,8 @@ const initializeCharts = () => {
     tooltipText: ['Outdoors {ho} %', 'Indoors {hi} %'],
     strokeFillColors: ['#5c8fff', '#0ec7ff'],
     labelText: 'Humidity',
-    fps: 60
+    fps: 60,
+    timeframeConfig
   }, props.observations)
 
   // Pressure
@@ -88,7 +98,8 @@ const initializeCharts = () => {
     tooltipText: ['{p} hPa'],
     strokeFillColors: ['#ff8d8d'],
     labelText: 'Pressure',
-    fps: 60
+    fps: 60,
+    timeframeConfig
   }, props.observations)
 
   // Wind Speed
@@ -99,7 +110,8 @@ const initializeCharts = () => {
     strokeFillColors: ['#11ff1e', '#ffbf8d', '#ff8d8d'],
     labelText: 'Wind Speed',
     fps: 60,
-    min: 0
+    min: 0,
+    timeframeConfig
   }, props.observations)
 
   // Rain
@@ -110,7 +122,8 @@ const initializeCharts = () => {
     strokeFillColors: ['#5c8fff', '#87f7ff'],
     labelText: 'Rain',
     fps: 60,
-    min: 0
+    min: 0,
+    timeframeConfig
   }, props.observations)
 
   // Solar Radiation
@@ -121,18 +134,20 @@ const initializeCharts = () => {
     strokeFillColors: ['#ffdf43'],
     labelText: 'Radiation',
     fps: 60,
-    min: 0
+    min: 0,
+    timeframeConfig
   }, props.observations)
 
   // UV Index
   createXYChart({
     id: 'chartuv',
     valueFields: ['uv'],
-    tooltipText: ['{UV}'],
+    tooltipText: ['{uv}'],
     strokeFillColors: ['#ffdf43'],
     labelText: 'UV index',
     fps: 60,
-    min: 0
+    min: 0,
+    timeframeConfig
   }, props.observations)
 
   // Wind Direction
@@ -145,7 +160,8 @@ const initializeCharts = () => {
     min: 0,
     max: 360,
     bullets: true,
-    fps: 60
+    fps: 60,
+    timeframeConfig
   }, props.observations)
 
   // Temperature Rose (polar chart)

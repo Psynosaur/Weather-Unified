@@ -34,8 +34,8 @@ const sunlightInfo = computed<SunlightData>(() => {
 
   // Find observations with solar radiation > 0
   const daylightObs = props.observations.filter(o => o.sr > 0)
-
-  if (daylightObs.length === 0) {
+  const totalObservations = daylightObs.length
+  if (totalObservations === 0 || !daylightObs[0]) {
     return {
       sunrise: null,
       sunset: null,
@@ -43,10 +43,11 @@ const sunlightInfo = computed<SunlightData>(() => {
       maxSolarElevation: null
     }
   }
-
+  const lastObservation = daylightObs[totalObservations - 1] as GraphDataPoint
   // Get sunrise (first solar > 0)
   const sunriseTime = new Date(daylightObs[0].ot)
-  const sunlightLatestTime = new Date(daylightObs[daylightObs.length - 1].ot)
+
+  const sunlightLatestTime = new Date(lastObservation.ot)
   const latestTime = new Date(props.latest.obsTime)
 
   // Calculate duration
@@ -59,7 +60,7 @@ const sunlightInfo = computed<SunlightData>(() => {
   let sunset: string | null = null
   const isSet = props.latest.solarRad === 0 && sunlightLatestTime < latestTime
   if (isSet) {
-    sunset = sunlightLatestTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+    sunset = sunlightLatestTime.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit', hour12: false })
   }
 
   // Calculate max solar elevation
@@ -75,7 +76,7 @@ const sunlightInfo = computed<SunlightData>(() => {
   const finalEle = -(Math.round(10 * (elevat + atmosRefrac + halfdisk)) / 10)
 
   return {
-    sunrise: sunriseTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+    sunrise: sunriseTime.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit', hour12: false }),
     sunset,
     duration,
     maxSolarElevation: finalEle
@@ -111,14 +112,14 @@ watch(() => props.windData, (newWindData) => {
 
 // Cleanup on unmount
 onUnmounted(() => {
-  disposeChart('windrose')
+  disposeChart('windrose-summary')
 })
 
 const initializeWindRose = () => {
   if (!props.windData || props.windData.length === 0) return
 
   createPolarChart({
-    id: 'windrose',
+    id: 'windrose-summary',
     valueYFields: ['wg', 'was'],
     strokeFillColors: ['#ffdf43', '#8ebdf3'],
     tooltipText: ['{wg} km/h @ {wd}° {wdce}', '{was} km/h @ {wd}° {wdce}'],
@@ -132,7 +133,6 @@ const initializeWindRose = () => {
     showLegend: false
   })
 }
-
 </script>
 
 <template>
@@ -204,7 +204,7 @@ const initializeWindRose = () => {
           Wind Rose
         </h4>
         <div
-          id="windrose"
+          id="windrose-summary"
           class="h-[300px]"
         />
       </div>

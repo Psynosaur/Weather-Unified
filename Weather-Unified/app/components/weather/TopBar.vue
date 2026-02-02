@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Observation } from '~/types/weather'
 
-const props = defineProps<{
+defineProps<{
   latest: Observation
 }>()
 </script>
@@ -11,7 +11,7 @@ const props = defineProps<{
     <!-- Solar Card -->
     <UCard>
       <div class="space-y-3">
-        <h3 class="text-center font-semibold text-lg border-b pb-2">
+        <h3 class="text-center font-semibold text-lg border-b border-primary pb-2">
           Solar
         </h3>
         <div class="space-y-2">
@@ -30,7 +30,7 @@ const props = defineProps<{
     <!-- Indoor Card -->
     <UCard>
       <div class="space-y-3">
-        <h3 class="text-center font-semibold text-lg border-b pb-2">
+        <h3 class="text-center font-semibold text-lg border-b border-primary pb-2">
           Indoor
         </h3>
         <div class="space-y-2">
@@ -49,7 +49,7 @@ const props = defineProps<{
     <!-- Rain Card -->
     <UCard>
       <div class="space-y-3">
-        <h3 class="text-center font-semibold text-lg border-b pb-2">
+        <h3 class="text-center font-semibold text-lg border-b border-primary pb-2">
           Rain
           <span
             v-if="latest.rainRateCur > 0"

@@ -1,76 +1,174 @@
+<script setup lang="ts">
+import type { DatePageData } from '~/types/weather'
+
+// Meta information
+useHead({
+  title: 'Weather Today',
+  meta: [
+    { name: 'description', content: 'View today\'s weather data and charts' }
+  ]
+})
+
+// Fetch today's weather data
+const { data, pending, error, refresh } = await useFetch<DatePageData>('/api/day')
+
+// App settings (will be moved to config/env later)
+const appSettings = ref({
+  stationName: process.env.WEATHER_STATION,
+  lat: -33.8,
+  lon: 18.6,
+  magneticDeclination: -23.5
+})
+
+// Format date for display
+const formattedDate = computed(() => {
+  if (!data.value?.latest) return ''
+  const date = new Date(data.value.latest.obsTime)
+  return date.toLocaleDateString('en-ZA', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  })
+})
+
+// Format time for display
+const formattedTime = computed(() => {
+  if (!data.value?.latest) return ''
+  const date = new Date(data.value.latest.obsTime)
+  return date.toLocaleTimeString('en-ZA', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZoneName: 'short'
+  })
+})
+
+// Auto-refresh every 2 minutes
+const refreshInterval = 120000 // 2 minutes
+let refreshTimer: NodeJS.Timeout | null = null
+
+onMounted(() => {
+  refreshTimer = setInterval(() => {
+    refresh()
+  }, refreshInterval)
+})
+
+onUnmounted(() => {
+  if (refreshTimer) {
+    clearInterval(refreshTimer)
+  }
+})
+</script>
+
 <template>
-  <div>
-    <UPageHero
-      title="Weather Today"
-      description="A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours."
-      :links="[{
-        label: 'Get started',
-        to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-        target: '_blank',
-        trailingIcon: 'i-lucide-arrow-right',
-        size: 'xl'
-      }, {
-        label: 'Use this template',
-        to: 'https://github.com/nuxt-ui-templates/starter',
-        target: '_blank',
-        icon: 'i-simple-icons-github',
-        size: 'xl',
-        color: 'neutral',
-        variant: 'subtle'
-      }]"
-    />
+  <div class="container-full mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold mb-4">
+        {{ appSettings.stationName }}
+      </h1>
 
-    <UPageSection
-      id="features"
-      title="Everything you need to build modern Nuxt apps"
-      description="Start with a solid foundation. This template includes all the essentials for building production-ready applications with Nuxt UI's powerful component system."
-      :features="[{
-        icon: 'i-lucide-rocket',
-        title: 'Production-ready from day one',
-        description: 'Pre-configured with TypeScript, ESLint, Tailwind CSS, and all the best practices. Focus on building features, not setting up tooling.'
-      }, {
-        icon: 'i-lucide-palette',
-        title: 'Beautiful by default',
-        description: 'Leveraging Nuxt UI\'s design system with automatic dark mode, consistent spacing, and polished components that look great out of the box.'
-      }, {
-        icon: 'i-lucide-zap',
-        title: 'Lightning fast',
-        description: 'Optimized for performance with SSR/SSG support, automatic code splitting, and edge-ready deployment. Your users will love the speed.'
-      }, {
-        icon: 'i-lucide-blocks',
-        title: '100+ components included',
-        description: 'Access Nuxt UI\'s comprehensive component library. From forms to navigation, everything is accessible, responsive, and customizable.'
-      }, {
-        icon: 'i-lucide-code-2',
-        title: 'Developer experience first',
-        description: 'Auto-imports, hot module replacement, and TypeScript support. Write less boilerplate and ship more features.'
-      }, {
-        icon: 'i-lucide-shield-check',
-        title: 'Built for scale',
-        description: 'Enterprise-ready architecture with proper error handling, SEO optimization, and security best practices built-in.'
-      }]"
-    />
+      <div class="space-y-2">
+        <p class="text-lg">
+          {{ formattedDate }}
+        </p>
+        <p class="text-md text-muted">
+          {{ formattedTime }}
+        </p>
 
-    <UPageSection>
-      <UPageCTA
-        title="Ready to build your next Nuxt app?"
-        description="Join thousands of developers building with Nuxt and Nuxt UI. Get this template and start shipping today."
-        variant="subtle"
-        :links="[{
-          label: 'Start building',
-          to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-          target: '_blank',
-          trailingIcon: 'i-lucide-arrow-right',
-          color: 'neutral'
-        }, {
-          label: 'View on GitHub',
-          to: 'https://github.com/nuxt-ui-templates/starter',
-          target: '_blank',
-          icon: 'i-simple-icons-github',
-          color: 'neutral',
-          variant: 'outline'
-        }]"
-      />
-    </UPageSection>
+        <!-- Cloudiness indicator -->
+        <p
+          v-if="data?.cloudiness"
+          class="text-xl font-semibold text-primary"
+        >
+          {{ data.cloudiness }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div
+      v-if="pending"
+      class="text-center py-12"
+    >
+      <p class="text-lg text-muted">
+        Loading weather data...
+      </p>
+    </div>
+
+    <!-- Error state -->
+    <div
+      v-else-if="error"
+      class="text-center py-12"
+    >
+      <UCard>
+        <p class="text-lg text-red-500">
+          Error loading weather data. Please try again.
+        </p>
+      </UCard>
+    </div>
+
+    <!-- Main content -->
+    <div
+      v-else-if="data && data.latest"
+      class="space-y-6"
+    >
+      <!-- Top bar with indoor/solar/rain info -->
+      <WeatherTopBar :latest="data.latest" />
+
+      <!-- Three column layout: CurrentConditions | Charts | Stats -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left sidebar - Current Conditions with Wind Rose -->
+        <WeatherCurrentConditions
+          :latest="data.latest"
+          :observations="data.observations"
+          :wind-data="data.windData"
+          :count="data.count"
+          :magnetic-declination="appSettings.magneticDeclination"
+          :lat="appSettings.lat"
+        />
+
+        <!-- Middle section - Charts -->
+        <WeatherChartsGrid
+          :observations="data.observations"
+          timeframe="day"
+        />
+
+        <!-- Right sidebar - Stats Summary with Rain Rose -->
+        <WeatherStats
+          :observations="data.observations"
+          :rain-data="data.rainData"
+        />
+      </div>
+
+      <!-- Record count -->
+      <div class="text-center text-sm text-muted py-4">
+        {{ data.count }} total records
+      </div>
+
+      <!-- Auto-refresh info -->
+      <div class="text-center text-sm text-muted pb-4">
+        Auto-refreshing every 2 minutes
+      </div>
+    </div>
+
+    <!-- No data state -->
+    <div
+      v-else
+      class="text-center py-12"
+    >
+      <UCard>
+        <div class="space-y-4">
+          <p class="text-lg">
+            No weather data available for today.
+          </p>
+          <p class="text-sm text-muted">
+            Please try again later.
+          </p>
+        </div>
+      </UCard>
+    </div>
   </div>
 </template>

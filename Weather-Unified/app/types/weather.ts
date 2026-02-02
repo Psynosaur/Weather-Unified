@@ -97,3 +97,79 @@ export interface WeekPageData {
   currentDate: string | undefined
   isCurrentWeek: boolean
 }
+
+export interface MonthPageData {
+  observations: GraphDataPoint[]
+  rainData: RainDataPoint[]
+  windData: WindDataPoint[]
+  latest: Observation | undefined
+  count: number
+  monthStart: string | undefined
+  monthEnd: string | undefined
+  currentDate: string | undefined
+  isCurrentMonth: boolean
+}
+
+export interface HourPageData {
+  observations: GraphDataPoint[]
+  rainData: RainDataPoint[]
+  windData: WindDataPoint[]
+  latest: Observation | undefined
+  count: number
+}
+
+export interface Daypart {
+  cloudCover: (number | null)[]
+  dayOrNight: (string | null)[]
+  daypartName: string[]
+  iconCode: (number | null)[]
+  iconCodeExtend: (number | null)[]
+  narrative: string[]
+  precipChance: (number | null)[]
+  precipType: string[]
+  qpf: (number | null)[]
+  qpfSnow: (number | null)[]
+  qualifierCode: string[]
+  qualifierPhrase: string[]
+  relativeHumidity: (number | null)[]
+  snowRange: string[]
+  temperature: (number | null)[]
+  temperatureHeatIndex: (number | null)[]
+  temperatureWindChill: (number | null)[]
+  thunderCategory: string[]
+  thunderIndex: (number | null)[]
+  uvDescription: string[]
+  uvIndex: (number | null)[]
+  windDirection: (number | null)[]
+  windDirectionCardinal: string[]
+  windPhrase: string[]
+  windSpeed: (number | null)[]
+  wxPhraseLong: string[]
+  wxPhraseShort: string[]
+}
+
+export interface Forecasts {
+  calendarDayTemperatureMax: (number | null)[]
+  calendarDayTemperatureMin: (number | null)[]
+  dayOfWeek: string[]
+  expirationTimeUtc: (number | null)[]
+  moonPhase: string[]
+  moonPhaseCode: string[]
+  moonPhaseDay: (number | null)[]
+  moonriseTimeLocal: string[]
+  moonriseTimeUtc: (number | null)[]
+  moonsetTimeLocal: string[]
+  moonsetTimeUtc: (number | null)[]
+  narrative: string[]
+  qpf: (number | null)[]
+  qpfSnow: (number | null)[]
+  sunriseTimeLocal: string[]
+  sunriseTimeUtc: (number | null)[]
+  sunsetTimeLocal: string[]
+  sunsetTimeUtc: (number | null)[]
+  temperatureMax: (number | null)[]
+  temperatureMin: (number | null)[]
+  validTimeLocal: string[]
+  validTimeUtc: (number | null)[]
+  daypart: Daypart[]
+}

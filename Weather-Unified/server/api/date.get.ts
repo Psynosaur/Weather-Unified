@@ -1,4 +1,10 @@
-import type { DatePageData, Observation, GraphDataPoint, RainDataPoint, WindDataPoint } from '~/types/weather'
+import type {
+  DatePageData,
+  Observation,
+  GraphDataPoint,
+  RainDataPoint,
+  WindDataPoint
+} from '~/types/weather'
 
 export default defineEventHandler(async (event): Promise<DatePageData> => {
   // Get date parameter from query (format: YYYY-MM-DD)
@@ -7,24 +13,11 @@ export default defineEventHandler(async (event): Promise<DatePageData> => {
 
   // Fetch from WURequest API
   const backendUrl = process.env.WUREQUEST_API_URL || 'https://localhost:5001'
-  
+
   try {
-    // Fetch observations from backend API
-    // For localhost with self-signed certificates, we need to disable TLS verification
-    const fetchOptions: any = {}
-    
-    if (backendUrl.includes('localhost')) {
-      // Disable TLS certificate validation for localhost development
-      // This is required when the backend uses self-signed certificates
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-    }
-    
-    const response = await $fetch<Observation[]>(`${backendUrl}/api/observations/date/${dateParam}`, fetchOptions)
-    
-    // Re-enable TLS verification after the request
-    if (backendUrl.includes('localhost')) {
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
-    }
+    const response = await $fetch<Observation[]>(
+      `${backendUrl}/api/observations/date/${dateParam}`
+    )
 
     // Convert backend response to our Observation type
     const backendObservations: Observation[] = response.map(o => ({
@@ -56,7 +49,9 @@ export default defineEventHandler(async (event): Promise<DatePageData> => {
 
     // Apply sampling (every 17th record)
     const nStep = 17
-    const sampledObservations = backendObservations.filter((_, i) => i % nStep === 0)
+    const sampledObservations = backendObservations.filter(
+      (_, i) => i % nStep === 0
+    )
 
     // Transform to graph data points
     const observations: GraphDataPoint[] = sampledObservations.map(o => ({
@@ -103,9 +98,13 @@ export default defineEventHandler(async (event): Promise<DatePageData> => {
       }))
 
     // Calculate cloudiness based on solar radiation standard deviation
-    const { cloudiness, standardDeviation } = calculateCloudiness(backendObservations)
+    const { cloudiness, standardDeviation }
+      = calculateCloudiness(backendObservations)
 
-    const latest = backendObservations.length > 0 ? backendObservations[backendObservations.length - 1] : undefined
+    const latest
+      = backendObservations.length > 0
+        ? backendObservations[backendObservations.length - 1]
+        : undefined
 
     return {
       observations,
@@ -117,11 +116,6 @@ export default defineEventHandler(async (event): Promise<DatePageData> => {
       standardDeviation
     }
   } catch (error) {
-    // Re-enable TLS verification in case of error
-    if (backendUrl.includes('localhost')) {
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
-    }
-    
     console.error('Error fetching from WURequest API:', error)
     throw createError({
       statusCode: 500,
@@ -130,8 +124,10 @@ export default defineEventHandler(async (event): Promise<DatePageData> => {
   }
 })
 
-
-function calculateCloudiness(observations: Observation[]): { cloudiness: string; standardDeviation: number } {
+function calculateCloudiness(observations: Observation[]): {
+  cloudiness: string
+  standardDeviation: number
+} {
   const daylightObs = observations.filter(o => o.solarRad > 0)
 
   if (daylightObs.length === 0) {
@@ -139,8 +135,12 @@ function calculateCloudiness(observations: Observation[]): { cloudiness: string;
   }
 
   const solarValues = daylightObs.map(o => o.solarRad)
-  const avg = solarValues.reduce((sum, val) => sum + val, 0) / solarValues.length
-  const sumOfSquares = solarValues.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0)
+  const avg
+    = solarValues.reduce((sum, val) => sum + val, 0) / solarValues.length
+  const sumOfSquares = solarValues.reduce(
+    (sum, val) => sum + Math.pow(val - avg, 2),
+    0
+  )
   const sd = Math.sqrt(sumOfSquares / solarValues.length)
 
   let cloudiness = ''
@@ -151,5 +151,3 @@ function calculateCloudiness(observations: Observation[]): { cloudiness: string;
 
   return { cloudiness, standardDeviation: sd }
 }
-
-

@@ -2,7 +2,13 @@ import * as am5 from '@amcharts/amcharts5'
 import * as am5xy from '@amcharts/amcharts5/xy'
 import * as am5radar from '@amcharts/amcharts5/radar'
 import am5themes_Dark from '@amcharts/amcharts5/themes/Dark'
-import type { GraphDataPoint, WindDataPoint, RainDataPoint } from '~/types/weather'
+import am5themes_Animated from '@amcharts/amcharts5/themes/Animated'
+import type {
+  GraphDataPoint,
+  WindDataPoint,
+  RainDataPoint
+} from '~/types/weather'
+import type { TimeframeConfig } from './useTimeframeConfig'
 
 interface XYChartConfig {
   id: string
@@ -16,6 +22,7 @@ interface XYChartConfig {
   connected?: boolean
   strokeWidth?: number
   fps?: number
+  timeframeConfig?: TimeframeConfig
 }
 
 interface PolarChartConfig {
@@ -36,6 +43,7 @@ interface PolarChartConfig {
 
 export const useAmCharts = () => {
   const chartRoots = new Map<string, am5.Root>()
+  const colorMode = useColorMode()
 
   /**
    * Create an XY Line Chart with date-based X-axis
@@ -46,11 +54,12 @@ export const useAmCharts = () => {
       valueFields,
       tooltipText,
       strokeFillColors,
-      labelText,
+      // labelText,
       min,
       max,
       bullets = false,
-      fps = 60
+      fps = 60,
+      timeframeConfig
     } = config
 
     // Dispose existing chart if any
@@ -63,8 +72,12 @@ export const useAmCharts = () => {
     root.fps = fps
     chartRoots.set(id, root)
 
-    // Set themes
-    root.setThemes([am5themes_Dark.new(root)])
+    // Set themes based on color mode
+    if (colorMode.value === 'dark') {
+      root.setThemes([am5themes_Dark.new(root)])
+    } else {
+      root.setThemes([am5themes_Animated.new(root)])
+    }
 
     // Create chart
     const chart = root.container.children.push(
@@ -78,25 +91,52 @@ export const useAmCharts = () => {
     )
 
     // Add cursor
-    const cursor = chart.set('cursor', am5xy.XYCursor.new(root, {
-      behavior: 'zoomX'
-    }))
-    cursor.lineY.set('visible', false)
-
-    // Create X-axis (Date axis)
-    const xAxis = chart.xAxes.push(
-      am5xy.DateAxis.new(root, {
-        maxDeviation: 0.5,
-        baseInterval: {
-          timeUnit: 'minute',
-          count: 5
-        },
-        renderer: am5xy.AxisRendererX.new(root, {
-          minGridDistance: 60
-        }),
-        tooltip: am5.Tooltip.new(root, {})
+    const cursor = chart.set(
+      'cursor',
+      am5xy.XYCursor.new(root, {
+        behavior: 'zoomX'
       })
     )
+    cursor.lineY.set('visible', false)
+
+    // Prepare axis configuration based on timeframe
+    const axisConfig: am5xy.IDateAxisSettings<am5xy.AxisRenderer> = {
+      maxDeviation: 0.5,
+      baseInterval: {
+        timeUnit: timeframeConfig?.timeUnit ?? 'minute',
+        count: timeframeConfig?.baseIntervalCount ?? 5
+      },
+      renderer: am5xy.AxisRendererX.new(root, {
+        minGridDistance: 60
+      }),
+      tooltip: am5.Tooltip.new(root, {})
+    }
+
+    // Apply timeframe-specific settings if provided
+    if (timeframeConfig) {
+      axisConfig.baseInterval = {
+        timeUnit: timeframeConfig.timeUnit,
+        count: timeframeConfig.baseIntervalCount
+      }
+      axisConfig.gridIntervals = [
+        {
+          timeUnit: timeframeConfig.timeUnit,
+          count: timeframeConfig.gridCount
+        }
+      ]
+      // Apply date format to tooltip
+      axisConfig.tooltipDateFormat = timeframeConfig.dateFormat
+    } else {
+      // TODO: Determine if this is needed ?
+      // Default settings (fallback to hour-based)
+      axisConfig.baseInterval = {
+        timeUnit: 'hour',
+        count: 1
+      }
+    }
+
+    // Create X-axis (Date axis)
+    const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, axisConfig))
 
     // Create Y-axis
     const yAxis = chart.yAxes.push(
@@ -124,19 +164,26 @@ export const useAmCharts = () => {
 
     // Add series
     for (let i = 0; i < valueFields.length; i++) {
+      const valueField = valueFields[i]
+      const tooltip = tooltipText[i]
+      const color = strokeFillColors[i]
+
+      // Skip if required fields are undefined
+      if (!valueField || !tooltip || !color) continue
+
       const series = chart.series.push(
         am5xy.SmoothedXLineSeries.new(root, {
           name: `Series${id}${i}`,
           xAxis,
           yAxis,
-          valueYField: valueFields[i],
+          valueYField: valueField,
           valueXField: 'ot',
           tooltip: am5.Tooltip.new(root, {
-            labelText: tooltipText[i],
-            getFillFromObject: true
+            labelText: tooltip,
+            getFillFromSprite: true
           }),
-          fill: am5.color(strokeFillColors[i]),
-          stroke: am5.color(strokeFillColors[i]),
+          fill: am5.color(color),
+          stroke: am5.color(color),
           tension: 0.3
         })
       )
@@ -146,8 +193,8 @@ export const useAmCharts = () => {
         series.bullets.push(() => {
           return am5.Bullet.new(root, {
             sprite: am5.Circle.new(root, {
-              radius: 1.4,
-              fill: am5.color(strokeFillColors[i])
+              radius: 2.8,
+              fill: am5.color(color)
             })
           })
         })
@@ -156,6 +203,9 @@ export const useAmCharts = () => {
         })
       }
 
+      series.strokes.template.setAll({
+        strokeWidth: 2 // Adjust pixel thickness here
+      })
       series.data.setAll(data)
     }
 
@@ -192,8 +242,12 @@ export const useAmCharts = () => {
     root.fps = fps
     chartRoots.set(id, root)
 
-    // Set themes
-    root.setThemes([am5themes_Dark.new(root)])
+    // Set themes based on color mode
+    if (colorMode.value === 'dark') {
+      root.setThemes([am5themes_Dark.new(root)])
+    } else {
+      root.setThemes([am5themes_Animated.new(root)])
+    }
 
     // Create chart
     const chart = root.container.children.push(
@@ -223,9 +277,12 @@ export const useAmCharts = () => {
     }
 
     // Add cursor
-    const cursor = chart.set('cursor', am5radar.RadarCursor.new(root, {
-      behavior: 'none'
-    }))
+    const cursor = chart.set(
+      'cursor',
+      am5radar.RadarCursor.new(root, {
+        behavior: 'none'
+      })
+    )
     cursor.lineY.set('visible', false)
     cursor.lineX.set('visible', false)
 
@@ -238,8 +295,7 @@ export const useAmCharts = () => {
       textAlign: 'center'
     })
     xRenderer.grid.template.setAll({
-      location: 0,
-      maxLabelPosition: 0.99
+      location: 0
     })
 
     const xAxis = chart.xAxes.push(
@@ -257,9 +313,14 @@ export const useAmCharts = () => {
     let yMax = -Infinity
 
     for (let i = 0; i < valueYFields.length; i++) {
+      const field = valueYFields[i]
+
+      // Skip if field is undefined
+      if (!field) continue
+
       data.forEach((item) => {
-        const value = item[valueYFields[i]]
-        if (value != null) {
+        const value = item[field as keyof typeof item]
+        if (value != null && typeof value === 'number') {
           yMin = Math.min(yMin, value)
           yMax = Math.max(yMax, value)
         }
@@ -283,6 +344,11 @@ export const useAmCharts = () => {
 
     // Add series
     for (let i = 0; i < valueYFields.length; i++) {
+      const color = strokeFillColors[i]
+
+      // Skip if required fields are undefined
+      if (!color) continue
+
       const series = chart.series.push(
         am5radar.RadarLineSeries.new(root, {
           name: seriesNames ? seriesNames[i] : `Series${id}${i}`,
@@ -295,7 +361,7 @@ export const useAmCharts = () => {
           }),
           connectEnds: false,
           sequencedInterpolation: true,
-          sequencedInterpolationDelay: 10
+          sequencedDelay: 10
         })
       )
 
@@ -304,7 +370,7 @@ export const useAmCharts = () => {
         return am5.Bullet.new(root, {
           sprite: am5.Circle.new(root, {
             radius: 4,
-            fill: am5.color(strokeFillColors[i]),
+            fill: am5.color(color),
             strokeWidth,
             stroke: root.interfaceColors.get('background')
           })
@@ -314,7 +380,7 @@ export const useAmCharts = () => {
       // Configure strokes
       series.strokes.template.setAll({
         strokeDasharray: [0, 1],
-        stroke: am5.color(strokeFillColors[i])
+        stroke: am5.color(color)
       })
 
       series.data.setAll(data)
@@ -345,7 +411,7 @@ export const useAmCharts = () => {
    * Dispose all charts
    */
   const disposeAllCharts = () => {
-    chartRoots.forEach((root) => root.dispose())
+    chartRoots.forEach(root => root.dispose())
     chartRoots.clear()
   }
 
@@ -353,6 +419,7 @@ export const useAmCharts = () => {
     createXYChart,
     createPolarChart,
     disposeChart,
-    disposeAllCharts
+    disposeAllCharts,
+    colorMode
   }
 }

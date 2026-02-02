@@ -1,47 +1,55 @@
+<script setup lang="ts">
+import type { NavigationMenuItem } from '@nuxt/ui'
+
+const items: NavigationMenuItem[] = [
+  {
+    label: 'Today',
+    icon: 'i-lucide-cloud-sun',
+    to: '/'
+  },
+  {
+    label: 'Hourly',
+    icon: 'i-lucide-clock',
+    to: '/hour'
+  },
+  {
+    label: 'Week',
+    icon: 'i-lucide-calendar-days',
+    to: '/week'
+  },
+  {
+    label: 'Month',
+    icon: 'i-lucide-calendar-range',
+    to: '/month'
+  },
+  {
+    label: 'Forecast',
+    icon: 'i-lucide-cloud-sun-rain',
+    to: '/forecast'
+  },
+  {
+    label: 'History',
+    icon: 'i-lucide-calendar-search',
+    to: '/date'
+  },
+  {
+    label: 'About',
+    icon: 'i-lucide-info',
+    to: '/about'
+  },
+  {
+    label: 'Photos',
+    icon: 'i-lucide-camera',
+    to: 'https://flickr.com/ohansmit',
+    target: '_blank'
+  }
+]
+</script>
+
 <template>
-  <UDropdownMenu
-    v-slot="{ open }"
-    :modal="false"
-    :items="[{
-      label: 'Weather Today',
-      to: '/',
-      color: 'primary'
-    }, {
-      label: 'Hourly Weather Today',
-      to: '/hour',
-    }, {
-      label: 'Past Weekly Weather',
-      to: '/week'
-    }, {
-      label: 'Past Monthly Weather',
-      to: '/month'
-    }, {
-      label: 'Six Day Weather Forecast',
-      to: '/forecast'
-    }, {
-      label: 'Historical Weather',
-      to: '/date'
-    }, {
-      label: 'About',
-      to: '/about'
-    }, {
-      label: 'Photograhpy',
-      to: 'https://flickr.com/ohansmit'
-    }]"
-    :content="{ align: 'start' }"
-    :ui="{ content: 'min-w-fit' }"
-    size="xs"
-  >
-    <UButton
-      label="Weather Today"
-      variant="subtle"
-      trailing-icon="i-lucide-chevron-down"
-      size="xs"
-      class="-mb-[6px] font-semibold rounded-full truncate"
-      :class="[open && 'bg-primary/15']"
-      :ui="{
-        trailingIcon: ['transition-transform duration-200', open ? 'rotate-180' : undefined].filter(Boolean).join(' ')
-      }"
-    />
-  </UDropdownMenu>
+  <UNavigationMenu
+    :items="items"
+    orientation="horizontal"
+    class="ml-4"
+  />
 </template>

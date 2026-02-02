@@ -13,7 +13,7 @@ useHead({
 const selectedDate = ref(new Date().toISOString().split('T')[0])
 
 // Fetch weather data for the selected week
-const { data, pending, error, refresh } = await useFetch<WeekPageData>('/api/week', {
+const { data, pending, error } = await useFetch<WeekPageData>('/api/week', {
   query: computed(() => ({
     date: selectedDate.value
   })),
@@ -22,7 +22,7 @@ const { data, pending, error, refresh } = await useFetch<WeekPageData>('/api/wee
 
 // App settings (will be moved to config/env later)
 const appSettings = ref({
-  stationName: 'Weather Station',
+  stationName: process.env.WEATHER_STATION,
   lat: -33.8,
   lon: 18.6,
   magneticDeclination: -23.5
@@ -30,22 +30,22 @@ const appSettings = ref({
 
 // Format date range for display
 const formattedDateRange = computed(() => {
-  if (!data.value) return ''
-  
+  if (!data.value?.weekStart || !data.value?.weekEnd) return ''
+
   const start = new Date(data.value.weekStart)
   const end = new Date(data.value.weekEnd)
-  
-  const startFormatted = start.toLocaleDateString('en-US', {
+
+  const startFormatted = start.toLocaleDateString('en-ZA', {
     day: '2-digit',
     month: 'short'
   })
-  
-  const endFormatted = end.toLocaleDateString('en-US', {
+
+  const endFormatted = end.toLocaleDateString('en-ZA', {
     day: '2-digit',
     month: 'short',
     year: 'numeric'
   })
-  
+
   return `${startFormatted} - ${endFormatted}`
 })
 
@@ -53,7 +53,7 @@ const formattedDateRange = computed(() => {
 const formattedLatestTime = computed(() => {
   if (!data.value?.latest) return ''
   const date = new Date(data.value.latest.obsTime)
-  return date.toLocaleString('en-US', {
+  return date.toLocaleString('en-ZA', {
     weekday: 'long',
     day: '2-digit',
     month: 'short',
@@ -67,12 +67,16 @@ const formattedLatestTime = computed(() => {
 
 // Navigation functions
 const navigateToPreviousWeek = () => {
+  if (!selectedDate.value) return
+
   const current = new Date(selectedDate.value)
   current.setDate(current.getDate() - 7)
   selectedDate.value = current.toISOString().split('T')[0]
 }
 
 const navigateToNextWeek = () => {
+  if (!selectedDate.value) return
+
   const current = new Date(selectedDate.value)
   current.setDate(current.getDate() + 7)
   selectedDate.value = current.toISOString().split('T')[0]
@@ -136,7 +140,7 @@ const navigateToNextWeek = () => {
             <p class="text-sm text-muted">
               Week: {{ formattedDateRange }}
             </p>
-            
+
             <!-- Date picker -->
             <div class="flex justify-center">
               <input
@@ -148,7 +152,7 @@ const navigateToNextWeek = () => {
                 min="2019-07-20"
               >
             </div>
-            
+
             <p class="text-sm text-muted">
               Latest: {{ formattedLatestTime }}
             </p>
@@ -188,7 +192,10 @@ const navigateToNextWeek = () => {
         />
 
         <!-- Middle section - Charts -->
-        <WeatherChartsGrid :observations="data.observations" />
+        <WeatherChartsGrid
+          :observations="data.observations"
+          timeframe="week"
+        />
 
         <!-- Right sidebar - Stats -->
         <WeatherStats

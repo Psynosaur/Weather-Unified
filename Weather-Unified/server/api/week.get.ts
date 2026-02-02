@@ -1,4 +1,10 @@
-import type { WeekPageData, Observation, GraphDataPoint, RainDataPoint, WindDataPoint } from '~/types/weather'
+import type {
+  WeekPageData,
+  Observation,
+  GraphDataPoint,
+  RainDataPoint,
+  WindDataPoint
+} from '~/types/weather'
 
 export default defineEventHandler(async (event): Promise<WeekPageData> => {
   // Get date parameter from query (format: YYYY-MM-DD)
@@ -7,24 +13,11 @@ export default defineEventHandler(async (event): Promise<WeekPageData> => {
 
   // Fetch from WURequest API
   const backendUrl = process.env.WUREQUEST_API_URL || 'https://localhost:5001'
-  
+
   try {
-    // Fetch observations from backend API
-    // For localhost with self-signed certificates, we need to disable TLS verification
-    const fetchOptions: any = {}
-    
-    if (backendUrl.includes('localhost')) {
-      // Disable TLS certificate validation for localhost development
-      // This is required when the backend uses self-signed certificates
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-    }
-    
-    const response = await $fetch<Observation[]>(`${backendUrl}/api/observations/weekly?date=${dateParam}`, fetchOptions)
-    
-    // Re-enable TLS verification after the request
-    if (backendUrl.includes('localhost')) {
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
-    }
+    const response = await $fetch<Observation[]>(
+      `${backendUrl}/api/observations/weekly?date=${dateParam}`
+    )
 
     // Convert backend response to our Observation type
     const backendObservations: Observation[] = response.map(o => ({
@@ -56,7 +49,9 @@ export default defineEventHandler(async (event): Promise<WeekPageData> => {
 
     // Apply sampling (every 100th record for weekly view)
     const nStep = 100
-    const sampledObservations = backendObservations.filter((_, i) => i % nStep === 0)
+    const sampledObservations = backendObservations.filter(
+      (_, i) => i % nStep === 0
+    )
 
     // Transform to graph data points
     const observations: GraphDataPoint[] = sampledObservations.map(o => ({
@@ -102,21 +97,27 @@ export default defineEventHandler(async (event): Promise<WeekPageData> => {
         ws: o.windSpeedCur * 3.6
       }))
 
-    const latest = backendObservations.length > 0 ? backendObservations[backendObservations.length - 1] : undefined
+    const latest
+      = backendObservations.length > 0
+        ? backendObservations[backendObservations.length - 1]
+        : undefined
 
     // Calculate date range in local time to match displayed observations
     const currentDate = new Date(dateParam)
     const now = new Date()
-    const isCurrentWeek = (now.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24) < 7
+    const isCurrentWeek
+      = (now.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24) < 7
 
     const firstObs = backendObservations[0]
     const lastObs = backendObservations[backendObservations.length - 1]
-    
-    const weekStart = firstObs 
+
+    const weekStart = firstObs
       ? new Date(firstObs.obsTime).toISOString().split('T')[0]
-      : new Date(currentDate.getTime() - 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-    
-    const weekEnd = lastObs 
+      : new Date(currentDate.getTime() - 6 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split('T')[0]
+
+    const weekEnd = lastObs
       ? new Date(lastObs.obsTime).toISOString().split('T')[0]
       : currentDate.toISOString().split('T')[0]
 
@@ -132,11 +133,6 @@ export default defineEventHandler(async (event): Promise<WeekPageData> => {
       isCurrentWeek
     }
   } catch (error) {
-    // Re-enable TLS verification in case of error
-    if (backendUrl.includes('localhost')) {
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
-    }
-    
     console.error('Error fetching from WURequest API:', error)
     throw createError({
       statusCode: 500,

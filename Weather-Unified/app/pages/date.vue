@@ -13,7 +13,7 @@ useHead({
 const selectedDate = ref(new Date().toISOString().split('T')[0])
 
 // Fetch weather data for the selected date
-const { data, pending, error, refresh } = await useFetch<DatePageData>('/api/date', {
+const { data, pending, error } = await useFetch<DatePageData>('/api/date', {
   query: computed(() => ({
     date: selectedDate.value
   })),
@@ -22,7 +22,7 @@ const { data, pending, error, refresh } = await useFetch<DatePageData>('/api/dat
 
 // App settings (will be moved to config/env later)
 const appSettings = ref({
-  stationName: 'Weather Station',
+  stationName: process.env.WEATHER_STATION,
   lat: -33.8,
   lon: 18.6,
   magneticDeclination: -23.5
@@ -32,18 +32,13 @@ const appSettings = ref({
 const formattedDate = computed(() => {
   if (!data.value?.latest) return ''
   const date = new Date(data.value.latest.obsTime)
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('en-ZA', {
     weekday: 'long',
     day: '2-digit',
     month: 'short',
     year: 'numeric'
   })
 })
-
-// Handle date picker change (placeholder for now)
-const handleDateChange = (newDate: string) => {
-  selectedDate.value = newDate
-}
 </script>
 
 <template>
@@ -117,7 +112,10 @@ const handleDateChange = (newDate: string) => {
         />
 
         <!-- Middle section - Charts -->
-        <WeatherChartsGrid :observations="data.observations" />
+        <WeatherChartsGrid
+          :observations="data.observations"
+          timeframe="day"
+        />
 
         <!-- Right sidebar - Date Summary (Rain & Sunlight) -->
         <WeatherDateSummary

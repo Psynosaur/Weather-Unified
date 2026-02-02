@@ -1,76 +1,73 @@
+<script setup lang="ts">
+// Meta information
+useHead({
+  title: 'About',
+  meta: [
+    { name: 'description', content: 'About the weather station and author' }
+  ]
+})
+</script>
+
 <template>
-  <div>
-    <UPageHero
-      title="About"
-      description="A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours."
-      :links="[{
-        label: 'Get started',
-        to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-        target: '_blank',
-        trailingIcon: 'i-lucide-arrow-right',
-        size: 'xl'
-      }, {
-        label: 'Use this template',
-        to: 'https://github.com/nuxt-ui-templates/starter',
-        target: '_blank',
-        icon: 'i-simple-icons-github',
-        size: 'xl',
-        color: 'neutral',
-        variant: 'subtle'
-      }]"
-    />
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex justify-center">
+      <div class="max-w-md w-full">
+        <UCard>
+          <!-- Card Image -->
+          <template #header>
+            <div class="aspect-square w-full overflow-hidden">
+              <img
+                src="/img/FullSpectrumOhanssss.jpg"
+                alt="Ohan Smit"
+                class="w-full h-full object-cover"
+              >
+            </div>
+          </template>
 
-    <UPageSection
-      id="features"
-      title="Everything you need to build modern Nuxt apps"
-      description="Start with a solid foundation. This template includes all the essentials for building production-ready applications with Nuxt UI's powerful component system."
-      :features="[{
-        icon: 'i-lucide-rocket',
-        title: 'Production-ready from day one',
-        description: 'Pre-configured with TypeScript, ESLint, Tailwind CSS, and all the best practices. Focus on building features, not setting up tooling.'
-      }, {
-        icon: 'i-lucide-palette',
-        title: 'Beautiful by default',
-        description: 'Leveraging Nuxt UI\'s design system with automatic dark mode, consistent spacing, and polished components that look great out of the box.'
-      }, {
-        icon: 'i-lucide-zap',
-        title: 'Lightning fast',
-        description: 'Optimized for performance with SSR/SSG support, automatic code splitting, and edge-ready deployment. Your users will love the speed.'
-      }, {
-        icon: 'i-lucide-blocks',
-        title: '100+ components included',
-        description: 'Access Nuxt UI\'s comprehensive component library. From forms to navigation, everything is accessible, responsive, and customizable.'
-      }, {
-        icon: 'i-lucide-code-2',
-        title: 'Developer experience first',
-        description: 'Auto-imports, hot module replacement, and TypeScript support. Write less boilerplate and ship more features.'
-      }, {
-        icon: 'i-lucide-shield-check',
-        title: 'Built for scale',
-        description: 'Enterprise-ready architecture with proper error handling, SEO optimization, and security best practices built-in.'
-      }]"
-    />
+          <!-- Card Content -->
+          <div class="space-y-4">
+            <h1 class="text-2xl font-bold">
+              The author -
+              <a
+                href="https://flickr.com/ohansmit"
+                target="_blank"
+                class="text-primary hover:underline"
+              >
+                Ohan Smit
+              </a>
+              -
+              <a
+                href="https://github.com/psynosaur"
+                target="_blank"
+                class="text-cyan-400 hover:underline"
+              >
+                Psynosaur
+              </a>
+            </h1>
 
-    <UPageSection>
-      <UPageCTA
-        title="Ready to build your next Nuxt app?"
-        description="Join thousands of developers building with Nuxt and Nuxt UI. Get this template and start shipping today."
-        variant="subtle"
-        :links="[{
-          label: 'Start building',
-          to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-          target: '_blank',
-          trailingIcon: 'i-lucide-arrow-right',
-          color: 'neutral'
-        }, {
-          label: 'View on GitHub',
-          to: 'https://github.com/nuxt-ui-templates/starter',
-          target: '_blank',
-          icon: 'i-simple-icons-github',
-          color: 'neutral',
-          variant: 'outline'
-        }]"
-      />
-    </UPageSection>
+            <div class="space-y-3">
+              <p>
+                This is my weather reporting site, it is built for speedy weather insights.
+              </p>
+
+              <p class="text-center">
+                My Amateur Radio blog can be found at
+                <a
+                  href="https://zs1sci.com/"
+                  target="_blank"
+                  class="text-primary hover:underline"
+                >
+                  zs1sci.com
+                </a>
+              </p>
+
+              <p class="text-center text-sm text-muted">
+                I like the weather okay. . . ¯\_(ツ)_/¯
+              </p>
+            </div>
+          </div>
+        </UCard>
+      </div>
+    </div>
   </div>
 </template>

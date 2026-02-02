@@ -30,7 +30,7 @@ const stats = computed<StatItem[]>(() => {
   const rainRates = props.observations.map(o => o.rr)
   const solar = props.observations.filter(o => o.sr > 0).map(o => o.sr)
   const solarAll = props.observations.map(o => o.sr)
-  const uv = props.observations.map(o => o.UV)
+  const uv = props.observations.map(o => o.uv)
   const pressure = props.observations.map(o => o.p)
 
   const items: StatItem[] = []
@@ -117,7 +117,6 @@ const initializeRainRose = () => {
     showLegend: false
   })
 }
-
 </script>
 
 <template>

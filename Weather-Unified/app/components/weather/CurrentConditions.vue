@@ -19,31 +19,31 @@ const windSpeeds = computed(() => ({
 
 // Check if there's any wind
 const hasWind = computed(() => {
-  return windSpeeds.value.currWind > 0 || 
-         windSpeeds.value.currWAvg > 0 || 
-         windSpeeds.value.currGust > 0
+  return windSpeeds.value.currWind > 0
+    || windSpeeds.value.currWAvg > 0
+    || windSpeeds.value.currGust > 0
 })
 
 // Calculate sunlight information
 const sunlightInfo = computed(() => {
   // Find observations with solar radiation
   const daylightObs = props.observations.filter(o => o.sr > 0)
-  
-  if (daylightObs.length === 0) {
+  const totalObservations = daylightObs.length
+  if (totalObservations === 0 || !daylightObs[0]) {
     return null
   }
-
+  const lastObservation = daylightObs[totalObservations - 1] as GraphDataPoint
   const sunrise = new Date(daylightObs[0].ot)
-  const sunlightLatest = new Date(daylightObs[daylightObs.length - 1].ot)
+  const sunlightLatest = new Date(lastObservation.ot)
   const latestObsTime = new Date(props.latest.obsTime)
-  
+
   const duration = sunlightLatest.getTime() - sunrise.getTime()
   const hours = Math.floor(duration / (1000 * 60 * 60))
   const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60))
-  
+
   // Check if sunset has occurred
   const isSet = props.latest.solarRad === 0 && sunlightLatest < latestObsTime
-  
+
   // Calculate max solar elevation
   const halfdisk = 0.26667
   const magDeclinationRad = (props.magneticDeclination * Math.PI) / 180
@@ -67,7 +67,7 @@ const sunlightInfo = computed(() => {
 
 // Format time to HH:mm
 const formatTime = (date: Date) => {
-  return date.toLocaleTimeString('en-US', {
+  return date.toLocaleTimeString('en-ZA', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false
