@@ -3,6 +3,13 @@ import type { Forecasts } from '~/types/weather'
 
 const { data: forecast, status, error } = await useFetch<Forecasts>('/api/forecast')
 
+useHead({
+  title: 'Weather Forecast',
+  meta: [
+    { name: 'description', content: '6-Day weather forecast' }
+  ]
+})
+
 // Helper function to format time
 const formatTime = (time: string | undefined): string => {
   if (!time) return '--'

@@ -3,24 +3,25 @@ import type {
   Observation,
   GraphDataPoint,
   RainDataPoint,
-  WindDataPoint
-} from '~/types/weather'
+  WindDataPoint,
+} from "~/types/weather";
 
 export default defineEventHandler(async (event): Promise<MonthPageData> => {
-  // Get date parameter from query (format: YYYY-MM-DD)
-  const query = getQuery(event)
-  const dateParam = query.date as string
+  const config = useRuntimeConfig();
+  const backendUrl = config.public.WUREQUEST_API_URL;
 
-  // Fetch from WURequest API
-  const backendUrl = process.env.WUREQUEST_API_URL || 'https://localhost:5001'
+  // Get date parameter from query (format: YYYY-MM-DD)
+  const query = getQuery(event);
+  const dateParam = query.date as string;
 
   try {
+    // Fetch from WURequest API
     const response = await $fetch<Observation[]>(
-      `${backendUrl}/api/observations/monthly?date=${dateParam}`
-    )
+      `${backendUrl}/api/observations/monthly?date=${dateParam}`,
+    );
 
     // Convert backend response to our Observation type
-    const backendObservations: Observation[] = response.map(o => ({
+    const backendObservations: Observation[] = response.map((o) => ({
       obsTime: o.obsTime,
       tempOutCur: o.tempOutCur,
       tempInCur: o.tempInCur,
@@ -44,17 +45,17 @@ export default defineEventHandler(async (event): Promise<MonthPageData> => {
       rainMonth: o.rainMonth,
       rainYear: o.rainYear,
       solarRad: o.solarRad,
-      uv: o.uv
-    }))
+      uv: o.uv,
+    }));
 
     // Apply sampling (every 400th record for monthly view - more aggressive than weekly)
-    const nStep = 400
+    const nStep = 400;
     const sampledObservations = backendObservations.filter(
-      (_, i) => i % nStep === 0
-    )
+      (_, i) => i % nStep === 0,
+    );
 
     // Transform to graph data points
-    const observations: GraphDataPoint[] = sampledObservations.map(o => ({
+    const observations: GraphDataPoint[] = sampledObservations.map((o) => ({
       ot: new Date(o.obsTime).getTime(),
       to: o.tempOutCur,
       dc: o.dewCur,
@@ -73,53 +74,53 @@ export default defineEventHandler(async (event): Promise<MonthPageData> => {
       rr: o.rainRateCur,
       rd: o.rainDay,
       sr: o.solarRad,
-      uv: o.uv
-    }))
+      uv: o.uv,
+    }));
 
     // Filter rain data (only records with rain)
     const rainData: RainDataPoint[] = backendObservations
-      .filter(o => o.rainRateCur > 0)
-      .map(o => ({
+      .filter((o) => o.rainRateCur > 0)
+      .map((o) => ({
         ot: o.obsTime,
         wda: o.windDirAvg10,
         wdae: o.windDirAvg10Eng,
-        rr: o.rainRateCur
-      }))
+        rr: o.rainRateCur,
+      }));
 
     // Filter wind data (only records with wind)
     const windData: WindDataPoint[] = sampledObservations
-      .filter(o => o.windSpeedCur > 0)
-      .map(o => ({
+      .filter((o) => o.windSpeedCur > 0)
+      .map((o) => ({
         wd: o.windDirCur,
         wdce: o.windDirCurEng,
         wg: o.windGust10 * 3.6,
         was: o.windAvgSpeedCur * 3.6,
-        ws: o.windSpeedCur * 3.6
-      }))
+        ws: o.windSpeedCur * 3.6,
+      }));
 
-    const latest
-      = backendObservations.length > 0
+    const latest =
+      backendObservations.length > 0
         ? backendObservations[backendObservations.length - 1]
-        : undefined
+        : undefined;
 
     // Calculate date range in local time to match displayed observations
-    const currentDate = new Date(dateParam)
-    const now = new Date()
-    const isCurrentMonth
-      = (now.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24) < 30
+    const currentDate = new Date(dateParam);
+    const now = new Date();
+    const isCurrentMonth =
+      (now.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24) < 30;
 
-    const firstObs = backendObservations[0]
-    const lastObs = backendObservations[backendObservations.length - 1]
+    const firstObs = backendObservations[0];
+    const lastObs = backendObservations[backendObservations.length - 1];
 
     const monthStart = firstObs
-      ? new Date(firstObs.obsTime).toISOString().split('T')[0]
+      ? new Date(firstObs.obsTime).toISOString().split("T")[0]
       : new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split('T')[0]
+          .toISOString()
+          .split("T")[0];
 
     const monthEnd = lastObs
-      ? new Date(lastObs.obsTime).toISOString().split('T')[0]
-      : currentDate.toISOString().split('T')[0]
+      ? new Date(lastObs.obsTime).toISOString().split("T")[0]
+      : currentDate.toISOString().split("T")[0];
 
     return {
       observations,
@@ -130,13 +131,13 @@ export default defineEventHandler(async (event): Promise<MonthPageData> => {
       monthStart,
       monthEnd,
       currentDate: dateParam,
-      isCurrentMonth
-    }
+      isCurrentMonth,
+    };
   } catch (error) {
-    console.error('Error fetching from WURequest API:', error)
+    console.error("Error fetching from WURequest API:", error);
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to fetch weather data from backend API'
-    })
+      statusMessage: "Failed to fetch weather data from backend API",
+    });
   }
-})
+});

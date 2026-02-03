@@ -79,18 +79,28 @@ const hasRain = computed(() => {
   return props.rainData && props.rainData.length > 0
 })
 
-const { createPolarChart, disposeChart } = useAmCharts()
+const { createPolarChart, disposeChart, colorMode } = useAmCharts()
 
 // Initialize rain rose chart after component is mounted
 onMounted(() => {
-  if (hasRain.value) {
-    initializeRainRose()
-  }
+  // Add a small delay to ensure DOM is fully ready after hydration
+  nextTick(() => {
+    if (hasRain.value) {
+      initializeRainRose()
+    }
+  })
 })
 
 // Reinitialize chart when rainData changes
 watch(() => props.rainData, (newRainData) => {
   if (newRainData && newRainData.length > 0) {
+    initializeRainRose()
+  }
+})
+
+// Reinitialize chart when color mode changes
+watch(() => colorMode.value, () => {
+  if (hasRain.value) {
     initializeRainRose()
   }
 })
@@ -148,7 +158,7 @@ const initializeRainRose = () => {
         </h4>
         <div
           id="rainrose"
-          class="h-[300px]"
+          class="h-[350px]"
         />
       </div>
     </UCard>

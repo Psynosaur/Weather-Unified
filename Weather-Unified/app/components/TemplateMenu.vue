@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 
+// Accept orientation prop to allow switching between horizontal and vertical
+defineProps<{
+  orientation?: 'horizontal' | 'vertical'
+}>()
+
 const items: NavigationMenuItem[] = [
   {
     label: 'Today',
@@ -49,7 +54,6 @@ const items: NavigationMenuItem[] = [
 <template>
   <UNavigationMenu
     :items="items"
-    orientation="horizontal"
-    class="ml-4"
+    :orientation="orientation"
   />
 </template>

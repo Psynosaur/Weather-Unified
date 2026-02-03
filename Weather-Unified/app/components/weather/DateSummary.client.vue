@@ -5,15 +5,14 @@ interface Props {
   latest: Observation | null
   observations: GraphDataPoint[]
   windData?: WindDataPoint[]
-  magneticDeclination?: number
-  lat?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  magneticDeclination: 0,
-  lat: 0,
   windData: () => []
 })
+
+const appSettings = useAppSettings()
+const { calculateMaxSolarElevation } = useSolarCalculations()
 
 interface SunlightData {
   sunrise: string | null
@@ -63,17 +62,9 @@ const sunlightInfo = computed<SunlightData>(() => {
     sunset = sunlightLatestTime.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit', hour12: false })
   }
 
-  // Calculate max solar elevation
-  const halfdisk = 0.26667
-  const declin = (props.magneticDeclination * Math.PI / 180)
+  // Calculate max solar elevation using the composable
   const obsDate = new Date(props.latest.obsTime)
-  const numday = getDayOfYear(obsDate)
-  const elevat = declin * Math.sin(Math.PI * 2 / 365 * (284 + numday)) / (Math.PI * 2) * 360 - (90 - Math.abs(props.lat))
-  const secs = 1 / 3600
-  const radh = elevat * Math.PI / 180
-  const tanradh = Math.tan(radh)
-  const atmosRefrac = secs * (58.1 / tanradh - 0.07 / Math.pow(tanradh, 3) + 0.000086 / Math.pow(tanradh, 5))
-  const finalEle = -(Math.round(10 * (elevat + atmosRefrac + halfdisk)) / 10)
+  const finalEle = calculateMaxSolarElevation(obsDate, appSettings.lat)
 
   return {
     sunrise: sunriseTime.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit', hour12: false }),
@@ -83,29 +74,32 @@ const sunlightInfo = computed<SunlightData>(() => {
   }
 })
 
-function getDayOfYear(date: Date): number {
-  const start = new Date(date.getFullYear(), 0, 0)
-  const diff = date.getTime() - start.getTime()
-  const oneDay = 1000 * 60 * 60 * 24
-  return Math.floor(diff / oneDay)
-}
-
 const hasWind = computed(() => {
   return props.windData && props.windData.length > 0
 })
 
-const { createPolarChart, disposeChart } = useAmCharts()
+const { createPolarChart, disposeChart, colorMode } = useAmCharts()
 
 // Initialize wind rose chart after component is mounted
 onMounted(() => {
-  if (hasWind.value) {
-    initializeWindRose()
-  }
+  // Add a small delay to ensure DOM is fully ready after hydration
+  nextTick(() => {
+    if (hasWind.value) {
+      initializeWindRose()
+    }
+  })
 })
 
 // Reinitialize chart when windData changes
 watch(() => props.windData, (newWindData) => {
   if (newWindData && newWindData.length > 0) {
+    initializeWindRose()
+  }
+})
+
+// Reinitialize chart when color mode changes
+watch(() => colorMode.value, () => {
+  if (hasWind.value) {
     initializeWindRose()
   }
 })
@@ -205,7 +199,7 @@ const initializeWindRose = () => {
         </h4>
         <div
           id="windrose-summary"
-          class="h-[300px]"
+          class="h-[350px]"
         />
       </div>
     </UCard>

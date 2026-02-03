@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { DatePageData } from '~/types/weather'
 
+// Use weather layout
+definePageMeta({
+  layout: 'weather'
+})
+
 // Meta information
 useHead({
   title: 'Weather Today',
@@ -12,13 +17,8 @@ useHead({
 // Fetch today's weather data
 const { data, pending, error, refresh } = await useFetch<DatePageData>('/api/day')
 
-// App settings (will be moved to config/env later)
-const appSettings = ref({
-  stationName: process.env.WEATHER_STATION,
-  lat: -33.8,
-  lon: 18.6,
-  magneticDeclination: -23.5
-})
+// App settings from composable
+const appSettings = useAppSettings()
 
 // Format date for display
 const formattedDate = computed(() => {
@@ -63,19 +63,19 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="container-full mx-auto">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-full overflow-x-hidden">
     <!-- Header -->
     <div class="text-center mb-8">
-      <h1 class="text-4xl font-bold mb-4">
-        {{ appSettings.stationName }}
+      <h1 class="text-4xl font-bold mb-2">
+        Today's Weather
       </h1>
+      <h2 class="text-2xl mb-4">
+        {{ appSettings.stationName }}
+      </h2>
 
       <div class="space-y-2">
-        <p class="text-lg">
-          {{ formattedDate }}
-        </p>
         <p class="text-md text-muted">
-          {{ formattedTime }}
+          {{ formattedDate }} {{ formattedTime }}
         </p>
 
         <!-- Cloudiness indicator -->
@@ -115,43 +115,50 @@ onUnmounted(() => {
       v-else-if="data && data.latest"
       class="space-y-6"
     >
-      <!-- Top bar with indoor/solar/rain info -->
-      <WeatherTopBar :latest="data.latest" />
+      <NuxtLayout name="weather">
+        <template #left-sidebar>
+          <!-- Left sidebar - Current Conditions with Wind Rose -->
+          <WeatherCurrentConditions
+            :latest="data.latest"
+            :observations="data.observations"
+            :wind-data="data.windData"
+            :count="data.count"
+          />
+        </template>
 
-      <!-- Three column layout: CurrentConditions | Charts | Stats -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Left sidebar - Current Conditions with Wind Rose -->
-        <WeatherCurrentConditions
-          :latest="data.latest"
-          :observations="data.observations"
-          :wind-data="data.windData"
-          :count="data.count"
-          :magnetic-declination="appSettings.magneticDeclination"
-          :lat="appSettings.lat"
-        />
+        <template #top-bar>
+          <!-- Top bar with indoor/solar/rain info -->
+          <WeatherTopBar :latest="data.latest" />
+        </template>
 
-        <!-- Middle section - Charts -->
-        <WeatherChartsGrid
-          :observations="data.observations"
-          timeframe="day"
-        />
+        <template #charts>
+          <!-- Charts Grid -->
+          <WeatherChartsGrid
+            :observations="data.observations"
+            timeframe="day"
+          />
+        </template>
 
-        <!-- Right sidebar - Stats Summary with Rain Rose -->
-        <WeatherStats
-          :observations="data.observations"
-          :rain-data="data.rainData"
-        />
-      </div>
+        <template #right-sidebar>
+          <!-- Right sidebar - Stats Summary with Rain Rose -->
+          <WeatherStats
+            :observations="data.observations"
+            :rain-data="data.rainData"
+          />
+        </template>
 
-      <!-- Record count -->
-      <div class="text-center text-sm text-muted py-4">
-        {{ data.count }} total records
-      </div>
+        <template #footer>
+          <!-- Record count -->
+          <div class="text-center text-sm text-muted py-4">
+            {{ data.count }} total records
+          </div>
 
-      <!-- Auto-refresh info -->
-      <div class="text-center text-sm text-muted pb-4">
-        Auto-refreshing every 2 minutes
-      </div>
+          <!-- Auto-refresh info -->
+          <div class="text-center text-sm text-muted pb-4">
+            Auto-refreshing every 2 minutes
+          </div>
+        </template>
+      </NuxtLayout>
     </div>
 
     <!-- No data state -->

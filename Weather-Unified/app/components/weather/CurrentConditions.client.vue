@@ -6,9 +6,10 @@ const props = defineProps<{
   observations: GraphDataPoint[]
   windData: WindDataPoint[]
   count: number
-  magneticDeclination: number
-  lat: number
 }>()
+
+const appSettings = useAppSettings()
+const { calculateMaxSolarElevation } = useSolarCalculations()
 
 // Calculate wind speeds in km/h
 const windSpeeds = computed(() => ({
@@ -44,16 +45,8 @@ const sunlightInfo = computed(() => {
   // Check if sunset has occurred
   const isSet = props.latest.solarRad === 0 && sunlightLatest < latestObsTime
 
-  // Calculate max solar elevation
-  const halfdisk = 0.26667
-  const magDeclinationRad = (props.magneticDeclination * Math.PI) / 180
-  const numday = latestObsTime.getUTCDate()
-  const elevat = magDeclinationRad * Math.sin((Math.PI * 2 / 365) * (284 + numday)) / (Math.PI * 2) * 360 - (90 - Math.abs(props.lat))
-  const secs = 1 / 3600
-  const radh = (elevat * Math.PI) / 180
-  const tanradh = Math.tan(radh)
-  const atmosRefrac = secs * (58.1 / tanradh - 0.07 / Math.pow(tanradh, 3) + 0.000086 / Math.pow(tanradh, 5))
-  const finalEle = -(Math.round(10 * (elevat + atmosRefrac + halfdisk)) / 10)
+  // Calculate max solar elevation using the composable
+  const finalEle = calculateMaxSolarElevation(latestObsTime, appSettings.lat)
 
   return {
     sunrise,
@@ -79,18 +72,28 @@ const hasWindData = computed(() => {
   return props.windData && props.windData.length > 0
 })
 
-const { createPolarChart, disposeChart } = useAmCharts()
+const { createPolarChart, disposeChart, colorMode } = useAmCharts()
 
 // Initialize wind rose chart after component is mounted
 onMounted(() => {
-  if (hasWindData.value) {
-    initializeWindRose()
-  }
+  // Add a small delay to ensure DOM is fully ready after hydration
+  nextTick(() => {
+    if (hasWindData.value) {
+      initializeWindRose()
+    }
+  })
 })
 
 // Reinitialize chart when windData changes
 watch(() => props.windData, (newWindData) => {
   if (newWindData && newWindData.length > 0) {
+    initializeWindRose()
+  }
+})
+
+// Reinitialize chart when color mode changes
+watch(() => colorMode.value, () => {
+  if (hasWindData.value) {
     initializeWindRose()
   }
 })
@@ -206,7 +209,8 @@ const initializeWindRose = () => {
             </div>
             <div class="flex justify-between">
               <span>Total hours</span>
-              <span class="font-medium">{{ sunlightInfo.durationHours }}:{{ String(sunlightInfo.durationMinutes).padStart(2, '0') }}</span>
+              <span class="font-medium">{{ sunlightInfo.durationHours }}:{{
+                String(sunlightInfo.durationMinutes).padStart(2, '0') }}</span>
             </div>
             <div class="flex justify-between">
               <span>Max Solar Elevation</span>
@@ -225,7 +229,7 @@ const initializeWindRose = () => {
           </h3>
           <div
             id="windrose"
-            class="h-[300px]"
+            class="h-[350px]"
           >
             <!-- Wind rose chart will be rendered here via amCharts JavaScript -->
           </div>

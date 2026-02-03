@@ -20,13 +20,8 @@ const { data, pending, error } = await useFetch<DatePageData>('/api/date', {
   watch: [selectedDate]
 })
 
-// App settings (will be moved to config/env later)
-const appSettings = ref({
-  stationName: process.env.WEATHER_STATION,
-  lat: -33.8,
-  lon: 18.6,
-  magneticDeclination: -23.5
-})
+// App settings from composable
+const appSettings = useAppSettings()
 
 // Format date for display
 const formattedDate = computed(() => {
@@ -42,7 +37,7 @@ const formattedDate = computed(() => {
 </script>
 
 <template>
-  <div class="container-full mx-auto">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-full overflow-x-hidden">
     <!-- Header -->
     <div class="text-center mb-8">
       <h1 class="text-4xl font-bold mb-4">
@@ -56,14 +51,10 @@ const formattedDate = computed(() => {
 
         <!-- Date picker placeholder -->
         <div class="flex justify-center">
-          <input
-            id="date"
+          <FormDatePicker
             v-model="selectedDate"
             type="date"
-            class="px-4 py-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700"
-            :max="new Date().toISOString().split('T')[0]"
-            min="2019-07-20"
-          >
+          />
         </div>
 
         <!-- Cloudiness indicator -->
@@ -122,8 +113,6 @@ const formattedDate = computed(() => {
           :latest="data.latest"
           :observations="data.observations"
           :wind-data="data.windData"
-          :magnetic-declination="appSettings.magneticDeclination"
-          :lat="appSettings.lat"
         />
       </div>
 

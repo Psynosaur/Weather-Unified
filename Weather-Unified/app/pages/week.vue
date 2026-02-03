@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { WeekPageData } from '~/types/weather'
 
+// Use weather layout
+definePageMeta({
+  layout: 'weather'
+})
+
 // Meta information
 useHead({
   title: 'Weekly Weather',
@@ -20,13 +25,8 @@ const { data, pending, error } = await useFetch<WeekPageData>('/api/week', {
   watch: [selectedDate]
 })
 
-// App settings (will be moved to config/env later)
-const appSettings = ref({
-  stationName: process.env.WEATHER_STATION,
-  lat: -33.8,
-  lon: 18.6,
-  magneticDeclination: -23.5
-})
+// App settings from composable
+const appSettings = useAppSettings()
 
 // Format date range for display
 const formattedDateRange = computed(() => {
@@ -50,20 +50,20 @@ const formattedDateRange = computed(() => {
 })
 
 // Format latest observation time
-const formattedLatestTime = computed(() => {
-  if (!data.value?.latest) return ''
-  const date = new Date(data.value.latest.obsTime)
-  return date.toLocaleString('en-ZA', {
-    weekday: 'long',
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    timeZoneName: 'short'
-  })
-})
+// const formattedLatestTime = computed(() => {
+//   if (!data.value?.latest) return ''
+//   const date = new Date(data.value.latest.obsTime)
+//   return date.toLocaleString('en-ZA', {
+//     weekday: 'long',
+//     day: '2-digit',
+//     month: 'short',
+//     year: 'numeric',
+//     hour: '2-digit',
+//     minute: '2-digit',
+//     second: '2-digit',
+//     timeZoneName: 'short'
+//   })
+// })
 
 // Navigation functions
 const navigateToPreviousWeek = () => {
@@ -84,7 +84,7 @@ const navigateToNextWeek = () => {
 </script>
 
 <template>
-  <div class="container-full mx-auto">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-full overflow-x-hidden">
     <!-- Loading state -->
     <div
       v-if="pending"
@@ -143,19 +143,15 @@ const navigateToNextWeek = () => {
 
             <!-- Date picker -->
             <div class="flex justify-center">
-              <input
-                id="date"
+              <FormDatePicker
                 v-model="selectedDate"
                 type="date"
-                class="px-4 py-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700"
-                :max="new Date().toISOString().split('T')[0]"
-                min="2019-07-20"
-              >
+              />
             </div>
 
-            <p class="text-sm text-muted">
+            <!-- <p class="text-sm text-muted">
               Latest: {{ formattedLatestTime }}
-            </p>
+            </p> -->
           </div>
 
           <!-- Next Week Button (only show if not current week) -->
@@ -173,41 +169,49 @@ const navigateToNextWeek = () => {
         </div>
       </div>
 
-      <!-- Top Bar - Summary Cards -->
-      <WeatherTopBar
-        v-if="data.latest"
-        :latest="data.latest"
-      />
+      <!-- Three column layout: CurrentConditions | TopBar + Charts | Stats -->
+      <NuxtLayout name="weather">
+        <template #left-sidebar>
+          <!-- Left sidebar - Current Conditions -->
+          <WeatherCurrentConditions
+            :latest="data.latest"
+            :observations="data.observations"
+            :wind-data="data.windData"
+            :count="data.count"
+          />
+        </template>
 
-      <!-- Three column layout: CurrentConditions | Charts | Stats -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Left sidebar - Current Conditions -->
-        <WeatherCurrentConditions
-          :latest="data.latest"
-          :observations="data.observations"
-          :wind-data="data.windData"
-          :count="data.count"
-          :magnetic-declination="appSettings.magneticDeclination"
-          :lat="appSettings.lat"
-        />
+        <template #top-bar>
+          <!-- Top Bar - Summary Cards -->
+          <WeatherTopBar
+            v-if="data.latest"
+            :latest="data.latest"
+          />
+        </template>
 
-        <!-- Middle section - Charts -->
-        <WeatherChartsGrid
-          :observations="data.observations"
-          timeframe="week"
-        />
+        <template #charts>
+          <!-- Charts Grid -->
+          <WeatherChartsGrid
+            :observations="data.observations"
+            timeframe="week"
+          />
+        </template>
 
-        <!-- Right sidebar - Stats -->
-        <WeatherStats
-          :observations="data.observations"
-          :rain-data="data.rainData"
-        />
-      </div>
+        <template #right-sidebar>
+          <!-- Right sidebar - Stats -->
+          <WeatherStats
+            :observations="data.observations"
+            :rain-data="data.rainData"
+          />
+        </template>
 
-      <!-- Record count -->
-      <div class="text-center text-sm text-muted py-4">
-        {{ data.count }} total records
-      </div>
+        <template #footer>
+          <!-- Record count -->
+          <div class="text-center text-sm text-muted py-4">
+            {{ data.count }} total records
+          </div>
+        </template>
+      </NuxtLayout>
     </div>
 
     <!-- No data state -->
@@ -226,14 +230,10 @@ const navigateToNextWeek = () => {
 
         <!-- Date picker -->
         <div class="flex justify-center mb-4">
-          <input
-            id="date"
+          <FormDatePicker
             v-model="selectedDate"
             type="date"
-            class="px-4 py-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700"
-            :max="new Date().toISOString().split('T')[0]"
-            min="2019-07-20"
-          >
+          />
         </div>
       </div>
 

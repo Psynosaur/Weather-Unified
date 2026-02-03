@@ -2,7 +2,9 @@ import type { Forecasts } from '~/types/weather'
 
 export default defineEventHandler(async (): Promise<Forecasts> => {
   // Fetch from WURequest API
-  const backendUrl = process.env.WUREQUEST_API_URL || 'https://localhost:5001'
+  const config = useRuntimeConfig();
+  // Fetch from WURequest API
+  const backendUrl = config.public.WUREQUEST_API_URL;
 
   try {
     const response = await $fetch<Forecasts>(`${backendUrl}/api/forecasts`)

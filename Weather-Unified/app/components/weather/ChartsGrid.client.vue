@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { GraphDataPoint } from '~/types/weather'
-import type { Timeframe } from '~/composables/useTimeframeConfig'
+import type { GraphDataPoint } from '@/types/weather'
+import type { Timeframe } from '@/composables/useTimeframeConfig'
 
 interface Props {
   observations: GraphDataPoint[]
@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<Props>(), {
   timeframe: 'default'
 })
 
-const { createXYChart, createPolarChart, disposeAllCharts } = useAmCharts()
+const { createXYChart, createPolarChart, disposeAllCharts, colorMode } = useAmCharts()
 
 // Get timeframe configuration
 const timeframeConfig = useTimeframeConfig(props.timeframe)
@@ -40,14 +40,24 @@ const roseCharts = [
 
 // Initialize charts after component is mounted
 onMounted(() => {
-  if (props.observations && props.observations.length > 0) {
-    initializeCharts()
-  }
+  // Add a small delay to ensure DOM is fully ready after hydration
+  nextTick(() => {
+    if (props.observations && props.observations.length > 0) {
+      initializeCharts()
+    }
+  })
 })
 
 // Reinitialize charts when observations change
 watch(() => props.observations, (newObs) => {
   if (newObs && newObs.length > 0) {
+    initializeCharts()
+  }
+})
+
+// Reinitialize charts when color mode changes
+watch(() => colorMode.value, () => {
+  if (props.observations && props.observations.length > 0) {
     initializeCharts()
   }
 })

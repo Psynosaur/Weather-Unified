@@ -1,7 +1,7 @@
 <script setup>
 useHead({
   meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+    { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes' }
   ],
   link: [
     { rel: 'icon', href: '/favicon.ico' }
@@ -33,7 +33,8 @@ useSeoMeta({
           <AppLogo class="w-auto h-6 shrink-0" />
         </NuxtLink>
 
-        <TemplateMenu />
+        <!-- Desktop Navigation - Hidden on mobile -->
+        <TemplateMenu class="hidden lg:flex" />
       </template>
 
       <template #right>
@@ -47,6 +48,11 @@ useSeoMeta({
           color="neutral"
           variant="ghost"
         />
+      </template>
+
+      <!-- Mobile Navigation Menu -->
+      <template #body>
+        <TemplateMenu orientation="vertical" class="lg:hidden -mx-2.5" />
       </template>
     </UHeader>
 
