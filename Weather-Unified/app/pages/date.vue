@@ -100,6 +100,7 @@ const formattedDate = computed(() => {
         <WeatherStats
           :observations="data.observations"
           :rain-data="data.rainData"
+          timeframe="day"
         />
 
         <!-- Middle section - Charts -->

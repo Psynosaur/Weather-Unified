@@ -21,6 +21,16 @@ const formatTime = (time: string | undefined): string => {
   })
 }
 
+// Helper function to format date as DD-MM
+const formatDate = (time: string | undefined): string => {
+  if (!time) return '--'
+
+  const date = new Date(time)
+  const day = date.getDate().toString().padStart(2, '0')
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  return `${day}-${month}`
+}
+
 // Calculate day length differences
 const calculateDayLengthDiff = (index: number) => {
   if (!forecast.value || index === 0) return null
@@ -99,6 +109,9 @@ const isDaytimeAvailable = (index: number) => {
             <h2 class="text-xl font-bold">
               {{ day }}
             </h2>
+            <p class="text-sm text-gray-400">
+              {{ formatDate(forecast.sunriseTimeLocal[i]) }}
+            </p>
           </div>
           <div class="text-center">
             <h3
@@ -238,9 +251,10 @@ const isDaytimeAvailable = (index: number) => {
 
         <div class="flex justify-center my-4">
           <img
-            :src="`/img/moon/wi-moon-alt-${forecast.moonPhaseDay[i]}.svg`"
+            :src="`/img/moon/wi-moon-alt-${forecast.moonPhaseDay[i] === 0 ? 29 : forecast.moonPhaseDay[i]}.svg`"
             alt="Moon phase"
             class="w-24 h-24"
+            style="transform: scaleX(-1);"
           >
         </div>
 

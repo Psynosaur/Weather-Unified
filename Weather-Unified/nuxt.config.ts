@@ -1,6 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ["@nuxt/eslint", "@nuxt/ui"],
+  modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxt/scripts"],
+
+  scripts: {
+    registry: {
+      googleAnalytics: {
+        id: 'YOUR TAG ID',
+      }
+    }
+  },
 
   devtools: {
     enabled: true,

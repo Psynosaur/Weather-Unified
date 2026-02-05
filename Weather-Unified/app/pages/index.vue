@@ -144,6 +144,7 @@ onUnmounted(() => {
           <WeatherStats
             :observations="data.observations"
             :rain-data="data.rainData"
+            timeframe="day"
           />
         </template>
 

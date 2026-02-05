@@ -202,6 +202,7 @@ const navigateToNextWeek = () => {
           <WeatherStats
             :observations="data.observations"
             :rain-data="data.rainData"
+            timeframe="week"
           />
         </template>
 

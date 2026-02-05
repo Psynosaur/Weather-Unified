@@ -139,6 +139,7 @@ const formattedDateTime = computed(() => {
           <WeatherStats
             :observations="data.observations"
             :rain-data="data.rainData"
+            timeframe="hour"
           />
         </template>
 

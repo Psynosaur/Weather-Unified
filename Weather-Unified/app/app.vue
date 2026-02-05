@@ -11,16 +11,16 @@ useHead({
   }
 })
 
-const title = 'Nuxt Starter Template'
-const description = 'A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours.'
+const title = 'Weather Unified'
+const description = 'Weather information for Durbanville, captured using a WH2303 weather station using Meteobridge'
 
 useSeoMeta({
   title,
   description,
   ogTitle: title,
   ogDescription: description,
-  ogImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
-  twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
+  ogImage: 'https://new.weatheru.co.za/img/FullSpectrumOhanssss.jpg',
+  twitterImage: 'https://new.weatheru.co.za/img/FullSpectrumOhanssss.jpg',
   twitterCard: 'summary_large_image'
 })
 </script>
@@ -69,7 +69,7 @@ useSeoMeta({
         </p>
       </template>
 
-      <template #right>
+      <!-- <template #right>
         <UButton
           to="https://github.com/nuxt-ui-templates/starter"
           target="_blank"
@@ -78,7 +78,7 @@ useSeoMeta({
           color="neutral"
           variant="ghost"
         />
-      </template>
+      </template> -->
     </UFooter>
   </UApp>
 </template>

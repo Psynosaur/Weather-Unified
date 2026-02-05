@@ -202,6 +202,7 @@ const navigateToNextMonth = () => {
           <WeatherStats
             :observations="data.observations"
             :rain-data="data.rainData"
+            timeframe="month"
           />
         </template>
 
