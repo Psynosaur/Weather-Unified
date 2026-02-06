@@ -157,7 +157,7 @@ const initializeRainRose = () => {
     id: 'rainrose',
     valueYFields: ['rr'],
     strokeFillColors: ['#8ebdf3'],
-    tooltipText: ['{rr} mm/h from {wdae}'],
+    tooltipText: ['{rr} mm/h from {wda}° {wdae}'],
     min: 0,
     max: 360,
     valueXFields: ['wda'],
