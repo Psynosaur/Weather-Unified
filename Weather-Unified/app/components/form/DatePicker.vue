@@ -18,12 +18,24 @@ const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
-// Data gap range (no data available) - 2019-08-29 to 2019-10-07
-const GAP_START = new CalendarDate(2019, 8, 29)
-const GAP_END = new CalendarDate(2019, 10, 7)
+// Get runtime config
+const config = useRuntimeConfig()
+
+// Parse date configuration from runtime config
+const parseConfigDate = (dateString: string): CalendarDate => {
+  const [year, month, day] = dateString.split('-').map(Number)
+  if (year === undefined || month === undefined || day === undefined) {
+    throw new Error(`Invalid date configuration: ${dateString}`)
+  }
+  return new CalendarDate(year, month, day)
+}
+
+// Data gap range (no data available) - configurable from environment
+const GAP_START = parseConfigDate(config.public.datePickerGapStart)
+const GAP_END = parseConfigDate(config.public.datePickerGapEnd)
 
 // Min and max dates
-const MIN_DATE = new CalendarDate(2019, 7, 20)
+const MIN_DATE = parseConfigDate(config.public.datePickerMinDate)
 const MAX_DATE = computed(() => {
   const now = new Date()
   return new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getDate())

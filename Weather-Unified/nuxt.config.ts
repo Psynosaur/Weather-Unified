@@ -20,6 +20,9 @@ export default defineNuxtConfig({
     public: {
       WUREQUEST_API_URL: process.env.WUREQUEST_API_URL,
       WEATHER_STATION: process.env.WEATHER_STATION,
+      datePickerMinDate: process.env.DATE_PICKER_MIN_DATE || '2019-07-20',
+      datePickerGapStart: process.env.DATE_PICKER_GAP_START || '2019-08-29',
+      datePickerGapEnd: process.env.DATE_PICKER_GAP_END || '2019-10-07',
     },
   },
 

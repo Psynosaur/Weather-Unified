@@ -62,12 +62,12 @@ const stats = computed<StatItem[]>(() => {
           day: '2-digit',
           hour: '2-digit',
           minute: '2-digit',
-          hour12: true
+          hour12: false
         })
       }
 
       // For day/hour views, just show time
-      return date.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit', hour12: true })
+      return date.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit', hour12: false })
     }
     return ''
   }
@@ -157,7 +157,7 @@ const initializeRainRose = () => {
     id: 'rainrose',
     valueYFields: ['rr'],
     strokeFillColors: ['#8ebdf3'],
-    tooltipText: ['{ot} : {rr} mm/h from {wda}° {wdae}'],
+    tooltipText: ['{rr} mm/h from {wdae}'],
     min: 0,
     max: 360,
     valueXFields: ['wda'],
