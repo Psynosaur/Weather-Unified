@@ -32,6 +32,11 @@ const items: NavigationMenuItem[] = [
     icon: 'i-lucide-cloud-sun-rain',
     to: '/forecast'
   },
+   {
+    label: 'Forecast',
+    icon: 'i-lucide-cloud-sun-rain',
+    to: '/forecast-charts'
+  },
   {
     label: 'History',
     icon: 'i-lucide-calendar-search',

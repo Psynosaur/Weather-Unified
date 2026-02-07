@@ -43,6 +43,8 @@ interface PolarChartConfig {
 
 export const useAmCharts = () => {
   const chartRoots = new Map<string, am5.Root>();
+  const chartSeries = new Map<string, am5xy.XYSeries[]>();
+  const chartPolarSeries = new Map<string, am5radar.RadarLineSeries[]>();
   const colorMode = useColorMode();
 
   /**
@@ -174,6 +176,7 @@ export const useAmCharts = () => {
     );
 
     // Add series
+    const seriesArray: am5xy.XYSeries[] = [];
     for (let i = 0; i < valueFields.length; i++) {
       const valueField = valueFields[i];
       const tooltip = tooltipText[i];
@@ -218,7 +221,13 @@ export const useAmCharts = () => {
         strokeWidth: 2, // Adjust pixel thickness here
       });
       series.data.setAll(data);
+      
+      // Store series reference
+      seriesArray.push(series);
     }
+    
+    // Store all series for this chart
+    chartSeries.set(id, seriesArray);
 
     return root;
   };
@@ -378,6 +387,7 @@ export const useAmCharts = () => {
     );
 
     // Add series
+    const seriesArray: am5radar.RadarLineSeries[] = [];
     for (let i = 0; i < valueYFields.length; i++) {
       const color = strokeFillColors[i];
 
@@ -419,7 +429,13 @@ export const useAmCharts = () => {
       });
 
       series.data.setAll(data);
+      
+      // Store series reference
+      seriesArray.push(series);
     }
+    
+    // Store all series for this chart
+    chartPolarSeries.set(id, seriesArray);
 
     // Add legend if specified
     if (showLegend) {
@@ -433,6 +449,43 @@ export const useAmCharts = () => {
   };
 
   /**
+   * Append a new data point to an existing XY chart
+   * This is more efficient than recreating the entire chart
+   */
+  const appendXYChartData = (id: string, dataPoint: GraphDataPoint) => {
+    const seriesArray = chartSeries.get(id);
+    if (!seriesArray) {
+      console.warn(`No series found for chart "${id}"`);
+      return;
+    }
+
+    // Append data to the END of all series (newest data on the right)
+    seriesArray.forEach((series) => {
+      series.data.push(dataPoint);
+    });
+  };
+
+  /**
+   * Append a new data point to an existing polar chart
+   * This is more efficient than recreating the entire chart
+   */
+  const appendPolarChartData = (
+    id: string,
+    dataPoint: RainDataPoint | WindDataPoint,
+  ) => {
+    const seriesArray = chartPolarSeries.get(id);
+    if (!seriesArray) {
+      console.warn(`No series found for polar chart "${id}"`);
+      return;
+    }
+
+    // Append data to the END of all series (newest data on the right)
+    seriesArray.forEach((series) => {
+      series.data.push(dataPoint);
+    });
+  };
+
+  /**
    * Dispose a specific chart
    */
   const disposeChart = (id: string) => {
@@ -440,6 +493,9 @@ export const useAmCharts = () => {
       chartRoots.get(id)?.dispose();
       chartRoots.delete(id);
     }
+    // Also clean up series references
+    chartSeries.delete(id);
+    chartPolarSeries.delete(id);
   };
 
   /**
@@ -448,11 +504,15 @@ export const useAmCharts = () => {
   const disposeAllCharts = () => {
     chartRoots.forEach((root) => root.dispose());
     chartRoots.clear();
+    chartSeries.clear();
+    chartPolarSeries.clear();
   };
 
   return {
     createXYChart,
     createPolarChart,
+    appendXYChartData,
+    appendPolarChartData,
     disposeChart,
     disposeAllCharts,
     colorMode,

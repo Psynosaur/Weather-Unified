@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<Props>(), {
   timeframe: 'default'
 })
 
-const { createXYChart, createPolarChart, disposeAllCharts, colorMode } = useAmCharts()
+const { createXYChart, createPolarChart, appendXYChartData, appendPolarChartData, disposeAllCharts, colorMode } = useAmCharts()
 
 // Get timeframe configuration
 const timeframeConfig = useTimeframeConfig(props.timeframe)
@@ -38,22 +38,58 @@ const roseCharts = [
   { id: 'chartHR', title: 'Humidity Rose' }
 ]
 
+// Track if charts are initialized
+const chartsInitialized = ref(false)
+const previousObservationsLength = ref(0)
+
 // Initialize charts after component is mounted
 onMounted(() => {
   // Add a small delay to ensure DOM is fully ready after hydration
   nextTick(() => {
     if (props.observations && props.observations.length > 0) {
       initializeCharts()
+      chartsInitialized.value = true
+      previousObservationsLength.value = props.observations.length
     }
   })
 })
 
-// Reinitialize charts when observations change
-watch(() => props.observations, (newObs) => {
-  if (newObs && newObs.length > 0) {
+// Watch for new observations and append data instead of reinitializing
+watch(() => props.observations, (newObs, oldObs) => {
+  if (!newObs || newObs.length === 0) return
+  
+  // If charts aren't initialized yet, initialize them
+  if (!chartsInitialized.value) {
     initializeCharts()
+    chartsInitialized.value = true
+    previousObservationsLength.value = newObs.length
+    return
   }
-})
+  
+  // Check if we have new data points (added to the end)
+  if (newObs.length > previousObservationsLength.value) {
+    // Get the new data point(s) from the end of the array
+    const newDataPoint = newObs[newObs.length - 1]
+    console.log('📊 Appending new data point to charts:', newDataPoint)
+    
+    // Append to all XY charts
+    charts.concat(fullWidthCharts).forEach(chart => {
+      appendXYChartData(chart.id, newDataPoint)
+    })
+    
+    // Append to polar charts
+    roseCharts.forEach(chart => {
+      appendPolarChartData(chart.id, newDataPoint)
+    })
+    
+    previousObservationsLength.value = newObs.length
+  } else if (newObs.length < previousObservationsLength.value || oldObs?.length === 0) {
+    // Data was completely replaced (e.g., time selection changed), reinitialize
+    console.log('📊 Reinitializing charts due to data replacement')
+    initializeCharts()
+    previousObservationsLength.value = newObs.length
+  }
+}, { deep: false })
 
 // Reinitialize charts when color mode changes
 watch(() => colorMode.value, () => {
@@ -65,6 +101,7 @@ watch(() => colorMode.value, () => {
 // Cleanup on unmount
 onUnmounted(() => {
   disposeAllCharts()
+  chartsInitialized.value = false
 })
 
 const initializeCharts = () => {

@@ -32,6 +32,7 @@ export default defineNuxtConfig({
     "/week": { ssr: true },
     "/month": { ssr: true },
     "/forecast": { ssr: true },
+    "/forecast-charts": { ssr: true },
     "/date": { ssr: true },
     "/about": { prerender: true },
   },
