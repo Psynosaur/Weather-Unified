@@ -1,3 +1,4 @@
+using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using WURequest.Models;
 using WURequest.Services;
+using WURequest.Hubs;
 
 namespace WURequest
 {
@@ -37,14 +39,29 @@ namespace WURequest
             services.AddSingleton<IForecastService, ForecastService>();
             services.AddSingleton<IObservationsService, ObservationsService>();
             
-            // Register HttpClient for external API calls
-            services.AddHttpClient<IForecastApiService, ForecastApiService>();
+            // Register HttpClient for external API calls with gzip decompression
+            services.AddHttpClient<IForecastApiService, ForecastApiService>()
+                .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                {
+                    AutomaticDecompression = System.Net.DecompressionMethods.GZip
+                });
             
             services.AddRazorPages();
             services.AddHostedService<ForecastBackgroundService>();
+            
+            // Add SignalR for real-time updates
+            services.AddSignalR();
+            
+            // CORS configuration for SignalR and API access
+            // Note: SignalR requires specific origins with AllowCredentials()
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
+                // c.AddPolicy("AllowOrigin", options => 
+                //     options.WithOrigins(
+                //             "https://yourdomain.com", 
+                //         )
+                //         .AllowCredentials());  // Required for SignalR WebSocket connections
             });
             services.AddMemoryCache();
         }
@@ -67,6 +84,7 @@ namespace WURequest
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHub<WeatherHub>("/weatherhub");
             });
         }
     }

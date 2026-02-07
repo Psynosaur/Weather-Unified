@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using WURequest.Models;
 using WURequest.Services;
+using WURequest.Hubs;
 
 namespace WURequest.Controllers
 {
@@ -14,13 +16,16 @@ namespace WURequest.Controllers
     public class ObservationsController : ControllerBase
     {
         private readonly IObservationsService _observationsService;
+        private readonly IHubContext<WeatherHub> _weatherHubContext;
         private readonly ILogger _logger;
 
         public ObservationsController(
             IObservationsService observationsService,
+            IHubContext<WeatherHub> weatherHubContext,
             ILoggerFactory logFactory)
         {
             _observationsService = observationsService;
+            _weatherHubContext = weatherHubContext;
             _logger = logFactory.CreateLogger<ObservationsController>();;
         }
 
@@ -54,6 +59,19 @@ namespace WURequest.Controllers
             try
             {
                 await _observationsService.Create(observations);
+                _logger.LogInformation("Created new observation at {ObsTime}", observations.ObsTime);
+                
+                // Broadcast new observation via SignalR
+                try
+                {
+                    await _weatherHubContext.Clients.All.SendAsync("ReceiveObservationUpdate", observations);
+                    _logger.LogInformation("Broadcasted observation update via SignalR");
+                }
+                catch (Exception signalREx)
+                {
+                    _logger.LogWarning(signalREx, "Failed to broadcast observation via SignalR");
+                }
+                
                 return CreatedAtRoute("GetObservation", new { id = observations.Id }, observations);
             }
             catch (Exception ex)
