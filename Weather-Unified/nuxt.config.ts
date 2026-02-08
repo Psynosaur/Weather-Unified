@@ -52,4 +52,21 @@ export default defineNuxtConfig({
       include: ["tslib"],
     },
   },
-});
+
+  eslint: {
+    config: {
+      stylistic: {
+        commaDangle: 'never',
+        braceStyle: '1tbs'
+      }
+    }
+  },
+
+  scripts: {
+    registry: {
+      googleAnalytics: {
+        id: 'G-EMW5M7487N'
+      }
+    }
+  }
+})
