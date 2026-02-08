@@ -1,15 +1,9 @@
-import type { Forecasts } from '~/types/weather'
+import type {Forecasts} from '~/types/weather'
 
 export default defineEventHandler(async (): Promise<Forecasts> => {
-  // Fetch from WURequest API
-  const config = useRuntimeConfig();
-  // Fetch from WURequest API
-  const backendUrl = config.public.WUREQUEST_API_URL;
-
   try {
-    const response = await $fetch<Forecasts>(`${backendUrl}/api/forecasts`)
-
-    return response
+    // Fetch from WURequest API with authentication
+    return await backendFetch<Forecasts>(`/api/forecasts`)
   } catch (error) {
     console.error('Error fetching from WURequest API:', error)
     throw createError({

@@ -19,6 +19,13 @@ namespace WUCharts.Services
             var appSettings1 = appSettings.Value;
             _baseUrl = $"{appSettings1.WURequestApiUrl}:{appSettings1.WURequestApiPort}/api/observations";
             _forecastBaseUrl = $"{appSettings1.WURequestApiUrl}:{appSettings1.WURequestApiPort}/api/forecasts";
+            var apiKey = appSettings1.ApiKey;
+
+            // Add API key to default headers if configured
+            if (!string.IsNullOrEmpty(apiKey))
+            {
+                httpClient.DefaultRequestHeaders.Add("X-API-Key", apiKey);
+            }
         }
 
         public async Task<List<Observations>> GetLatestObservationsAsync()

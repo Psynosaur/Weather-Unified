@@ -1,4 +1,4 @@
-﻿@model WURequest.Models.Forecasts
+@model WURequest.Models.Forecasts
 @using System.Security.Permissions
 @using MongoDB.Bson
 @using NUglify.Helpers
@@ -18,7 +18,7 @@
 @* <br> *@
 @* <h2> last updated  @DateTime.Parse(Model.ValidTimeLocal[0]).AddHours(-1)</h2> *@
 <br/>
-<div class="columns is-0-mobile has-text-light">
+<div class="columns is-multiline is-0-mobile has-text-light">
 
     @foreach (var day in Model.DayOfWeek)
     {
@@ -33,7 +33,7 @@
             timespan = TimeSpan.FromMinutes(lengthOfDay);
         }
         // Daytime stats should not display when it has passed(after 3pm) and data is 'null'
-        <div class="column" id="weatherbox">
+        <div class="column is-2" id="weatherbox">
             <div class="box has-background-grey-darker has-text-light">
                 <div class="columns is-mobile">
                     <div class="column" id="WeekdaySubHeadings">
@@ -41,6 +41,7 @@
                     </div>
                     <div class="column" id="WeekdaySubHeadings">
                         <h2 class="is-size-4">@day</h2>
+                        <p class="has-text-grey-light" style="font-size: 0.875rem;">@DateTime.Parse(Model.ValidTimeLocal[i]).ToString("dd-MM")</p>
                     </div>
                     <div class="column" id="WeekdaySubHeadings">
                         @if (Model.TemperatureMax[i] == null)

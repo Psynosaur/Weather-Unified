@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using WURequest.Models;
 using WURequest.Services;
 using WURequest.Hubs;
+using WURequest.Middleware;
 
 namespace WURequest
 {
@@ -54,14 +55,17 @@ namespace WURequest
             
             // CORS configuration for SignalR and API access
             // Note: SignalR requires specific origins with AllowCredentials()
+            // Origins are configured in appsettings.json under CorsSettings:AllowedOrigins
+            var allowedOrigins = Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>() 
+                ?? new[] { "http://localhost:3000" }; // Fallback
+            
             services.AddCors(c =>
             {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
-                // c.AddPolicy("AllowOrigin", options => 
-                //     options.WithOrigins(
-                //             "https://yourdomain.com", 
-                //         )
-                //         .AllowCredentials());  // Required for SignalR WebSocket connections
+                c.AddPolicy("AllowOrigin", options => 
+                    options.WithOrigins(allowedOrigins)
+                           .AllowAnyMethod()
+                           .AllowAnyHeader()
+                           .AllowCredentials());  // Required for SignalR WebSocket connections
             });
             services.AddMemoryCache();
         }
@@ -77,8 +81,19 @@ namespace WURequest
                 app.UseExceptionHandler("/error");
                 app.UseHsts();
             }
-            app.UseCors(options => options.AllowAnyOrigin());
-            app.UseHttpsRedirection();
+            
+            // Use the named CORS policy (required for SignalR with credentials)
+            app.UseCors("AllowOrigin");
+            
+            // Add API key authentication middleware
+            // This protects against direct curl/Postman access while allowing browser CORS requests
+            app.UseMiddleware<ApiKeyAuthMiddleware>();
+            
+            // HTTPS redirection disabled to allow Meteobridge HTTP-only access
+            // Meteobridge device sends to http://192.168.1.107:5000/api/weather/Mb
+            // Browser traffic to https://api.weatheru.co.za will work via IIS HTTPS binding
+            // app.UseHttpsRedirection();
+            
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {

@@ -57,7 +57,7 @@ onMounted(() => {
 // Watch for new observations and append data instead of reinitializing
 watch(() => props.observations, (newObs, oldObs) => {
   if (!newObs || newObs.length === 0) return
-  
+
   // If charts aren't initialized yet, initialize them
   if (!chartsInitialized.value) {
     initializeCharts()
@@ -65,23 +65,23 @@ watch(() => props.observations, (newObs, oldObs) => {
     previousObservationsLength.value = newObs.length
     return
   }
-  
+
   // Check if we have new data points (added to the end)
   if (newObs.length > previousObservationsLength.value) {
     // Get the new data point(s) from the end of the array
     const newDataPoint = newObs[newObs.length - 1]
     console.log('📊 Appending new data point to charts:', newDataPoint)
-    
+
     // Append to all XY charts
-    charts.concat(fullWidthCharts).forEach(chart => {
+    charts.concat(fullWidthCharts).forEach((chart) => {
       appendXYChartData(chart.id, newDataPoint)
     })
-    
+
     // Append to polar charts
-    roseCharts.forEach(chart => {
+    roseCharts.forEach((chart) => {
       appendPolarChartData(chart.id, newDataPoint)
     })
-    
+
     previousObservationsLength.value = newObs.length
   } else if (newObs.length < previousObservationsLength.value || oldObs?.length === 0) {
     // Data was completely replaced (e.g., time selection changed), reinitialize

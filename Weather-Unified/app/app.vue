@@ -52,7 +52,10 @@ useSeoMeta({
 
       <!-- Mobile Navigation Menu -->
       <template #body>
-        <TemplateMenu orientation="vertical" class="lg:hidden -mx-2.5" />
+        <TemplateMenu
+          orientation="vertical"
+          class="lg:hidden -mx-2.5"
+        />
       </template>
     </UHeader>
 

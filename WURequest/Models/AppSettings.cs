@@ -9,6 +9,7 @@ namespace WURequest.Models
         public string WeatherStation { get; set; }
         public string WURequestApiUrl { get; set; }
         public int WURequestApiPort { get; set; }
+        public string ApiKey { get; set; }  // API key for authenticating with WURequest API
     }
 
     public interface IAppSettings
@@ -20,5 +21,6 @@ namespace WURequest.Models
         public string WeatherStation { get; set; }
         public string WURequestApiUrl { get; set; }
         public int WURequestApiPort { get; set; }
+        public string ApiKey { get; set; }
     }
 }

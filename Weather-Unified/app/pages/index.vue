@@ -15,7 +15,7 @@ useHead({
 })
 
 // Fetch today's weather data
-const { data, pending, error, refresh } = await useFetch<DatePageData>('/api/day')
+const { data, pending, error } = await useFetch<DatePageData>('/api/day')
 
 // App settings from composable
 const appSettings = useAppSettings()
@@ -23,7 +23,7 @@ const appSettings = useAppSettings()
 // Real-time update state
 const lastUpdateTime = ref<string>('')
 const isLiveUpdateActive = ref(false)
-let eventSource: EventSource | null = null
+const signalR = useSignalR()
 
 // Format date for display
 const formattedDate = computed(() => {
@@ -53,10 +53,10 @@ const formattedTime = computed(() => {
 // Handle real-time observation update
 const handleObservationUpdate = (newObservation: Observation) => {
   if (!data.value) return
-  
+
   // Update the latest observation
   const oldObsTime = data.value.latest?.obsTime
-  
+
   // Convert Observation to GraphDataPoint for the observations array
   const graphDataPoint = {
     ot: new Date(newObservation.obsTime).getTime(),
@@ -79,13 +79,13 @@ const handleObservationUpdate = (newObservation: Observation) => {
     sr: newObservation.solarRad,
     uv: newObservation.uv
   }
-  
+
   // Force reactivity by creating a new observations array with the new data point
   // Add to the END of the array since charts display chronologically (oldest to newest)
-  const updatedObservations = data.value.observations 
+  const updatedObservations = data.value.observations
     ? [...data.value.observations, graphDataPoint]
     : [graphDataPoint]
-  
+
   // Update the entire data object to ensure reactivity
   data.value = {
     ...data.value,
@@ -93,13 +93,13 @@ const handleObservationUpdate = (newObservation: Observation) => {
     observations: updatedObservations,
     count: (data.value.count || 0) + 1
   }
-  
+
   lastUpdateTime.value = new Date().toLocaleTimeString('en-ZA', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit'
   })
-  
+
   console.log('✅ Real-time observation update:', {
     old: oldObsTime,
     new: newObservation.obsTime,
@@ -116,66 +116,27 @@ const handleObservationUpdate = (newObservation: Observation) => {
   })
 }
 
-// Setup SSE connection for real-time updates
-const setupSSE = () => {
-  if (eventSource) {
-    eventSource.close()
-  }
-  
-  eventSource = new EventSource('/api/observations/stream')
-  
-  eventSource.onopen = () => {
+// Setup SignalR connection for real-time updates
+const setupSignalR = async () => {
+  try {
+    await signalR.connect(handleObservationUpdate)
     isLiveUpdateActive.value = true
-    console.log('✅ Real-time observation stream connected')
-  }
-  
-  eventSource.onmessage = (event) => {
-    try {
-      const message = JSON.parse(event.data)
-      
-      if (message.type === 'initial') {
-        console.log('📡 Received initial observation', message.data?.obsTime)
-      } else if (message.type === 'update') {
-        console.log('🔄 New observation received:', message.data?.obsTime, '- Update time:', message.timestamp)
-        handleObservationUpdate(message.data)
-      } else if (message.type === 'heartbeat') {
-        console.log('💓 Heartbeat:', message.timestamp)
-      } else if (message.type === 'info') {
-        console.log('ℹ️ Info:', message.message)
-      } else if (message.type === 'error') {
-        console.error('❌ SSE Error:', message.message)
-      }
-    } catch (error) {
-      console.error('Error parsing SSE message:', error)
-    }
-  }
-  
-  eventSource.onerror = (error) => {
-    console.error('SSE connection error:', error)
+  } catch (error) {
+    console.error('Failed to connect to SignalR:', error)
     isLiveUpdateActive.value = false
-    eventSource?.close()
-    
-    // Reconnect after 10 seconds
-    setTimeout(() => {
-      console.log('Reconnecting SSE...')
-      setupSSE()
-    }, 10000)
   }
 }
 
 onMounted(() => {
-  // Setup SSE connection for real-time updates
+  // Setup SignalR connection for real-time updates
   if (data.value) {
-    setupSSE()
+    setupSignalR()
   }
 })
 
 onUnmounted(() => {
-  // Close SSE connection
-  if (eventSource) {
-    eventSource.close()
-    eventSource = null
-  }
+  // Close SignalR connection
+  signalR.disconnect()
   isLiveUpdateActive.value = false
 })
 </script>
@@ -198,25 +159,20 @@ onUnmounted(() => {
 
         <!-- Live update indicator -->
         <div class="flex items-center justify-center gap-2">
-          <div 
+          <div
             class="w-2 h-2 rounded-full"
             :class="isLiveUpdateActive ? 'bg-green-500 animate-pulse' : 'bg-gray-400'"
           />
           <span class="text-xs text-muted">
             {{ isLiveUpdateActive ? 'Live Updates Active' : 'Connecting...' }}
           </span>
-          <span v-if="lastUpdateTime" class="text-xs text-muted">
+          <span
+            v-if="lastUpdateTime"
+            class="text-xs text-muted"
+          >
             (Last: {{ lastUpdateTime }})
           </span>
         </div>
-
-        <!-- Cloudiness indicator -->
-        <p
-          v-if="data?.cloudiness"
-          class="text-xl font-semibold text-primary"
-        >
-          {{ data.cloudiness }}
-        </p>
       </div>
     </div>
 
@@ -288,10 +244,16 @@ onUnmounted(() => {
 
           <!-- Real-time update info -->
           <div class="text-center text-sm text-muted pb-4">
-            <span v-if="isLiveUpdateActive" class="text-green-600">
+            <span
+              v-if="isLiveUpdateActive"
+              class="text-green-600"
+            >
               ● Real-time updates enabled
             </span>
-            <span v-else class="text-gray-400">
+            <span
+              v-else
+              class="text-gray-400"
+            >
               ○ Connecting to real-time stream...
             </span>
           </div>

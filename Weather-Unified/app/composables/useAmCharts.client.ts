@@ -1,51 +1,51 @@
-import * as am5 from "@amcharts/amcharts5";
-import * as am5xy from "@amcharts/amcharts5/xy";
-import * as am5radar from "@amcharts/amcharts5/radar";
-import am5themes_Dark from "@amcharts/amcharts5/themes/Dark";
-import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
+import * as am5 from '@amcharts/amcharts5'
+import * as am5xy from '@amcharts/amcharts5/xy'
+import * as am5radar from '@amcharts/amcharts5/radar'
+import am5themes_Dark from '@amcharts/amcharts5/themes/Dark'
+import am5themes_Animated from '@amcharts/amcharts5/themes/Animated'
 import type {
   GraphDataPoint,
   WindDataPoint,
-  RainDataPoint,
-} from "~/types/weather";
-import type { TimeframeConfig } from "./useTimeframeConfig";
+  RainDataPoint
+} from '~/types/weather'
+import type { TimeframeConfig } from './useTimeframeConfig'
 
 interface XYChartConfig {
-  id: string;
-  valueFields: string[];
-  tooltipText: string[];
-  strokeFillColors: string[];
-  labelText: string;
-  min?: number;
-  max?: number;
-  bullets?: boolean;
-  connected?: boolean;
-  strokeWidth?: number;
-  fps?: number;
-  timeframeConfig?: TimeframeConfig;
+  id: string
+  valueFields: string[]
+  tooltipText: string[]
+  strokeFillColors: string[]
+  labelText: string
+  min?: number
+  max?: number
+  bullets?: boolean
+  connected?: boolean
+  strokeWidth?: number
+  fps?: number
+  timeframeConfig?: TimeframeConfig
 }
 
 interface PolarChartConfig {
-  id: string;
-  valueYFields: string[];
-  tooltipText: string[];
-  strokeFillColors: string[];
-  valueXFields: string[];
-  min: number;
-  max: number;
-  data: RainDataPoint[] | WindDataPoint[];
-  strokeWidth?: number;
-  fps?: number;
-  seriesNames?: string[];
-  showLegend?: boolean;
-  labelText?: string;
+  id: string
+  valueYFields: string[]
+  tooltipText: string[]
+  strokeFillColors: string[]
+  valueXFields: string[]
+  min: number
+  max: number
+  data: RainDataPoint[] | WindDataPoint[]
+  strokeWidth?: number
+  fps?: number
+  seriesNames?: string[]
+  showLegend?: boolean
+  labelText?: string
 }
 
 export const useAmCharts = () => {
-  const chartRoots = new Map<string, am5.Root>();
-  const chartSeries = new Map<string, am5xy.XYSeries[]>();
-  const chartPolarSeries = new Map<string, am5radar.RadarLineSeries[]>();
-  const colorMode = useColorMode();
+  const chartRoots = new Map<string, am5.Root>()
+  const chartSeries = new Map<string, am5xy.XYSeries[]>()
+  const chartPolarSeries = new Map<string, am5radar.RadarLineSeries[]>()
+  const colorMode = useColorMode()
 
   /**
    * Create an XY Line Chart with date-based X-axis
@@ -61,35 +61,35 @@ export const useAmCharts = () => {
       max,
       bullets = false,
       fps = 60,
-      timeframeConfig,
-    } = config;
+      timeframeConfig
+    } = config
 
     // Dispose existing chart if any
     if (chartRoots.has(id)) {
-      chartRoots.get(id)?.dispose();
+      chartRoots.get(id)?.dispose()
     }
 
     // Check if DOM element exists before creating chart
-    if (typeof document !== "undefined") {
-      const element = document.getElementById(id);
+    if (typeof document !== 'undefined') {
+      const element = document.getElementById(id)
       if (!element) {
         console.warn(
-          `Element with id "${id}" not found, skipping chart creation`,
-        );
-        return;
+          `Element with id "${id}" not found, skipping chart creation`
+        )
+        return
       }
     }
 
     // Create root element
-    const root = am5.Root.new(id);
-    root.fps = fps;
-    chartRoots.set(id, root);
+    const root = am5.Root.new(id)
+    root.fps = fps
+    chartRoots.set(id, root)
 
     // Set themes based on color mode
-    if (colorMode.value === "dark") {
-      root.setThemes([am5themes_Dark.new(root)]);
+    if (colorMode.value === 'dark') {
+      root.setThemes([am5themes_Dark.new(root)])
     } else {
-      root.setThemes([am5themes_Animated.new(root)]);
+      root.setThemes([am5themes_Animated.new(root)])
     }
 
     // Create chart
@@ -97,59 +97,59 @@ export const useAmCharts = () => {
       am5xy.XYChart.new(root, {
         panX: false,
         panY: false,
-        wheelX: "none",
-        wheelY: "none",
-        pinchZoomX: true,
-      }),
-    );
+        wheelX: 'none',
+        wheelY: 'none',
+        pinchZoomX: true
+      })
+    )
 
     // Add cursor
     const cursor = chart.set(
-      "cursor",
+      'cursor',
       am5xy.XYCursor.new(root, {
-        behavior: "zoomX",
-      }),
-    );
-    cursor.lineY.set("visible", false);
+        behavior: 'zoomX'
+      })
+    )
+    cursor.lineY.set('visible', false)
 
     // Prepare axis configuration based on timeframe
     const axisConfig: am5xy.IDateAxisSettings<am5xy.AxisRenderer> = {
       maxDeviation: 0.5,
       baseInterval: {
-        timeUnit: timeframeConfig?.timeUnit ?? "minute",
-        count: timeframeConfig?.baseIntervalCount ?? 5,
+        timeUnit: timeframeConfig?.timeUnit ?? 'minute',
+        count: timeframeConfig?.baseIntervalCount ?? 5
       },
       renderer: am5xy.AxisRendererX.new(root, {
-        minGridDistance: 60,
+        minGridDistance: 60
       }),
-      tooltip: am5.Tooltip.new(root, {}),
-    };
+      tooltip: am5.Tooltip.new(root, {})
+    }
 
     // Apply timeframe-specific settings if provided
     if (timeframeConfig) {
       axisConfig.baseInterval = {
         timeUnit: timeframeConfig.timeUnit,
-        count: timeframeConfig.baseIntervalCount,
-      };
+        count: timeframeConfig.baseIntervalCount
+      }
       axisConfig.gridIntervals = [
         {
           timeUnit: timeframeConfig.timeUnit,
-          count: timeframeConfig.gridCount,
-        },
-      ];
+          count: timeframeConfig.gridCount
+        }
+      ]
       // Apply date format to tooltip
-      axisConfig.tooltipDateFormat = timeframeConfig.dateFormat;
+      axisConfig.tooltipDateFormat = timeframeConfig.dateFormat
     } else {
       // TODO: Determine if this is needed ?
       // Default settings (fallback to hour-based)
       axisConfig.baseInterval = {
-        timeUnit: "hour",
-        count: 1,
-      };
+        timeUnit: 'hour',
+        count: 1
+      }
     }
 
     // Create X-axis (Date axis)
-    const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, axisConfig));
+    const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, axisConfig))
 
     // Create Y-axis
     const yAxis = chart.yAxes.push(
@@ -159,31 +159,31 @@ export const useAmCharts = () => {
         strictMinMax: min !== undefined || max !== undefined,
         renderer: am5xy.AxisRendererY.new(root, {
           minGridDistance: 30,
-          strokeWidth: 1.2,
-        }),
-      }),
-    );
+          strokeWidth: 1.2
+        })
+      })
+    )
 
     // Add label
     chart.children.unshift(
       am5.Label.new(root, {
         // text: labelText,
         fontSize: 18,
-        textAlign: "center",
+        textAlign: 'center',
         x: am5.percent(50),
-        centerX: am5.percent(50),
-      }),
-    );
+        centerX: am5.percent(50)
+      })
+    )
 
     // Add series
-    const seriesArray: am5xy.XYSeries[] = [];
+    const seriesArray: am5xy.XYSeries[] = []
     for (let i = 0; i < valueFields.length; i++) {
-      const valueField = valueFields[i];
-      const tooltip = tooltipText[i];
-      const color = strokeFillColors[i];
+      const valueField = valueFields[i]
+      const tooltip = tooltipText[i]
+      const color = strokeFillColors[i]
 
       // Skip if required fields are undefined
-      if (!valueField || !tooltip || !color) continue;
+      if (!valueField || !tooltip || !color) continue
 
       const series = chart.series.push(
         am5xy.SmoothedXLineSeries.new(root, {
@@ -191,16 +191,16 @@ export const useAmCharts = () => {
           xAxis,
           yAxis,
           valueYField: valueField,
-          valueXField: "ot",
+          valueXField: 'ot',
           tooltip: am5.Tooltip.new(root, {
             labelText: tooltip,
-            getFillFromSprite: true,
+            getFillFromSprite: true
           }),
           fill: am5.color(color),
           stroke: am5.color(color),
-          tension: 0.3,
-        }),
-      );
+          tension: 0.3
+        })
+      )
 
       // Add bullets if specified
       if (bullets) {
@@ -208,29 +208,29 @@ export const useAmCharts = () => {
           return am5.Bullet.new(root, {
             sprite: am5.Circle.new(root, {
               radius: 2.8,
-              fill: am5.color(color),
-            }),
-          });
-        });
+              fill: am5.color(color)
+            })
+          })
+        })
         series.strokes.template.setAll({
-          strokeDasharray: [0, 1],
-        });
+          strokeDasharray: [0, 1]
+        })
       }
 
       series.strokes.template.setAll({
-        strokeWidth: 2, // Adjust pixel thickness here
-      });
-      series.data.setAll(data);
-      
-      // Store series reference
-      seriesArray.push(series);
-    }
-    
-    // Store all series for this chart
-    chartSeries.set(id, seriesArray);
+        strokeWidth: 2 // Adjust pixel thickness here
+      })
+      series.data.setAll(data)
 
-    return root;
-  };
+      // Store series reference
+      seriesArray.push(series)
+    }
+
+    // Store all series for this chart
+    chartSeries.set(id, seriesArray)
+
+    return root
+  }
 
   /**
    * Create a Polar/Radar Chart (for roses)
@@ -249,35 +249,35 @@ export const useAmCharts = () => {
       fps = 60,
       seriesNames,
       showLegend = false,
-      labelText,
-    } = config;
+      labelText
+    } = config
 
     // Dispose existing chart if any
     if (chartRoots.has(id)) {
-      chartRoots.get(id)?.dispose();
+      chartRoots.get(id)?.dispose()
     }
 
     // Check if DOM element exists before creating chart
-    if (typeof document !== "undefined") {
-      const element = document.getElementById(id);
+    if (typeof document !== 'undefined') {
+      const element = document.getElementById(id)
       if (!element) {
         console.warn(
-          `Element with id "${id}" not found, skipping chart creation`,
-        );
-        return;
+          `Element with id "${id}" not found, skipping chart creation`
+        )
+        return
       }
     }
 
     // Create root element
-    const root = am5.Root.new(id);
-    root.fps = fps;
-    chartRoots.set(id, root);
+    const root = am5.Root.new(id)
+    root.fps = fps
+    chartRoots.set(id, root)
 
     // Set themes based on color mode
-    if (colorMode.value === "dark") {
-      root.setThemes([am5themes_Dark.new(root)]);
+    if (colorMode.value === 'dark') {
+      root.setThemes([am5themes_Dark.new(root)])
     } else {
-      root.setThemes([am5themes_Animated.new(root)]);
+      root.setThemes([am5themes_Animated.new(root)])
     }
 
     // Create chart
@@ -285,11 +285,11 @@ export const useAmCharts = () => {
       am5radar.RadarChart.new(root, {
         panX: false,
         panY: false,
-        wheelX: "none",
-        wheelY: "none",
-        layout: root.verticalLayout,
-      }),
-    );
+        wheelX: 'none',
+        wheelY: 'none',
+        layout: root.verticalLayout
+      })
+    )
 
     // Add label if provided
     if (labelText) {
@@ -297,37 +297,37 @@ export const useAmCharts = () => {
         am5.Label.new(root, {
           // text: labelText,
           fontSize: 16,
-          fontWeight: "500",
-          textAlign: "center",
+          fontWeight: '500',
+          textAlign: 'center',
           x: am5.percent(50),
           centerX: am5.percent(50),
           paddingTop: 0,
-          paddingBottom: 10,
-        }),
-      );
+          paddingBottom: 10
+        })
+      )
     }
 
     // Add cursor
     const cursor = chart.set(
-      "cursor",
+      'cursor',
       am5radar.RadarCursor.new(root, {
-        behavior: "none",
-      }),
-    );
-    cursor.lineY.set("visible", false);
-    cursor.lineX.set("visible", false);
+        behavior: 'none'
+      })
+    )
+    cursor.lineY.set('visible', false)
+    cursor.lineX.set('visible', false)
 
     // Create X-axis (circular)
     const xRenderer = am5radar.AxisRendererCircular.new(root, {
-      minGridDistance: 40,
-    });
+      minGridDistance: 40
+    })
     xRenderer.labels.template.setAll({
       radius: 0,
-      textAlign: "center",
-    });
+      textAlign: 'center'
+    })
     xRenderer.grid.template.setAll({
-      location: 0,
-    });
+      location: 0
+    })
 
     const xAxis = chart.xAxes.push(
       am5xy.ValueAxis.new(root, {
@@ -335,45 +335,45 @@ export const useAmCharts = () => {
         min,
         max,
         strictMinMax: true,
-        renderer: xRenderer,
-      }),
-    );
-    
+        renderer: xRenderer
+      })
+    )
+
     // Hide the first label (0°) to prevent overlap with max value (360°)
-    xAxis.get("renderer").labels.template.adapters.add("text", (text, target) => {
-      const dataItem = target.dataItem as any;
+    xAxis.get('renderer').labels.template.adapters.add('text', (text, target) => {
+      const dataItem = target.dataItem as { get?: (key: string) => number }
       if (dataItem && dataItem.get) {
-        const value = dataItem.get("value");
+        const value = dataItem.get('value')
         // Hide the label if its value equals the minimum (0)
         if (value === min) {
-          return "";
+          return ''
         }
       }
-      return text;
-    });
+      return text
+    })
 
     // Calculate Y-axis range from data
-    let yMin = Infinity;
-    let yMax = -Infinity;
+    let yMin = Infinity
+    let yMax = -Infinity
 
     for (let i = 0; i < valueYFields.length; i++) {
-      const field = valueYFields[i];
+      const field = valueYFields[i]
 
       // Skip if field is undefined
-      if (!field) continue;
+      if (!field) continue
 
       data.forEach((item) => {
-        const value = item[field as keyof typeof item];
-        if (value != null && typeof value === "number") {
-          yMin = Math.min(yMin, value);
-          yMax = Math.max(yMax, value);
+        const value = item[field as keyof typeof item]
+        if (value != null && typeof value === 'number') {
+          yMin = Math.min(yMin, value)
+          yMax = Math.max(yMax, value)
         }
-      });
+      })
     }
 
     // Add padding (10% on each side)
-    const yRange = yMax - yMin;
-    const yPadding = yRange * 0.1;
+    const yRange = yMax - yMin
+    const yPadding = yRange * 0.1
 
     const yAxis = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
@@ -381,18 +381,18 @@ export const useAmCharts = () => {
         max: yMax + yPadding,
         strictMinMax: true,
         renderer: am5radar.AxisRendererRadial.new(root, {
-          minGridDistance: 20,
-        }),
-      }),
-    );
+          minGridDistance: 20
+        })
+      })
+    )
 
     // Add series
-    const seriesArray: am5radar.RadarLineSeries[] = [];
+    const seriesArray: am5radar.RadarLineSeries[] = []
     for (let i = 0; i < valueYFields.length; i++) {
-      const color = strokeFillColors[i];
+      const color = strokeFillColors[i]
 
       // Skip if required fields are undefined
-      if (!color) continue;
+      if (!color) continue
 
       const series = chart.series.push(
         am5radar.RadarLineSeries.new(root, {
@@ -402,13 +402,13 @@ export const useAmCharts = () => {
           valueYField: valueYFields[i],
           valueXField: valueXFields[i],
           tooltip: am5.Tooltip.new(root, {
-            labelText: tooltipText[i],
+            labelText: tooltipText[i]
           }),
           connectEnds: false,
           sequencedInterpolation: true,
-          sequencedDelay: 10,
-        }),
-      );
+          sequencedDelay: 10
+        })
+      )
 
       // Add bullets
       series.bullets.push(() => {
@@ -417,53 +417,53 @@ export const useAmCharts = () => {
             radius: 4,
             fill: am5.color(color),
             strokeWidth,
-            stroke: root.interfaceColors.get("background"),
-          }),
-        });
-      });
+            stroke: root.interfaceColors.get('background')
+          })
+        })
+      })
 
       // Configure strokes
       series.strokes.template.setAll({
         strokeDasharray: [0, 1],
-        stroke: am5.color(color),
-      });
+        stroke: am5.color(color)
+      })
 
-      series.data.setAll(data);
-      
+      series.data.setAll(data)
+
       // Store series reference
-      seriesArray.push(series);
+      seriesArray.push(series)
     }
-    
+
     // Store all series for this chart
-    chartPolarSeries.set(id, seriesArray);
+    chartPolarSeries.set(id, seriesArray)
 
     // Add legend if specified
     if (showLegend) {
-      const legend = chart.children.push(am5.Legend.new(root, {}));
-      legend.data.setAll(chart.series.values);
+      const legend = chart.children.push(am5.Legend.new(root, {}))
+      legend.data.setAll(chart.series.values)
     }
 
-    xAxis.data.setAll(data);
+    xAxis.data.setAll(data)
 
-    return root;
-  };
+    return root
+  }
 
   /**
    * Append a new data point to an existing XY chart
    * This is more efficient than recreating the entire chart
    */
   const appendXYChartData = (id: string, dataPoint: GraphDataPoint) => {
-    const seriesArray = chartSeries.get(id);
+    const seriesArray = chartSeries.get(id)
     if (!seriesArray) {
-      console.warn(`No series found for chart "${id}"`);
-      return;
+      console.warn(`No series found for chart "${id}"`)
+      return
     }
 
     // Append data to the END of all series (newest data on the right)
     seriesArray.forEach((series) => {
-      series.data.push(dataPoint);
-    });
-  };
+      series.data.push(dataPoint)
+    })
+  }
 
   /**
    * Append a new data point to an existing polar chart
@@ -471,42 +471,42 @@ export const useAmCharts = () => {
    */
   const appendPolarChartData = (
     id: string,
-    dataPoint: RainDataPoint | WindDataPoint,
+    dataPoint: RainDataPoint | WindDataPoint
   ) => {
-    const seriesArray = chartPolarSeries.get(id);
+    const seriesArray = chartPolarSeries.get(id)
     if (!seriesArray) {
-      console.warn(`No series found for polar chart "${id}"`);
-      return;
+      console.warn(`No series found for polar chart "${id}"`)
+      return
     }
 
     // Append data to the END of all series (newest data on the right)
     seriesArray.forEach((series) => {
-      series.data.push(dataPoint);
-    });
-  };
+      series.data.push(dataPoint)
+    })
+  }
 
   /**
    * Dispose a specific chart
    */
   const disposeChart = (id: string) => {
     if (chartRoots.has(id)) {
-      chartRoots.get(id)?.dispose();
-      chartRoots.delete(id);
+      chartRoots.get(id)?.dispose()
+      chartRoots.delete(id)
     }
     // Also clean up series references
-    chartSeries.delete(id);
-    chartPolarSeries.delete(id);
-  };
+    chartSeries.delete(id)
+    chartPolarSeries.delete(id)
+  }
 
   /**
    * Dispose all charts
    */
   const disposeAllCharts = () => {
-    chartRoots.forEach((root) => root.dispose());
-    chartRoots.clear();
-    chartSeries.clear();
-    chartPolarSeries.clear();
-  };
+    chartRoots.forEach(root => root.dispose())
+    chartRoots.clear()
+    chartSeries.clear()
+    chartPolarSeries.clear()
+  }
 
   return {
     createXYChart,
@@ -515,6 +515,6 @@ export const useAmCharts = () => {
     appendPolarChartData,
     disposeChart,
     disposeAllCharts,
-    colorMode,
-  };
-};
+    colorMode
+  }
+}
