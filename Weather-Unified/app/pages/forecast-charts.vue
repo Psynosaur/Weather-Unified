@@ -26,18 +26,27 @@ useHead({
     </div>
 
     <!-- Loading state -->
-    <div v-if="status === 'pending'" class="text-center py-8">
+    <div
+      v-if="status === 'pending'"
+      class="text-center py-8"
+    >
       <p>Loading forecast data...</p>
     </div>
 
     <!-- Error state -->
-    <div v-else-if="error" class="text-center py-8 text-red-500">
+    <div
+      v-else-if="error"
+      class="text-center py-8 text-red-500"
+    >
       <p>Error loading forecast: {{ error.message }}</p>
     </div>
 
     <!-- Chart Component -->
     <ClientOnly>
-      <WeatherForecastCharts v-if="forecast" :forecast="forecast" />
+      <WeatherForecastCharts
+        v-if="forecast"
+        :forecast="forecast"
+      />
     </ClientOnly>
   </div>
 </template>

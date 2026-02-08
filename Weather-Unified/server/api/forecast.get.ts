@@ -1,4 +1,4 @@
-import type {Forecasts} from '~/types/weather'
+import type { Forecasts } from '~/types/weather'
 
 export default defineEventHandler(async (): Promise<Forecasts> => {
   try {
