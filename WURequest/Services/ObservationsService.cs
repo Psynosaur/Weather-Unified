@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using WURequest.Models;
@@ -12,8 +13,9 @@ namespace WURequest.Services
     {
         private readonly IMongoCollection<Observations> _observation;
         private readonly ILogger _logger;
+        private readonly IMemoryCache _cache;
 
-        public ObservationsService(IObservationDatabaseSettings settings, ILoggerFactory logFactory)
+        public ObservationsService(IObservationDatabaseSettings settings, ILoggerFactory logFactory, IMemoryCache cache)
         {
             var mongoConnectionUrl = new MongoUrl(settings.ConnectionString);
             var mongoClientSettings = MongoClientSettings.FromUrl(mongoConnectionUrl);
@@ -26,6 +28,7 @@ namespace WURequest.Services
             var database = client.GetDatabase(settings.DatabaseName);
             _observation = database.GetCollection<Observations>(settings.ObservationCollectionName);
             _logger = logFactory.CreateLogger<ObservationsService>();
+            _cache = cache;
         }
 
         //Finds all the observations for a time frame(hourly,daily and weekly) based on DateTime object comparisons
@@ -106,10 +109,48 @@ namespace WURequest.Services
                 var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Local);
                 var weekstart = hm.AddDays(-6);
                 var weekend = hm.AddDays(1);
-                var observations = await _observation.Find(
-                        x => x.ObsTime >= weekstart && x.ObsTime < weekend)
-                    .SortBy(e => e.ObsTime).ToListAsync();
-                return observations;
+                
+                // Check if this is the current week (weekend is in the future)
+                var now = DateTime.Now;
+                var isCurrentWeek = weekend > now;
+                
+                // Only use cache for historical weeks (not the current week)
+                if (!isCurrentWeek)
+                {
+                    // Create cache key based on the date range
+                    var cacheKey = $"weekly_{weekstart:yyyy-MM-dd}_{weekend:yyyy-MM-dd}";
+                    
+                    // Try to get from cache
+                    if (_cache.TryGetValue(cacheKey, out List<Observations> cachedObservations))
+                    {
+                        _logger.LogInformation("Returning cached weekly observations for {CacheKey}", cacheKey);
+                        return cachedObservations;
+                    }
+                    
+                    // If not in cache, fetch from database
+                    var observations = await _observation.Find(
+                            x => x.ObsTime >= weekstart && x.ObsTime < weekend)
+                        .SortBy(e => e.ObsTime).ToListAsync();
+                    
+                    // Cache for 1 week
+                    var cacheOptions = new MemoryCacheEntryOptions()
+                        .SetAbsoluteExpiration(TimeSpan.FromDays(7))
+                        .SetPriority(CacheItemPriority.Normal);
+                    
+                    _cache.Set(cacheKey, observations, cacheOptions);
+                    _logger.LogInformation("Cached weekly observations for {CacheKey}", cacheKey);
+                    
+                    return observations;
+                }
+                else
+                {
+                    // Current week - always fetch fresh data
+                    _logger.LogInformation("Fetching fresh weekly observations for current week {WeekStart} to {WeekEnd}", weekstart.ToString("yyyy-MM-dd"), weekend.ToString("yyyy-MM-dd"));
+                    var observations = await _observation.Find(
+                            x => x.ObsTime >= weekstart && x.ObsTime < weekend)
+                        .SortBy(e => e.ObsTime).ToListAsync();
+                    return observations;
+                }
             }
             catch (Exception ex)
             {
@@ -202,10 +243,48 @@ namespace WURequest.Services
                 var hm = new DateTime(tm.Year, tm.Month, tm.Day, 0, 0, 0, DateTimeKind.Local);
                 var monthstart = hm.AddMonths(-1);
                 var monthend = hm.AddDays(1);
-                var observations = await _observation.Find(
-                        x => x.ObsTime >= monthstart && x.ObsTime < monthend)
-                    .SortBy(e => e.ObsTime).ToListAsync();
-                return observations;
+                
+                // Check if this is the current month (monthend is in the future)
+                var now = DateTime.Now;
+                var isCurrentMonth = monthend > now;
+                
+                // Only use cache for historical months (not the current month)
+                if (!isCurrentMonth)
+                {
+                    // Create cache key based on the date range
+                    var cacheKey = $"monthly_{monthstart:yyyy-MM-dd}_{monthend:yyyy-MM-dd}";
+                    
+                    // Try to get from cache
+                    if (_cache.TryGetValue(cacheKey, out List<Observations> cachedObservations))
+                    {
+                        _logger.LogInformation("Returning cached monthly observations for {CacheKey}", cacheKey);
+                        return cachedObservations;
+                    }
+                    
+                    // If not in cache, fetch from database
+                    var observations = await _observation.Find(
+                            x => x.ObsTime >= monthstart && x.ObsTime < monthend)
+                        .SortBy(e => e.ObsTime).ToListAsync();
+                    
+                    // Cache for 1 week
+                    var cacheOptions = new MemoryCacheEntryOptions()
+                        .SetAbsoluteExpiration(TimeSpan.FromDays(7))
+                        .SetPriority(CacheItemPriority.Normal);
+                    
+                    _cache.Set(cacheKey, observations, cacheOptions);
+                    _logger.LogInformation("Cached monthly observations for {CacheKey}", cacheKey);
+                    
+                    return observations;
+                }
+                else
+                {
+                    // Current month - always fetch fresh data
+                    _logger.LogInformation("Fetching fresh monthly observations for current month {MonthStart} to {MonthEnd}", monthstart.ToString("yyyy-MM-dd"), monthend.ToString("yyyy-MM-dd"));
+                    var observations = await _observation.Find(
+                            x => x.ObsTime >= monthstart && x.ObsTime < monthend)
+                        .SortBy(e => e.ObsTime).ToListAsync();
+                    return observations;
+                }
             }
             catch (Exception ex)
             {

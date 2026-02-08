@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using WURequest.Hubs;
 using WURequest.Models;
 using WURequest.Services;
 
@@ -15,16 +17,20 @@ namespace WURequest.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IObservationsService _observationsService;
         private readonly IWeatherUndergroundApiSettings _weatherUndergroundApiSettings;
+        private readonly IHubContext<WeatherHub> _weatherHubContext;
         private readonly ILogger _logger;
+        
         public WeatherController(
             IObservationsService observationsService,
             IWebHostEnvironment hostingEnvironment, 
             IWeatherUndergroundApiSettings weatherUndergroundApiSettings,
+            IHubContext<WeatherHub> weatherHubContext,
             ILoggerFactory logFactory)
         {
             _observationsService = observationsService;
             _hostingEnvironment = hostingEnvironment;
             _weatherUndergroundApiSettings = weatherUndergroundApiSettings;
+            _weatherHubContext = weatherHubContext;
             _logger = logFactory.CreateLogger<WeatherController>();
         }
 
@@ -32,6 +38,7 @@ namespace WURequest.Controllers
             Meteobridge Data getter
             - This is where Meteobridge sends the weather data to
             - It stores the result in the mongodb
+            - Broadcasts via SignalR for real-time updates
         */
         [HttpGet]
         public async Task<ActionResult<string>> Mb([FromQuery] Observations data)
@@ -41,6 +48,19 @@ namespace WURequest.Controllers
                 if (data.ObsTime != default && !double.IsNaN(data.TempOutCur))
                 {
                     await _observationsService.Create(data);
+                    _logger.LogInformation("Created new observation at {ObsTime}", data.ObsTime);
+                    
+                    // Broadcast new observation via SignalR for real-time updates
+                    try
+                    {
+                        await _weatherHubContext.Clients.All.SendAsync("ReceiveObservationUpdate", data);
+                        _logger.LogInformation("✅ Broadcasted observation update via SignalR");
+                    }
+                    catch (Exception signalREx)
+                    {
+                        _logger.LogWarning(signalREx, "⚠️ Failed to broadcast observation via SignalR");
+                    }
+                    
                     return "DATA OK";
                 }
                 return "DATA BAD";
@@ -51,82 +71,5 @@ namespace WURequest.Controllers
                 throw;
             }
         }
-        // Decide what to do here?
-        // [HttpGet]
-        // public async Task<ActionResult<string>> Wu()
-        // {
-        //     try
-        //     {
-        //         string webRootPath = _hostingEnvironment.WebRootPath;
-        //
-        //         using (HttpClient client = new HttpClient())
-        //         {
-        //             client.DefaultRequestHeaders.Accept.Add(
-        //                 new MediaTypeWithQualityHeaderValue("application/json"));
-        //
-        //             using (HttpResponseMessage response = await client.GetAsync(
-        //                 string.Format(
-        //                     "https://api.weather.com/v2/pws/observations/current?stationId={0}&format={1}&units={2}&apiKey={3}",
-        //                     _weatherUndergroundApiSettings.StationId, _weatherUndergroundApiSettings.Format, _weatherUndergroundApiSettings.Units, _weatherUndergroundApiSettings.Pat)))
-        //             {
-        //                 try
-        //                 {
-        //                     response.EnsureSuccessStatusCode();
-        //                     string responseBody = await response.Content.ReadAsStringAsync();
-        //                     using (StreamWriter outputFile =
-        //                         new StreamWriter(Path.Combine(webRootPath + "/logs/wudata11.txt"), append: true))
-        //                     {
-        //                         await outputFile.WriteAsync(responseBody).ConfigureAwait(false);
-        //                     }
-        //                     JObject jObj = JObject.Parse(responseBody);
-        //                     string some = jObj["observations"][0].ToString();
-        //                     return some;
-        //                 }
-        //                 catch (Exception ex)
-        //                 {
-        //                     _logger.LogInformation(ex.ToString());
-        //                     throw;
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         _logger.LogInformation(ex.ToString());
-        //         throw;
-        //     }
-        // }
-        //
-        // // POC stuff to get JSON from flat DB
-        // [Route("api/[controller]")]
-        // [ApiController]
-        // public class DataController : ControllerBase
-        // {
-        //     private readonly IWebHostEnvironment _hostingEnvironment;
-        //
-        //     public DataController(IWebHostEnvironment hostingEnvironment)
-        //     {
-        //         _hostingEnvironment = hostingEnvironment;
-        //     }
-        //
-        //     [HttpGet]
-        //     public ActionResult<JArray> Temp()
-        //     {
-        //
-        //         string webRootPath = _hostingEnvironment.WebRootPath;
-        //         var jsonArray = new JArray();
-        //         var fileitems = System.IO.File.ReadLines(webRootPath + "/logs/wudata11.txt");
-        //         foreach (var item in fileitems)
-        //         {
-        //             JObject jObj = JObject.Parse(item);
-        //             jsonArray.Add(jObj[""]);
-        //         }
-        //
-        //         return jsonArray;
-        //
-        //     }
-        // }
     }
 }
-
-

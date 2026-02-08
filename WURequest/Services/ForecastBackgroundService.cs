@@ -1,9 +1,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NCrontab;
+using WURequest.Hubs;
 
 namespace WURequest.Services
 {
@@ -12,6 +14,7 @@ namespace WURequest.Services
     {
         private readonly IForecastService _forecastService;
         private readonly IForecastApiService _forecastApiService;
+        private readonly IHubContext<WeatherHub> _weatherHubContext;
         private readonly CrontabSchedule _schedule;
         private readonly ILogger _logger;
         private DateTime _nextRun;
@@ -22,12 +25,14 @@ namespace WURequest.Services
         public ForecastBackgroundService(
             IForecastService forecastService,
             IForecastApiService forecastApiService,
+            IHubContext<WeatherHub> weatherHubContext,
             ILoggerFactory logFactory)
         {
             _schedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = false });
             _nextRun = _schedule.GetNextOccurrence(DateTime.Now);
             _forecastService = forecastService;
             _forecastApiService = forecastApiService;
+            _weatherHubContext = weatherHubContext;
             _logger = logFactory.CreateLogger<ForecastBackgroundService>();
         }
 
@@ -77,6 +82,17 @@ namespace WURequest.Services
                 {
                     await _forecastService.Create(forecast);
                     _logger.LogInformation("Successfully fetched and stored forecast data");
+                    
+                    // Broadcast new forecast via SignalR
+                    try
+                    {
+                        await _weatherHubContext.Clients.All.SendAsync("ReceiveForecastUpdate", forecast);
+                        _logger.LogInformation("Broadcasted forecast update via SignalR");
+                    }
+                    catch (Exception signalREx)
+                    {
+                        _logger.LogWarning(signalREx, "Failed to broadcast forecast via SignalR (no connected clients or SignalR error)");
+                    }
                 }
                 else
                 {

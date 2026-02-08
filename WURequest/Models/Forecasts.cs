@@ -38,7 +38,11 @@ namespace WURequest.Models
 
         [BsonElement("qpf")] public List<double?> Qpf { get; set; }
 
-        [BsonElement("qpfSnow")] public List<long?> QpfSnow { get; set; }
+        [BsonElement("qpfSnow")] public List<double?> QpfSnow { get; set; }
+
+        [BsonElement("qpfIce")] public List<double?> QpfIce { get; set; }
+
+        [BsonElement("qpfRain")] public List<double?> QpfRain { get; set; }
 
         [BsonElement("sunriseTimeLocal")] public List<string> SunriseTimeLocal { get; set; }
 
@@ -80,11 +84,11 @@ namespace WURequest.Models
     
         [BsonElement("qpf")] public List<double?> Qpf { get; set; }
     
-        [BsonElement("qpfSnow")] public List<long?> QpfSnow { get; set; }
+        [BsonElement("qpfSnow")] public List<double?> QpfSnow { get; set; }
     
-        [BsonElement("qualifierCode")] public List<object> QualifierCode { get; set; }
+        [BsonElement("qualifierCode")] public List<string> QualifierCode { get; set; }
     
-        [BsonElement("qualifierPhrase")] public List<object> QualifierPhrase { get; set; }
+        [BsonElement("qualifierPhrase")] public List<string> QualifierPhrase { get; set; }
     
         [BsonElement("relativeHumidity")] public List<long?> RelativeHumidity { get; set; }
     
@@ -96,7 +100,7 @@ namespace WURequest.Models
     
         [BsonElement("temperatureWindChill")] public List<long?> TemperatureWindChill { get; set; }
     
-        [BsonElement("thunderCategory")] public List<object> ThunderCategory { get; set; }
+        [BsonElement("thunderCategory")] public List<string> ThunderCategory { get; set; }
     
         [BsonElement("thunderIndex")] public List<long?> ThunderIndex { get; set; }
     

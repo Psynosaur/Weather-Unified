@@ -28,12 +28,16 @@ namespace WURequest.Services
             // Configure HttpClient headers
             _httpClient.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
+            
+            // Request gzip encoding (automatically decompressed by HttpClientHandler)
+            _httpClient.DefaultRequestHeaders.AcceptEncoding.Add(
+                new StringWithQualityHeaderValue("gzip"));
         }
 
         public async Task<Forecasts> GetForecastAsync()
         {
             var url = string.Format(
-                "https://api.weather.com/v3/wx/forecast/daily/5day?geocode={0},{1}&format={2}&units={3}&language={4}&apiKey={5}",
+                "https://api.weather.com/v3/wx/forecast/daily/15day?geocode={0},{1}&format={2}&units={3}&language={4}&apiKey={5}",
                 _weatherUndergroundApiSettings.Lat,
                 _weatherUndergroundApiSettings.Lon,
                 _weatherUndergroundApiSettings.Format,
@@ -42,7 +46,7 @@ namespace WURequest.Services
                 _weatherUndergroundApiSettings.Pat
             );
 
-            return await GetWithBsonAsync<Forecasts>(url, "fetching weather forecast");
+            return await GetAsync<Forecasts>(url, "fetching weather forecast");
         }
     }
 }

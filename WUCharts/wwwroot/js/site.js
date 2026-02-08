@@ -41,7 +41,7 @@ am5.ready(function () {
         case 1:
             tUnint = "minute";
             baseIntervalCount = 5;
-            gridCount = 120
+            gridCount = 210
             break;
         case 2:
             tUnint = "hour"
@@ -53,7 +53,7 @@ am5.ready(function () {
             tUnint = "hour"
             dateFormat = "dd-MM HH:mm";
             baseIntervalCount = 2;
-            gridCount = 48;
+            gridCount = 120;
             break;
         default:
             tUnint = "second";
@@ -108,6 +108,7 @@ am5.ready(function () {
         var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
             behavior: "zoomX"
         }));
+        
         cursor.lineY.set("visible", false);
         // 5. Create axes
         // Temperature and aew chart axes
